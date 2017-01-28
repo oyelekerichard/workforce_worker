@@ -1,0 +1,8 @@
+{
+  "name": "push",
+  "version": "2.0.0",
+  "description": "Push Internal Developer Api",
+  "title": "Push Internal Developer Api",
+  "url" : "https://e1.push.ng/v2/mac",
+  "sampleUrl"  : "https://e1.push.ng/v2/mac" 
+}
