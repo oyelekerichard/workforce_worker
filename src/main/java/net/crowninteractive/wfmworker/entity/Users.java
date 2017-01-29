@@ -64,6 +64,15 @@ import javax.xml.bind.annotation.XmlTransient;
     @NamedQuery(name = "Users.findByIsActive", query = "SELECT u FROM Users u WHERE u.isActive = :isActive")})
 public class Users implements Serializable {
 
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "createdBy")
+    private List<ApprovalLevel> approvalLevelList;
+    @OneToMany(mappedBy = "updatedBy")
+    private List<ApprovalLevel> approvalLevelList1;
+    @OneToMany(mappedBy = "actionedBy")
+    private List<InventoryApproval> inventoryApprovalList;
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "createdBy")
+    private List<InventoryApproval> inventoryApprovalList1;
+
     private static final long serialVersionUID = 1L;
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -907,6 +916,38 @@ public class Users implements Serializable {
     @Override
     public String toString() {
         return "net.crowninteractive.wfmworker.entity.Users[ id=" + id + " ]";
+    }
+
+    public List<ApprovalLevel> getApprovalLevelList() {
+        return approvalLevelList;
+    }
+
+    public void setApprovalLevelList(List<ApprovalLevel> approvalLevelList) {
+        this.approvalLevelList = approvalLevelList;
+    }
+
+    public List<ApprovalLevel> getApprovalLevelList1() {
+        return approvalLevelList1;
+    }
+
+    public void setApprovalLevelList1(List<ApprovalLevel> approvalLevelList1) {
+        this.approvalLevelList1 = approvalLevelList1;
+    }
+
+    public List<InventoryApproval> getInventoryApprovalList() {
+        return inventoryApprovalList;
+    }
+
+    public void setInventoryApprovalList(List<InventoryApproval> inventoryApprovalList) {
+        this.inventoryApprovalList = inventoryApprovalList;
+    }
+
+    public List<InventoryApproval> getInventoryApprovalList1() {
+        return inventoryApprovalList1;
+    }
+
+    public void setInventoryApprovalList1(List<InventoryApproval> inventoryApprovalList1) {
+        this.inventoryApprovalList1 = inventoryApprovalList1;
     }
     
 }

@@ -3,7 +3,7 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package net.crowninteractive.wfmworker;
+/*package net.crowninteractive.wfmworker;
 
 import java.io.File;
 import java.text.SimpleDateFormat;
@@ -28,12 +28,13 @@ import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.mail.EmailException;
 import org.apache.commons.mail.HtmlEmail;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Component;
+import org.springframework.stereotype.Component;*/
 
 /**
  *
  * @author osita
  */
+/*
 @Component
 public class Worker extends TimerTask{
     
@@ -51,13 +52,16 @@ public class Worker extends TimerTask{
     
     @Autowired
     private EscalationTempDao escalationTempDao;
-    
+    @Autowired
+    private  Scheduler scheduler;
     
 
     @Override
     public void run() {
         try {
             System.out.println("escalation processor ...");
+            
+            
             List<EscalationWorkOrder> lewo = escalationWorkOrderDao.getUnprocessedEscalations();
             
             for (EscalationWorkOrder ewo : lewo) {
@@ -148,4 +152,4 @@ public class Worker extends TimerTask{
         
         return StringUtils.join(emailStore,",");
     }
-}
+}*/

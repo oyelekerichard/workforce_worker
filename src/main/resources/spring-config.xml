@@ -9,7 +9,7 @@
   http://www.springframework.org/schema/task http://www.springframework.org/schema/task/spring-task-4.0.xsd
   http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-3.2.xsd">
 
- <context:component-scan base-package="ng.push.coreapi" />
+ <context:component-scan base-package="net.crowninteractive.wfmworker" />
  <mvc:annotation-driven />
  <tx:annotation-driven transaction-manager="transactionManager"  />
 
@@ -46,6 +46,13 @@
 
 
 
+<task:scheduled-tasks scheduler="myScheduler">
+        <task:scheduled ref="myBean" method="work" fixed-rate="10000" />
+    </task:scheduled-tasks>
+ 
+    <task:scheduler id="myScheduler"/>
+
+
 
 
 <bean id="dataSource" class="org.springframework.jndi.JndiObjectFactoryBean">
@@ -80,8 +87,9 @@
    
  
 </bean>
-
+<bean class="net.crowninteractive.wfmworker.Scheduler"/>
  <bean id="persistenceExceptionTranslationPostProcessor"
   class="org.springframework.dao.annotation.PersistenceExceptionTranslationPostProcessor" />
-
+<bean class="org.springframework.config.java.process.ConfigurationPostProcessor"/>
 </beans>
+
