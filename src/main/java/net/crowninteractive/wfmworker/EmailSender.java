@@ -3,7 +3,7 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-/*package net.crowninteractive.wfmworker;
+package net.crowninteractive.wfmworker;
 
 import java.util.Date;
 import java.util.List;
@@ -19,7 +19,7 @@ import org.springframework.stereotype.Component;
  *
  * @author osita
  */
-/*
+
 @Component
 public class EmailSender extends TimerTask{
     
@@ -78,4 +78,4 @@ public class EmailSender extends TimerTask{
     
  
 }
-*/
+

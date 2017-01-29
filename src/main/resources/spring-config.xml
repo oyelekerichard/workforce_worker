@@ -46,11 +46,7 @@
 
 
 
-<task:scheduled-tasks scheduler="myScheduler">
-        <task:scheduled ref="myBean" method="work" fixed-rate="10000" />
-    </task:scheduled-tasks>
- 
-    <task:scheduler id="myScheduler"/>
+
 
 
 
@@ -87,7 +83,6 @@
    
  
 </bean>
-<bean class="net.crowninteractive.wfmworker.Scheduler"/>
  <bean id="persistenceExceptionTranslationPostProcessor"
   class="org.springframework.dao.annotation.PersistenceExceptionTranslationPostProcessor" />
 <bean class="org.springframework.config.java.process.ConfigurationPostProcessor"/>
