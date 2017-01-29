@@ -12,11 +12,10 @@ import org.springframework.stereotype.Component;
 @Component
 public class InventoryApprovalDao extends AbstractDao<Integer, InventoryApproval>{
     
-   public List<InventoryApproval> findByEmailSendTimeNULL()
-   {
-  String query="SELECT * from inventory_approval where email_send_time is ";
-  return getEntityManager().createNativeQuery(query, InventoryApproval.class).getResultList();
-   }
+    public List<InventoryApproval> findByEmailSendTimeNULL(){
+        String query="SELECT * from inventory_approval where email_send_time is ";
+        return getEntityManager().createNativeQuery(query, InventoryApproval.class).getResultList();
+    }
     
     public List<WorkOrder> findTempWorkOrders(){
         String query = String.format("select * from work_order where id in (select work_order_id from escalation_temp where `type`='CREATE'  )");

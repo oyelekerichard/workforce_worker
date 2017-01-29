@@ -49,23 +49,35 @@
 
 <bean id="timerTask" class="net.crowninteractive.wfmworker.Worker"> </bean> 
 <task:scheduled-tasks scheduler="myScheduler">
-    <task:scheduled ref="timerTask" method="run" initial-delay="40000" fixed-delay="600000" /> <!-- 10 mins -->
+    <task:scheduled ref="timerTask" method="run" initial-delay="5000" fixed-delay="60000" /> <!-- 10 mins -->
 </task:scheduled-tasks>
 <task:scheduler id="myScheduler" pool-size="5"/>
 
 
 <bean id="timerTask2" class="net.crowninteractive.wfmworker.EscalationCreator"> </bean> 
 <task:scheduled-tasks scheduler="myScheduler2">
-    <task:scheduled ref="timerTask2" method="run" initial-delay="10000" fixed-delay="300000" /> <!-- 5 mins -->
+    <task:scheduled ref="timerTask2" method="run" initial-delay="10000" fixed-delay="70000" /> <!-- 5 mins -->
 </task:scheduled-tasks>
 <task:scheduler id="myScheduler2" pool-size="5"/>
 
 
 <bean id="timerTask3" class="net.crowninteractive.wfmworker.EmailSender"> </bean> 
 <task:scheduled-tasks scheduler="myScheduler3">
-    <task:scheduled ref="timerTask3" method="run" initial-delay="5000" fixed-delay="45000" /> <!-- 45 secs -->
+    <task:scheduled ref="timerTask3" method="run" initial-delay="15000" fixed-delay="80000" /> <!-- 45 secs -->
 </task:scheduled-tasks>
 <task:scheduler id="myScheduler3" pool-size="3"/>
+
+<bean id="timerTask4" class="net.crowninteractive.wfmworker.SendApprovalEmails"> </bean> 
+<task:scheduled-tasks scheduler="myScheduler4">
+    <task:scheduled ref="timerTask4" method="run" initial-delay="20000" fixed-delay="90000" /> <!-- 45 secs -->
+</task:scheduled-tasks>
+<task:scheduler id="myScheduler4" pool-size="3"/>
+
+<bean id="timerTask5" class="net.crowninteractive.wfmworker.SendRejectEmails"> </bean> 
+<task:scheduled-tasks scheduler="myScheduler5">
+    <task:scheduled ref="timerTask5" method="run" initial-delay="25000" fixed-delay="100000" /> <!-- 45 secs -->
+</task:scheduled-tasks>
+<task:scheduler id="myScheduler5" pool-size="3"/>
 
 
 
