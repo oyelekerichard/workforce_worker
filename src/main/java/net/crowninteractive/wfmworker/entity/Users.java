@@ -36,33 +36,63 @@ import javax.xml.bind.annotation.XmlTransient;
     @UniqueConstraint(columnNames = {"email"})})
 @XmlRootElement
 @NamedQueries({
-    @NamedQuery(name = "Users.findAll", query = "SELECT u FROM Users u"),
-    @NamedQuery(name = "Users.findById", query = "SELECT u FROM Users u WHERE u.id = :id"),
-    @NamedQuery(name = "Users.findByToken", query = "SELECT u FROM Users u WHERE u.token = :token"),
-    @NamedQuery(name = "Users.findByOwnerId", query = "SELECT u FROM Users u WHERE u.ownerId = :ownerId"),
-    @NamedQuery(name = "Users.findByNewpass", query = "SELECT u FROM Users u WHERE u.newpass = :newpass"),
-    @NamedQuery(name = "Users.findByLevel", query = "SELECT u FROM Users u WHERE u.level = :level"),
-    @NamedQuery(name = "Users.findByEmail", query = "SELECT u FROM Users u WHERE u.email = :email"),
-    @NamedQuery(name = "Users.findByFirstname", query = "SELECT u FROM Users u WHERE u.firstname = :firstname"),
-    @NamedQuery(name = "Users.findByLastname", query = "SELECT u FROM Users u WHERE u.lastname = :lastname"),
-    @NamedQuery(name = "Users.findByPassword", query = "SELECT u FROM Users u WHERE u.password = :password"),
-    @NamedQuery(name = "Users.findByDepartment", query = "SELECT u FROM Users u WHERE u.department = :department"),
-    @NamedQuery(name = "Users.findBySalt", query = "SELECT u FROM Users u WHERE u.salt = :salt"),
-    @NamedQuery(name = "Users.findByRoles", query = "SELECT u FROM Users u WHERE u.roles = :roles"),
-    @NamedQuery(name = "Users.findByQueues", query = "SELECT u FROM Users u WHERE u.queues = :queues"),
-    @NamedQuery(name = "Users.findByDistricts", query = "SELECT u FROM Users u WHERE u.districts = :districts"),
-    @NamedQuery(name = "Users.findByTariffs", query = "SELECT u FROM Users u WHERE u.tariffs = :tariffs"),
-    @NamedQuery(name = "Users.findByStatuses", query = "SELECT u FROM Users u WHERE u.statuses = :statuses"),
-    @NamedQuery(name = "Users.findByTempPassword", query = "SELECT u FROM Users u WHERE u.tempPassword = :tempPassword"),
-    @NamedQuery(name = "Users.findBySentEmail", query = "SELECT u FROM Users u WHERE u.sentEmail = :sentEmail"),
-    @NamedQuery(name = "Users.findByPhone", query = "SELECT u FROM Users u WHERE u.phone = :phone"),
-    @NamedQuery(name = "Users.findByLogonTime", query = "SELECT u FROM Users u WHERE u.logonTime = :logonTime"),
-    @NamedQuery(name = "Users.findByHasConfirmed", query = "SELECT u FROM Users u WHERE u.hasConfirmed = :hasConfirmed"),
-    @NamedQuery(name = "Users.findByIsEngineer", query = "SELECT u FROM Users u WHERE u.isEngineer = :isEngineer"),
-    @NamedQuery(name = "Users.findByCreateTime", query = "SELECT u FROM Users u WHERE u.createTime = :createTime"),
-    @NamedQuery(name = "Users.findByUpdateTime", query = "SELECT u FROM Users u WHERE u.updateTime = :updateTime"),
+    @NamedQuery(name = "Users.findAll", query = "SELECT u FROM Users u")
+    ,
+    @NamedQuery(name = "Users.findById", query = "SELECT u FROM Users u WHERE u.id = :id")
+    ,
+    @NamedQuery(name = "Users.findByToken", query = "SELECT u FROM Users u WHERE u.token = :token")
+    ,
+    @NamedQuery(name = "Users.findByOwnerId", query = "SELECT u FROM Users u WHERE u.ownerId = :ownerId")
+    ,
+    @NamedQuery(name = "Users.findByNewpass", query = "SELECT u FROM Users u WHERE u.newpass = :newpass")
+    ,
+    @NamedQuery(name = "Users.findByLevel", query = "SELECT u FROM Users u WHERE u.level = :level")
+    ,
+    @NamedQuery(name = "Users.findByEmail", query = "SELECT u FROM Users u WHERE u.email = :email")
+    ,
+    @NamedQuery(name = "Users.findByFirstname", query = "SELECT u FROM Users u WHERE u.firstname = :firstname")
+    ,
+    @NamedQuery(name = "Users.findByLastname", query = "SELECT u FROM Users u WHERE u.lastname = :lastname")
+    ,
+    @NamedQuery(name = "Users.findByPassword", query = "SELECT u FROM Users u WHERE u.password = :password")
+    ,
+    @NamedQuery(name = "Users.findByDepartment", query = "SELECT u FROM Users u WHERE u.department = :department")
+    ,
+    @NamedQuery(name = "Users.findBySalt", query = "SELECT u FROM Users u WHERE u.salt = :salt")
+    ,
+    @NamedQuery(name = "Users.findByRoles", query = "SELECT u FROM Users u WHERE u.roles = :roles")
+    ,
+    @NamedQuery(name = "Users.findByQueues", query = "SELECT u FROM Users u WHERE u.queues = :queues")
+    ,
+    @NamedQuery(name = "Users.findByDistricts", query = "SELECT u FROM Users u WHERE u.districts = :districts")
+    ,
+    @NamedQuery(name = "Users.findByTariffs", query = "SELECT u FROM Users u WHERE u.tariffs = :tariffs")
+    ,
+    @NamedQuery(name = "Users.findByStatuses", query = "SELECT u FROM Users u WHERE u.statuses = :statuses")
+    ,
+    @NamedQuery(name = "Users.findByTempPassword", query = "SELECT u FROM Users u WHERE u.tempPassword = :tempPassword")
+    ,
+    @NamedQuery(name = "Users.findBySentEmail", query = "SELECT u FROM Users u WHERE u.sentEmail = :sentEmail")
+    ,
+    @NamedQuery(name = "Users.findByPhone", query = "SELECT u FROM Users u WHERE u.phone = :phone")
+    ,
+    @NamedQuery(name = "Users.findByLogonTime", query = "SELECT u FROM Users u WHERE u.logonTime = :logonTime")
+    ,
+    @NamedQuery(name = "Users.findByHasConfirmed", query = "SELECT u FROM Users u WHERE u.hasConfirmed = :hasConfirmed")
+    ,
+    @NamedQuery(name = "Users.findByIsEngineer", query = "SELECT u FROM Users u WHERE u.isEngineer = :isEngineer")
+    ,
+    @NamedQuery(name = "Users.findByCreateTime", query = "SELECT u FROM Users u WHERE u.createTime = :createTime")
+    ,
+    @NamedQuery(name = "Users.findByUpdateTime", query = "SELECT u FROM Users u WHERE u.updateTime = :updateTime")
+    ,
     @NamedQuery(name = "Users.findByIsActive", query = "SELECT u FROM Users u WHERE u.isActive = :isActive")})
 public class Users implements Serializable {
+
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "createdBy")
+    private List<InventoryRejection> inventoryRejectionList;
+    @OneToMany(mappedBy = "updatedBy")
+    private List<InventoryRejection> inventoryRejectionList1;
 
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "createdBy")
     private List<ApprovalLevel> approvalLevelList;
@@ -949,5 +979,21 @@ public class Users implements Serializable {
     public void setInventoryApprovalList1(List<InventoryApproval> inventoryApprovalList1) {
         this.inventoryApprovalList1 = inventoryApprovalList1;
     }
-    
+
+    public List<InventoryRejection> getInventoryRejectionList() {
+        return inventoryRejectionList;
+    }
+
+    public void setInventoryRejectionList(List<InventoryRejection> inventoryRejectionList) {
+        this.inventoryRejectionList = inventoryRejectionList;
+    }
+
+    public List<InventoryRejection> getInventoryRejectionList1() {
+        return inventoryRejectionList1;
+    }
+
+    public void setInventoryRejectionList1(List<InventoryRejection> inventoryRejectionList1) {
+        this.inventoryRejectionList1 = inventoryRejectionList1;
+    }
+
 }

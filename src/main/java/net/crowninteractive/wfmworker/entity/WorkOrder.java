@@ -37,44 +37,83 @@ import javax.xml.bind.annotation.XmlTransient;
     @UniqueConstraint(columnNames = {"ticket_id"})})
 @XmlRootElement
 @NamedQueries({
-    @NamedQuery(name = "WorkOrder.findAll", query = "SELECT w FROM WorkOrder w"),
-    @NamedQuery(name = "WorkOrder.findById", query = "SELECT w FROM WorkOrder w WHERE w.id = :id"),
-    @NamedQuery(name = "WorkOrder.findByTicketId", query = "SELECT w FROM WorkOrder w WHERE w.ticketId = :ticketId"),
-    @NamedQuery(name = "WorkOrder.findByToken", query = "SELECT w FROM WorkOrder w WHERE w.token = :token"),
-    @NamedQuery(name = "WorkOrder.findByOwnerId", query = "SELECT w FROM WorkOrder w WHERE w.ownerId = :ownerId"),
-    @NamedQuery(name = "WorkOrder.findBySummary", query = "SELECT w FROM WorkOrder w WHERE w.summary = :summary"),
-    @NamedQuery(name = "WorkOrder.findByContactNumber", query = "SELECT w FROM WorkOrder w WHERE w.contactNumber = :contactNumber"),
-    @NamedQuery(name = "WorkOrder.findByReferenceType", query = "SELECT w FROM WorkOrder w WHERE w.referenceType = :referenceType"),
-    @NamedQuery(name = "WorkOrder.findByReferenceTypeData", query = "SELECT w FROM WorkOrder w WHERE w.referenceTypeData = :referenceTypeData"),
-    @NamedQuery(name = "WorkOrder.findByAddressLine1", query = "SELECT w FROM WorkOrder w WHERE w.addressLine1 = :addressLine1"),
-    @NamedQuery(name = "WorkOrder.findByAddressLine2", query = "SELECT w FROM WorkOrder w WHERE w.addressLine2 = :addressLine2"),
-    @NamedQuery(name = "WorkOrder.findByCity", query = "SELECT w FROM WorkOrder w WHERE w.city = :city"),
-    @NamedQuery(name = "WorkOrder.findByState", query = "SELECT w FROM WorkOrder w WHERE w.state = :state"),
-    @NamedQuery(name = "WorkOrder.findByBusinessUnit", query = "SELECT w FROM WorkOrder w WHERE w.businessUnit = :businessUnit"),
-    @NamedQuery(name = "WorkOrder.findByCustomerTariff", query = "SELECT w FROM WorkOrder w WHERE w.customerTariff = :customerTariff"),
-    @NamedQuery(name = "WorkOrder.findByPriority", query = "SELECT w FROM WorkOrder w WHERE w.priority = :priority"),
-    @NamedQuery(name = "WorkOrder.findByCreateTime", query = "SELECT w FROM WorkOrder w WHERE w.createTime = :createTime"),
-    @NamedQuery(name = "WorkOrder.findByIsClosed", query = "SELECT w FROM WorkOrder w WHERE w.isClosed = :isClosed"),
-    @NamedQuery(name = "WorkOrder.findByClosedTime", query = "SELECT w FROM WorkOrder w WHERE w.closedTime = :closedTime"),
-    @NamedQuery(name = "WorkOrder.findByIsAssigned", query = "SELECT w FROM WorkOrder w WHERE w.isAssigned = :isAssigned"),
-    @NamedQuery(name = "WorkOrder.findByDateAssigned", query = "SELECT w FROM WorkOrder w WHERE w.dateAssigned = :dateAssigned"),
-    @NamedQuery(name = "WorkOrder.findByChannel", query = "SELECT w FROM WorkOrder w WHERE w.channel = :channel"),
-    @NamedQuery(name = "WorkOrder.findByIsActive", query = "SELECT w FROM WorkOrder w WHERE w.isActive = :isActive"),
-    @NamedQuery(name = "WorkOrder.findByUpdateTime", query = "SELECT w FROM WorkOrder w WHERE w.updateTime = :updateTime"),
-    @NamedQuery(name = "WorkOrder.findByCurrentStatus", query = "SELECT w FROM WorkOrder w WHERE w.currentStatus = :currentStatus"),
-    @NamedQuery(name = "WorkOrder.findByInventoryDescription", query = "SELECT w FROM WorkOrder w WHERE w.inventoryDescription = :inventoryDescription"),
-    @NamedQuery(name = "WorkOrder.findByReportedBy", query = "SELECT w FROM WorkOrder w WHERE w.reportedBy = :reportedBy"),
-    @NamedQuery(name = "WorkOrder.findByInventoryRef", query = "SELECT w FROM WorkOrder w WHERE w.inventoryRef = :inventoryRef"),
-    @NamedQuery(name = "WorkOrder.findByRequestedInventory", query = "SELECT w FROM WorkOrder w WHERE w.requestedInventory = :requestedInventory"),
-    @NamedQuery(name = "WorkOrder.findByDateRequestedInventory", query = "SELECT w FROM WorkOrder w WHERE w.dateRequestedInventory = :dateRequestedInventory"),
-    @NamedQuery(name = "WorkOrder.findByApprovedInventory", query = "SELECT w FROM WorkOrder w WHERE w.approvedInventory = :approvedInventory"),
-    @NamedQuery(name = "WorkOrder.findByInventoryApprovedBy", query = "SELECT w FROM WorkOrder w WHERE w.inventoryApprovedBy = :inventoryApprovedBy"),
-    @NamedQuery(name = "WorkOrder.findByDateApprovedInventory", query = "SELECT w FROM WorkOrder w WHERE w.dateApprovedInventory = :dateApprovedInventory"),
-    @NamedQuery(name = "WorkOrder.findByInventoryApproved", query = "SELECT w FROM WorkOrder w WHERE w.inventoryApproved = :inventoryApproved"),
-    @NamedQuery(name = "WorkOrder.findByWorkDate", query = "SELECT w FROM WorkOrder w WHERE w.workDate = :workDate"),
-    @NamedQuery(name = "WorkOrder.findBySlot", query = "SELECT w FROM WorkOrder w WHERE w.slot = :slot"),
+    @NamedQuery(name = "WorkOrder.findAll", query = "SELECT w FROM WorkOrder w")
+    ,
+    @NamedQuery(name = "WorkOrder.findById", query = "SELECT w FROM WorkOrder w WHERE w.id = :id")
+    ,
+    @NamedQuery(name = "WorkOrder.findByTicketId", query = "SELECT w FROM WorkOrder w WHERE w.ticketId = :ticketId")
+    ,
+    @NamedQuery(name = "WorkOrder.findByToken", query = "SELECT w FROM WorkOrder w WHERE w.token = :token")
+    ,
+    @NamedQuery(name = "WorkOrder.findByOwnerId", query = "SELECT w FROM WorkOrder w WHERE w.ownerId = :ownerId")
+    ,
+    @NamedQuery(name = "WorkOrder.findBySummary", query = "SELECT w FROM WorkOrder w WHERE w.summary = :summary")
+    ,
+    @NamedQuery(name = "WorkOrder.findByContactNumber", query = "SELECT w FROM WorkOrder w WHERE w.contactNumber = :contactNumber")
+    ,
+    @NamedQuery(name = "WorkOrder.findByReferenceType", query = "SELECT w FROM WorkOrder w WHERE w.referenceType = :referenceType")
+    ,
+    @NamedQuery(name = "WorkOrder.findByReferenceTypeData", query = "SELECT w FROM WorkOrder w WHERE w.referenceTypeData = :referenceTypeData")
+    ,
+    @NamedQuery(name = "WorkOrder.findByAddressLine1", query = "SELECT w FROM WorkOrder w WHERE w.addressLine1 = :addressLine1")
+    ,
+    @NamedQuery(name = "WorkOrder.findByAddressLine2", query = "SELECT w FROM WorkOrder w WHERE w.addressLine2 = :addressLine2")
+    ,
+    @NamedQuery(name = "WorkOrder.findByCity", query = "SELECT w FROM WorkOrder w WHERE w.city = :city")
+    ,
+    @NamedQuery(name = "WorkOrder.findByState", query = "SELECT w FROM WorkOrder w WHERE w.state = :state")
+    ,
+    @NamedQuery(name = "WorkOrder.findByBusinessUnit", query = "SELECT w FROM WorkOrder w WHERE w.businessUnit = :businessUnit")
+    ,
+    @NamedQuery(name = "WorkOrder.findByCustomerTariff", query = "SELECT w FROM WorkOrder w WHERE w.customerTariff = :customerTariff")
+    ,
+    @NamedQuery(name = "WorkOrder.findByPriority", query = "SELECT w FROM WorkOrder w WHERE w.priority = :priority")
+    ,
+    @NamedQuery(name = "WorkOrder.findByCreateTime", query = "SELECT w FROM WorkOrder w WHERE w.createTime = :createTime")
+    ,
+    @NamedQuery(name = "WorkOrder.findByIsClosed", query = "SELECT w FROM WorkOrder w WHERE w.isClosed = :isClosed")
+    ,
+    @NamedQuery(name = "WorkOrder.findByClosedTime", query = "SELECT w FROM WorkOrder w WHERE w.closedTime = :closedTime")
+    ,
+    @NamedQuery(name = "WorkOrder.findByIsAssigned", query = "SELECT w FROM WorkOrder w WHERE w.isAssigned = :isAssigned")
+    ,
+    @NamedQuery(name = "WorkOrder.findByDateAssigned", query = "SELECT w FROM WorkOrder w WHERE w.dateAssigned = :dateAssigned")
+    ,
+    @NamedQuery(name = "WorkOrder.findByChannel", query = "SELECT w FROM WorkOrder w WHERE w.channel = :channel")
+    ,
+    @NamedQuery(name = "WorkOrder.findByIsActive", query = "SELECT w FROM WorkOrder w WHERE w.isActive = :isActive")
+    ,
+    @NamedQuery(name = "WorkOrder.findByUpdateTime", query = "SELECT w FROM WorkOrder w WHERE w.updateTime = :updateTime")
+    ,
+    @NamedQuery(name = "WorkOrder.findByCurrentStatus", query = "SELECT w FROM WorkOrder w WHERE w.currentStatus = :currentStatus")
+    ,
+    @NamedQuery(name = "WorkOrder.findByInventoryDescription", query = "SELECT w FROM WorkOrder w WHERE w.inventoryDescription = :inventoryDescription")
+    ,
+    @NamedQuery(name = "WorkOrder.findByReportedBy", query = "SELECT w FROM WorkOrder w WHERE w.reportedBy = :reportedBy")
+    ,
+    @NamedQuery(name = "WorkOrder.findByInventoryRef", query = "SELECT w FROM WorkOrder w WHERE w.inventoryRef = :inventoryRef")
+    ,
+    @NamedQuery(name = "WorkOrder.findByRequestedInventory", query = "SELECT w FROM WorkOrder w WHERE w.requestedInventory = :requestedInventory")
+    ,
+    @NamedQuery(name = "WorkOrder.findByDateRequestedInventory", query = "SELECT w FROM WorkOrder w WHERE w.dateRequestedInventory = :dateRequestedInventory")
+    ,
+    @NamedQuery(name = "WorkOrder.findByApprovedInventory", query = "SELECT w FROM WorkOrder w WHERE w.approvedInventory = :approvedInventory")
+    ,
+    @NamedQuery(name = "WorkOrder.findByInventoryApprovedBy", query = "SELECT w FROM WorkOrder w WHERE w.inventoryApprovedBy = :inventoryApprovedBy")
+    ,
+    @NamedQuery(name = "WorkOrder.findByDateApprovedInventory", query = "SELECT w FROM WorkOrder w WHERE w.dateApprovedInventory = :dateApprovedInventory")
+    ,
+    @NamedQuery(name = "WorkOrder.findByInventoryApproved", query = "SELECT w FROM WorkOrder w WHERE w.inventoryApproved = :inventoryApproved")
+    ,
+    @NamedQuery(name = "WorkOrder.findByWorkDate", query = "SELECT w FROM WorkOrder w WHERE w.workDate = :workDate")
+    ,
+    @NamedQuery(name = "WorkOrder.findBySlot", query = "SELECT w FROM WorkOrder w WHERE w.slot = :slot")
+    ,
     @NamedQuery(name = "WorkOrder.findByAgentName", query = "SELECT w FROM WorkOrder w WHERE w.agentName = :agentName")})
 public class WorkOrder implements Serializable {
+
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "workOrderId")
+    private List<InventoryApproval> inventoryApprovalList;
 
     private static final long serialVersionUID = 1L;
     @Id
@@ -175,6 +214,16 @@ public class WorkOrder implements Serializable {
     private String slot;
     @Column(name = "agent_name", length = 100)
     private String agentName;
+    @Column(name = "customer_name", length = 60)
+    private String customerName;
+
+    public String getCustomerName() {
+        return customerName;
+    }
+
+    public void setCustomerName(String customerName) {
+        this.customerName = customerName;
+    }
     @OneToMany(mappedBy = "workOrderId")
     private List<EscalationWorkOrder> escalationWorkOrderList;
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "workOrderId")
@@ -674,5 +723,13 @@ public class WorkOrder implements Serializable {
     public String toString() {
         return "net.crowninteractive.wfmworker.entity.WorkOrder[ id=" + id + " ]";
     }
-    
+
+    public List<InventoryApproval> getInventoryApprovalList() {
+        return inventoryApprovalList;
+    }
+
+    public void setInventoryApprovalList(List<InventoryApproval> inventoryApprovalList) {
+        this.inventoryApprovalList = inventoryApprovalList;
+    }
+
 }

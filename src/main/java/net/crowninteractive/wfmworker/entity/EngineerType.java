@@ -1,13 +1,18 @@
+
 /*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
+* To change this license header, choose License Headers in Project Properties.
+* To change this template file, choose Tools | Templates
+* and open the template in the editor.
  */
 package net.crowninteractive.wfmworker.entity;
 
+//~--- JDK imports ------------------------------------------------------------
+
 import java.io.Serializable;
+
 import java.util.Date;
 import java.util.List;
+
 import javax.persistence.Basic;
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
@@ -23,6 +28,7 @@ import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
+
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlTransient;
 
@@ -31,70 +37,125 @@ import javax.xml.bind.annotation.XmlTransient;
  * @author osita
  */
 @Entity
-@Table(name = "engineer_type", catalog = "wfm_new", schema = "")
+@Table(
+    name      = "engineer_type",
+    catalog   = "wfm_new",
+    schema    = ""
+)
 @XmlRootElement
-@NamedQueries({
-    @NamedQuery(name = "EngineerType.findAll", query = "SELECT e FROM EngineerType e"),
-    @NamedQuery(name = "EngineerType.findById", query = "SELECT e FROM EngineerType e WHERE e.id = :id"),
-    @NamedQuery(name = "EngineerType.findByToken", query = "SELECT e FROM EngineerType e WHERE e.token = :token"),
-    @NamedQuery(name = "EngineerType.findByOwnerId", query = "SELECT e FROM EngineerType e WHERE e.ownerId = :ownerId"),
-    @NamedQuery(name = "EngineerType.findByName", query = "SELECT e FROM EngineerType e WHERE e.name = :name"),
-    @NamedQuery(name = "EngineerType.findByDescription", query = "SELECT e FROM EngineerType e WHERE e.description = :description"),
-    @NamedQuery(name = "EngineerType.findByCreateTime", query = "SELECT e FROM EngineerType e WHERE e.createTime = :createTime"),
-    @NamedQuery(name = "EngineerType.findByUpdateTime", query = "SELECT e FROM EngineerType e WHERE e.updateTime = :updateTime"),
-    @NamedQuery(name = "EngineerType.findByIsActive", query = "SELECT e FROM EngineerType e WHERE e.isActive = :isActive")})
+@NamedQueries( {
+    @NamedQuery(
+        name  = "EngineerType.findAll",
+        query = "SELECT e FROM EngineerType e"
+    ) , @NamedQuery(
+        name  = "EngineerType.findById",
+        query = "SELECT e FROM EngineerType e WHERE e.id = :id"
+    ) , @NamedQuery(
+        name  = "EngineerType.findByToken",
+        query = "SELECT e FROM EngineerType e WHERE e.token = :token"
+    ) , @NamedQuery(
+        name  = "EngineerType.findByOwnerId",
+        query = "SELECT e FROM EngineerType e WHERE e.ownerId = :ownerId"
+    ) , @NamedQuery(
+        name  = "EngineerType.findByName",
+        query = "SELECT e FROM EngineerType e WHERE e.name = :name"
+    ) , @NamedQuery(
+        name  = "EngineerType.findByDescription",
+        query = "SELECT e FROM EngineerType e WHERE e.description = :description"
+    ) , @NamedQuery(
+        name  = "EngineerType.findByCreateTime",
+        query = "SELECT e FROM EngineerType e WHERE e.createTime = :createTime"
+    ) , @NamedQuery(
+        name  = "EngineerType.findByUpdateTime",
+        query = "SELECT e FROM EngineerType e WHERE e.updateTime = :updateTime"
+    ) , @NamedQuery(
+        name  = "EngineerType.findByIsActive",
+        query = "SELECT e FROM EngineerType e WHERE e.isActive = :isActive"
+    )
+})
 public class EngineerType implements Serializable {
-
     private static final long serialVersionUID = 1L;
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Basic(optional = false)
-    @Column(name = "id", nullable = false)
-    private Integer id;
+    @Column(
+        name                                   = "id",
+        nullable                               = false
+    )
+    private Integer           id;
     @Basic(optional = false)
-    @Column(name = "token", nullable = false, length = 30)
-    private String token;
+    @Column(
+        name     = "token",
+        nullable = false,
+        length   = 30
+    )
+    private String            token;
     @Basic(optional = false)
-    @Column(name = "owner_id", nullable = false)
-    private int ownerId;
-    @Column(name = "name", length = 40)
-    private String name;
+    @Column(
+        name     = "owner_id",
+        nullable = false
+    )
+    private int               ownerId;
+    @Column(
+        name   = "name",
+        length = 40
+    )
+    private String            name;
     @Basic(optional = false)
-    @Column(name = "description", nullable = false, length = 400)
-    private String description;
+    @Column(
+        name     = "description",
+        nullable = false,
+        length   = 400
+    )
+    private String            description;
     @Basic(optional = false)
-    @Column(name = "create_time", nullable = false)
+    @Column(
+        name     = "create_time",
+        nullable = false
+    )
     @Temporal(TemporalType.TIMESTAMP)
-    private Date createTime;
+    private Date              createTime;
     @Column(name = "update_time")
     @Temporal(TemporalType.TIMESTAMP)
-    private Date updateTime;
+    private Date              updateTime;
     @Basic(optional = false)
-    @Column(name = "is_active", nullable = false)
-    private int isActive;
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "engType")
-    private List<Engineer> engineerList;
-    @JoinColumn(name = "created_by", referencedColumnName = "id", nullable = false)
+    @Column(
+        name     = "is_active",
+        nullable = false
+    )
+    private int               isActive;
+    @OneToMany(
+        cascade  = CascadeType.ALL,
+        mappedBy = "engType"
+    )
+    private List<Engineer>    engineerList;
+    @JoinColumn(
+        name                 = "created_by",
+        referencedColumnName = "id",
+        nullable             = false
+    )
     @ManyToOne(optional = false)
-    private Users createdBy;
-    @JoinColumn(name = "updated_by", referencedColumnName = "id")
+    private Users             createdBy;
+    @JoinColumn(
+        name                 = "updated_by",
+        referencedColumnName = "id"
+    )
     @ManyToOne
-    private Users updatedBy;
+    private Users             updatedBy;
 
-    public EngineerType() {
-    }
+    public EngineerType() {}
 
     public EngineerType(Integer id) {
         this.id = id;
     }
 
     public EngineerType(Integer id, String token, int ownerId, String description, Date createTime, int isActive) {
-        this.id = id;
-        this.token = token;
-        this.ownerId = ownerId;
+        this.id          = id;
+        this.token       = token;
+        this.ownerId     = ownerId;
         this.description = description;
-        this.createTime = createTime;
-        this.isActive = isActive;
+        this.createTime  = createTime;
+        this.isActive    = isActive;
     }
 
     public Integer getId() {
@@ -189,20 +250,28 @@ public class EngineerType implements Serializable {
     @Override
     public int hashCode() {
         int hash = 0;
-        hash += (id != null ? id.hashCode() : 0);
+
+        hash += ((id != null)
+                 ? id.hashCode()
+                 : 0);
+
         return hash;
     }
 
     @Override
     public boolean equals(Object object) {
+
         // TODO: Warning - this method won't work in the case the id fields are not set
         if (!(object instanceof EngineerType)) {
             return false;
         }
+
         EngineerType other = (EngineerType) object;
-        if ((this.id == null && other.id != null) || (this.id != null && !this.id.equals(other.id))) {
+
+        if (((this.id == null) && (other.id != null)) || ((this.id != null) &&!this.id.equals(other.id))) {
             return false;
         }
+
         return true;
     }
 
@@ -210,5 +279,7 @@ public class EngineerType implements Serializable {
     public String toString() {
         return "net.crowninteractive.wfmworker.entity.EngineerType[ id=" + id + " ]";
     }
-    
 }
+
+
+//~ Formatted by Jindent --- http://www.jindent.com

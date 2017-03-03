@@ -29,66 +29,126 @@ import javax.xml.bind.annotation.XmlRootElement;
 @Table(name = "billing", catalog = "wfm_new", schema = "")
 @XmlRootElement
 @NamedQueries({
-    @NamedQuery(name = "Billing.findAll", query = "SELECT b FROM Billing b"),
-    @NamedQuery(name = "Billing.findByBillingId", query = "SELECT b FROM Billing b WHERE b.billingId = :billingId"),
-    @NamedQuery(name = "Billing.findByAccountNumber", query = "SELECT b FROM Billing b WHERE b.accountNumber = :accountNumber"),
-    @NamedQuery(name = "Billing.findByAdjustment", query = "SELECT b FROM Billing b WHERE b.adjustment = :adjustment"),
-    @NamedQuery(name = "Billing.findByBillingDate", query = "SELECT b FROM Billing b WHERE b.billingDate = :billingDate"),
-    @NamedQuery(name = "Billing.findByBillingMode", query = "SELECT b FROM Billing b WHERE b.billingMode = :billingMode"),
-    @NamedQuery(name = "Billing.findByClosingBalance", query = "SELECT b FROM Billing b WHERE b.closingBalance = :closingBalance"),
-    @NamedQuery(name = "Billing.findByConsumption", query = "SELECT b FROM Billing b WHERE b.consumption = :consumption"),
-    @NamedQuery(name = "Billing.findByCreatedDate", query = "SELECT b FROM Billing b WHERE b.createdDate = :createdDate"),
-    @NamedQuery(name = "Billing.findByCustomerStatus", query = "SELECT b FROM Billing b WHERE b.customerStatus = :customerStatus"),
-    @NamedQuery(name = "Billing.findByEnergyCharge", query = "SELECT b FROM Billing b WHERE b.energyCharge = :energyCharge"),
-    @NamedQuery(name = "Billing.findByFc", query = "SELECT b FROM Billing b WHERE b.fc = :fc"),
-    @NamedQuery(name = "Billing.findByFixed", query = "SELECT b FROM Billing b WHERE b.fixed = :fixed"),
-    @NamedQuery(name = "Billing.findByKvaConsumptions", query = "SELECT b FROM Billing b WHERE b.kvaConsumptions = :kvaConsumptions"),
-    @NamedQuery(name = "Billing.findByKvaDemandChage", query = "SELECT b FROM Billing b WHERE b.kvaDemandChage = :kvaDemandChage"),
-    @NamedQuery(name = "Billing.findByKvaMultiplier", query = "SELECT b FROM Billing b WHERE b.kvaMultiplier = :kvaMultiplier"),
-    @NamedQuery(name = "Billing.findByKvaRate", query = "SELECT b FROM Billing b WHERE b.kvaRate = :kvaRate"),
-    @NamedQuery(name = "Billing.findByKvaReadCode", query = "SELECT b FROM Billing b WHERE b.kvaReadCode = :kvaReadCode"),
-    @NamedQuery(name = "Billing.findByKvaReadDate", query = "SELECT b FROM Billing b WHERE b.kvaReadDate = :kvaReadDate"),
-    @NamedQuery(name = "Billing.findByLar", query = "SELECT b FROM Billing b WHERE b.lar = :lar"),
-    @NamedQuery(name = "Billing.findByLarDate", query = "SELECT b FROM Billing b WHERE b.larDate = :larDate"),
-    @NamedQuery(name = "Billing.findByLastDate", query = "SELECT b FROM Billing b WHERE b.lastDate = :lastDate"),
-    @NamedQuery(name = "Billing.findByLastPayment", query = "SELECT b FROM Billing b WHERE b.lastPayment = :lastPayment"),
-    @NamedQuery(name = "Billing.findByMeteredStatus", query = "SELECT b FROM Billing b WHERE b.meteredStatus = :meteredStatus"),
-    @NamedQuery(name = "Billing.findByMmc", query = "SELECT b FROM Billing b WHERE b.mmc = :mmc"),
-    @NamedQuery(name = "Billing.findByMultiplier", query = "SELECT b FROM Billing b WHERE b.multiplier = :multiplier"),
-    @NamedQuery(name = "Billing.findByNoEstimates", query = "SELECT b FROM Billing b WHERE b.noEstimates = :noEstimates"),
-    @NamedQuery(name = "Billing.findByNodials", query = "SELECT b FROM Billing b WHERE b.nodials = :nodials"),
-    @NamedQuery(name = "Billing.findByPayment", query = "SELECT b FROM Billing b WHERE b.payment = :payment"),
-    @NamedQuery(name = "Billing.findByPresentCode", query = "SELECT b FROM Billing b WHERE b.presentCode = :presentCode"),
-    @NamedQuery(name = "Billing.findByPresentReading", query = "SELECT b FROM Billing b WHERE b.presentReading = :presentReading"),
-    @NamedQuery(name = "Billing.findByPresentReadingDate", query = "SELECT b FROM Billing b WHERE b.presentReadingDate = :presentReadingDate"),
-    @NamedQuery(name = "Billing.findByPreviousBalance", query = "SELECT b FROM Billing b WHERE b.previousBalance = :previousBalance"),
-    @NamedQuery(name = "Billing.findByStatusCode", query = "SELECT b FROM Billing b WHERE b.statusCode = :statusCode"),
-    @NamedQuery(name = "Billing.findByTariff", query = "SELECT b FROM Billing b WHERE b.tariff = :tariff"),
-    @NamedQuery(name = "Billing.findByTotalCharge", query = "SELECT b FROM Billing b WHERE b.totalCharge = :totalCharge"),
-    @NamedQuery(name = "Billing.findByVat", query = "SELECT b FROM Billing b WHERE b.vat = :vat"),
-    @NamedQuery(name = "Billing.findByCustomerId", query = "SELECT b FROM Billing b WHERE b.customerId = :customerId"),
-    @NamedQuery(name = "Billing.findByBillAmountWithinPeriod", query = "SELECT b FROM Billing b WHERE b.billAmountWithinPeriod = :billAmountWithinPeriod"),
-    @NamedQuery(name = "Billing.findByBillCycle", query = "SELECT b FROM Billing b WHERE b.billCycle = :billCycle"),
-    @NamedQuery(name = "Billing.findByBillDueDate", query = "SELECT b FROM Billing b WHERE b.billDueDate = :billDueDate"),
-    @NamedQuery(name = "Billing.findByBillEmbededPowerCharges", query = "SELECT b FROM Billing b WHERE b.billEmbededPowerCharges = :billEmbededPowerCharges"),
-    @NamedQuery(name = "Billing.findByBillProductionDate", query = "SELECT b FROM Billing b WHERE b.billProductionDate = :billProductionDate"),
-    @NamedQuery(name = "Billing.findByBillingPeriods", query = "SELECT b FROM Billing b WHERE b.billingPeriods = :billingPeriods"),
-    @NamedQuery(name = "Billing.findByCostPerUnitPod", query = "SELECT b FROM Billing b WHERE b.costPerUnitPod = :costPerUnitPod"),
-    @NamedQuery(name = "Billing.findByCostPerUnitPog", query = "SELECT b FROM Billing b WHERE b.costPerUnitPog = :costPerUnitPog"),
-    @NamedQuery(name = "Billing.findByEmbeddedPowerRate", query = "SELECT b FROM Billing b WHERE b.embeddedPowerRate = :embeddedPowerRate"),
-    @NamedQuery(name = "Billing.findByInvoiceNumber", query = "SELECT b FROM Billing b WHERE b.invoiceNumber = :invoiceNumber"),
-    @NamedQuery(name = "Billing.findByNetArrears", query = "SELECT b FROM Billing b WHERE b.netArrears = :netArrears"),
-    @NamedQuery(name = "Billing.findByNewCharges", query = "SELECT b FROM Billing b WHERE b.newCharges = :newCharges"),
-    @NamedQuery(name = "Billing.findByNextInvoicePeriod", query = "SELECT b FROM Billing b WHERE b.nextInvoicePeriod = :nextInvoicePeriod"),
-    @NamedQuery(name = "Billing.findByPaid", query = "SELECT b FROM Billing b WHERE b.paid = :paid"),
-    @NamedQuery(name = "Billing.findByPremiumServiceSubscription", query = "SELECT b FROM Billing b WHERE b.premiumServiceSubscription = :premiumServiceSubscription"),
-    @NamedQuery(name = "Billing.findByPreviousReadingAmount", query = "SELECT b FROM Billing b WHERE b.previousReadingAmount = :previousReadingAmount"),
-    @NamedQuery(name = "Billing.findByPreviousReadingDate", query = "SELECT b FROM Billing b WHERE b.previousReadingDate = :previousReadingDate"),
-    @NamedQuery(name = "Billing.findByTotalAmountDue", query = "SELECT b FROM Billing b WHERE b.totalAmountDue = :totalAmountDue"),
-    @NamedQuery(name = "Billing.findByTotalUsages", query = "SELECT b FROM Billing b WHERE b.totalUsages = :totalUsages"),
-    @NamedQuery(name = "Billing.findByUnitsConsumedPod", query = "SELECT b FROM Billing b WHERE b.unitsConsumedPod = :unitsConsumedPod"),
-    @NamedQuery(name = "Billing.findByUnitsConsumedPog", query = "SELECT b FROM Billing b WHERE b.unitsConsumedPog = :unitsConsumedPog"),
-    @NamedQuery(name = "Billing.findByAdc", query = "SELECT b FROM Billing b WHERE b.adc = :adc"),
+    @NamedQuery(name = "Billing.findAll", query = "SELECT b FROM Billing b")
+    ,
+    @NamedQuery(name = "Billing.findByBillingId", query = "SELECT b FROM Billing b WHERE b.billingId = :billingId")
+    ,
+    @NamedQuery(name = "Billing.findByAccountNumber", query = "SELECT b FROM Billing b WHERE b.accountNumber = :accountNumber")
+    ,
+    @NamedQuery(name = "Billing.findByAdjustment", query = "SELECT b FROM Billing b WHERE b.adjustment = :adjustment")
+    ,
+    @NamedQuery(name = "Billing.findByBillingDate", query = "SELECT b FROM Billing b WHERE b.billingDate = :billingDate")
+    ,
+    @NamedQuery(name = "Billing.findByBillingMode", query = "SELECT b FROM Billing b WHERE b.billingMode = :billingMode")
+    ,
+    @NamedQuery(name = "Billing.findByClosingBalance", query = "SELECT b FROM Billing b WHERE b.closingBalance = :closingBalance")
+    ,
+    @NamedQuery(name = "Billing.findByConsumption", query = "SELECT b FROM Billing b WHERE b.consumption = :consumption")
+    ,
+    @NamedQuery(name = "Billing.findByCreatedDate", query = "SELECT b FROM Billing b WHERE b.createdDate = :createdDate")
+    ,
+    @NamedQuery(name = "Billing.findByCustomerStatus", query = "SELECT b FROM Billing b WHERE b.customerStatus = :customerStatus")
+    ,
+    @NamedQuery(name = "Billing.findByEnergyCharge", query = "SELECT b FROM Billing b WHERE b.energyCharge = :energyCharge")
+    ,
+    @NamedQuery(name = "Billing.findByFc", query = "SELECT b FROM Billing b WHERE b.fc = :fc")
+    ,
+    @NamedQuery(name = "Billing.findByFixed", query = "SELECT b FROM Billing b WHERE b.fixed = :fixed")
+    ,
+    @NamedQuery(name = "Billing.findByKvaConsumptions", query = "SELECT b FROM Billing b WHERE b.kvaConsumptions = :kvaConsumptions")
+    ,
+    @NamedQuery(name = "Billing.findByKvaDemandChage", query = "SELECT b FROM Billing b WHERE b.kvaDemandChage = :kvaDemandChage")
+    ,
+    @NamedQuery(name = "Billing.findByKvaMultiplier", query = "SELECT b FROM Billing b WHERE b.kvaMultiplier = :kvaMultiplier")
+    ,
+    @NamedQuery(name = "Billing.findByKvaRate", query = "SELECT b FROM Billing b WHERE b.kvaRate = :kvaRate")
+    ,
+    @NamedQuery(name = "Billing.findByKvaReadCode", query = "SELECT b FROM Billing b WHERE b.kvaReadCode = :kvaReadCode")
+    ,
+    @NamedQuery(name = "Billing.findByKvaReadDate", query = "SELECT b FROM Billing b WHERE b.kvaReadDate = :kvaReadDate")
+    ,
+    @NamedQuery(name = "Billing.findByLar", query = "SELECT b FROM Billing b WHERE b.lar = :lar")
+    ,
+    @NamedQuery(name = "Billing.findByLarDate", query = "SELECT b FROM Billing b WHERE b.larDate = :larDate")
+    ,
+    @NamedQuery(name = "Billing.findByLastDate", query = "SELECT b FROM Billing b WHERE b.lastDate = :lastDate")
+    ,
+    @NamedQuery(name = "Billing.findByLastPayment", query = "SELECT b FROM Billing b WHERE b.lastPayment = :lastPayment")
+    ,
+    @NamedQuery(name = "Billing.findByMeteredStatus", query = "SELECT b FROM Billing b WHERE b.meteredStatus = :meteredStatus")
+    ,
+    @NamedQuery(name = "Billing.findByMmc", query = "SELECT b FROM Billing b WHERE b.mmc = :mmc")
+    ,
+    @NamedQuery(name = "Billing.findByMultiplier", query = "SELECT b FROM Billing b WHERE b.multiplier = :multiplier")
+    ,
+    @NamedQuery(name = "Billing.findByNoEstimates", query = "SELECT b FROM Billing b WHERE b.noEstimates = :noEstimates")
+    ,
+    @NamedQuery(name = "Billing.findByNodials", query = "SELECT b FROM Billing b WHERE b.nodials = :nodials")
+    ,
+    @NamedQuery(name = "Billing.findByPayment", query = "SELECT b FROM Billing b WHERE b.payment = :payment")
+    ,
+    @NamedQuery(name = "Billing.findByPresentCode", query = "SELECT b FROM Billing b WHERE b.presentCode = :presentCode")
+    ,
+    @NamedQuery(name = "Billing.findByPresentReading", query = "SELECT b FROM Billing b WHERE b.presentReading = :presentReading")
+    ,
+    @NamedQuery(name = "Billing.findByPresentReadingDate", query = "SELECT b FROM Billing b WHERE b.presentReadingDate = :presentReadingDate")
+    ,
+    @NamedQuery(name = "Billing.findByPreviousBalance", query = "SELECT b FROM Billing b WHERE b.previousBalance = :previousBalance")
+    ,
+    @NamedQuery(name = "Billing.findByStatusCode", query = "SELECT b FROM Billing b WHERE b.statusCode = :statusCode")
+    ,
+    @NamedQuery(name = "Billing.findByTariff", query = "SELECT b FROM Billing b WHERE b.tariff = :tariff")
+    ,
+    @NamedQuery(name = "Billing.findByTotalCharge", query = "SELECT b FROM Billing b WHERE b.totalCharge = :totalCharge")
+    ,
+    @NamedQuery(name = "Billing.findByVat", query = "SELECT b FROM Billing b WHERE b.vat = :vat")
+    ,
+    @NamedQuery(name = "Billing.findByCustomerId", query = "SELECT b FROM Billing b WHERE b.customerId = :customerId")
+    ,
+    @NamedQuery(name = "Billing.findByBillAmountWithinPeriod", query = "SELECT b FROM Billing b WHERE b.billAmountWithinPeriod = :billAmountWithinPeriod")
+    ,
+    @NamedQuery(name = "Billing.findByBillCycle", query = "SELECT b FROM Billing b WHERE b.billCycle = :billCycle")
+    ,
+    @NamedQuery(name = "Billing.findByBillDueDate", query = "SELECT b FROM Billing b WHERE b.billDueDate = :billDueDate")
+    ,
+    @NamedQuery(name = "Billing.findByBillEmbededPowerCharges", query = "SELECT b FROM Billing b WHERE b.billEmbededPowerCharges = :billEmbededPowerCharges")
+    ,
+    @NamedQuery(name = "Billing.findByBillProductionDate", query = "SELECT b FROM Billing b WHERE b.billProductionDate = :billProductionDate")
+    ,
+    @NamedQuery(name = "Billing.findByBillingPeriods", query = "SELECT b FROM Billing b WHERE b.billingPeriods = :billingPeriods")
+    ,
+    @NamedQuery(name = "Billing.findByCostPerUnitPod", query = "SELECT b FROM Billing b WHERE b.costPerUnitPod = :costPerUnitPod")
+    ,
+    @NamedQuery(name = "Billing.findByCostPerUnitPog", query = "SELECT b FROM Billing b WHERE b.costPerUnitPog = :costPerUnitPog")
+    ,
+    @NamedQuery(name = "Billing.findByEmbeddedPowerRate", query = "SELECT b FROM Billing b WHERE b.embeddedPowerRate = :embeddedPowerRate")
+    ,
+    @NamedQuery(name = "Billing.findByInvoiceNumber", query = "SELECT b FROM Billing b WHERE b.invoiceNumber = :invoiceNumber")
+    ,
+    @NamedQuery(name = "Billing.findByNetArrears", query = "SELECT b FROM Billing b WHERE b.netArrears = :netArrears")
+    ,
+    @NamedQuery(name = "Billing.findByNewCharges", query = "SELECT b FROM Billing b WHERE b.newCharges = :newCharges")
+    ,
+    @NamedQuery(name = "Billing.findByNextInvoicePeriod", query = "SELECT b FROM Billing b WHERE b.nextInvoicePeriod = :nextInvoicePeriod")
+    ,
+    @NamedQuery(name = "Billing.findByPaid", query = "SELECT b FROM Billing b WHERE b.paid = :paid")
+    ,
+    @NamedQuery(name = "Billing.findByPremiumServiceSubscription", query = "SELECT b FROM Billing b WHERE b.premiumServiceSubscription = :premiumServiceSubscription")
+    ,
+    @NamedQuery(name = "Billing.findByPreviousReadingAmount", query = "SELECT b FROM Billing b WHERE b.previousReadingAmount = :previousReadingAmount")
+    ,
+    @NamedQuery(name = "Billing.findByPreviousReadingDate", query = "SELECT b FROM Billing b WHERE b.previousReadingDate = :previousReadingDate")
+    ,
+    @NamedQuery(name = "Billing.findByTotalAmountDue", query = "SELECT b FROM Billing b WHERE b.totalAmountDue = :totalAmountDue")
+    ,
+    @NamedQuery(name = "Billing.findByTotalUsages", query = "SELECT b FROM Billing b WHERE b.totalUsages = :totalUsages")
+    ,
+    @NamedQuery(name = "Billing.findByUnitsConsumedPod", query = "SELECT b FROM Billing b WHERE b.unitsConsumedPod = :unitsConsumedPod")
+    ,
+    @NamedQuery(name = "Billing.findByUnitsConsumedPog", query = "SELECT b FROM Billing b WHERE b.unitsConsumedPog = :unitsConsumedPog")
+    ,
+    @NamedQuery(name = "Billing.findByAdc", query = "SELECT b FROM Billing b WHERE b.adc = :adc")
+    ,
     @NamedQuery(name = "Billing.findByDistrict", query = "SELECT b FROM Billing b WHERE b.district = :district")})
 public class Billing implements Serializable {
 
@@ -750,5 +810,5 @@ public class Billing implements Serializable {
     public String toString() {
         return "net.crowninteractive.wfmworker.entity.Billing[ billingId=" + billingId + " ]";
     }
-    
+
 }

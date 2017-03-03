@@ -1,12 +1,17 @@
+
 /*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
+* To change this license header, choose License Headers in Project Properties.
+* To change this template file, choose Tools | Templates
+* and open the template in the editor.
  */
 package net.crowninteractive.wfmworker.entity;
 
+//~--- JDK imports ------------------------------------------------------------
+
 import java.io.Serializable;
+
 import java.util.Date;
+
 import javax.persistence.Basic;
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -18,6 +23,7 @@ import javax.persistence.NamedQuery;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
+
 import javax.xml.bind.annotation.XmlRootElement;
 
 /**
@@ -25,63 +31,105 @@ import javax.xml.bind.annotation.XmlRootElement;
  * @author osita
  */
 @Entity
-@Table(name = "audit", catalog = "wfm_new", schema = "")
+@Table(
+    name      = "audit",
+    catalog   = "wfm_new",
+    schema    = ""
+)
 @XmlRootElement
-@NamedQueries({
-    @NamedQuery(name = "Audit.findAll", query = "SELECT a FROM Audit a"),
-    @NamedQuery(name = "Audit.findById", query = "SELECT a FROM Audit a WHERE a.id = :id"),
-    @NamedQuery(name = "Audit.findByParams", query = "SELECT a FROM Audit a WHERE a.params = :params"),
-    @NamedQuery(name = "Audit.findByDescription", query = "SELECT a FROM Audit a WHERE a.description = :description"),
-    @NamedQuery(name = "Audit.findByRecordType", query = "SELECT a FROM Audit a WHERE a.recordType = :recordType"),
-    @NamedQuery(name = "Audit.findByCreateTime", query = "SELECT a FROM Audit a WHERE a.createTime = :createTime"),
-    @NamedQuery(name = "Audit.findByCreatedBy", query = "SELECT a FROM Audit a WHERE a.createdBy = :createdBy"),
-    @NamedQuery(name = "Audit.findByUpdateTime", query = "SELECT a FROM Audit a WHERE a.updateTime = :updateTime"),
-    @NamedQuery(name = "Audit.findByUpdatedBy", query = "SELECT a FROM Audit a WHERE a.updatedBy = :updatedBy"),
-    @NamedQuery(name = "Audit.findByIsActive", query = "SELECT a FROM Audit a WHERE a.isActive = :isActive")})
+@NamedQueries( {
+    @NamedQuery(
+        name  = "Audit.findAll",
+        query = "SELECT a FROM Audit a"
+    ) , @NamedQuery(
+        name  = "Audit.findById",
+        query = "SELECT a FROM Audit a WHERE a.id = :id"
+    ) , @NamedQuery(
+        name  = "Audit.findByParams",
+        query = "SELECT a FROM Audit a WHERE a.params = :params"
+    ) , @NamedQuery(
+        name  = "Audit.findByDescription",
+        query = "SELECT a FROM Audit a WHERE a.description = :description"
+    ) , @NamedQuery(
+        name  = "Audit.findByRecordType",
+        query = "SELECT a FROM Audit a WHERE a.recordType = :recordType"
+    ) , @NamedQuery(
+        name  = "Audit.findByCreateTime",
+        query = "SELECT a FROM Audit a WHERE a.createTime = :createTime"
+    ) , @NamedQuery(
+        name  = "Audit.findByCreatedBy",
+        query = "SELECT a FROM Audit a WHERE a.createdBy = :createdBy"
+    ) , @NamedQuery(
+        name  = "Audit.findByUpdateTime",
+        query = "SELECT a FROM Audit a WHERE a.updateTime = :updateTime"
+    ) , @NamedQuery(
+        name  = "Audit.findByUpdatedBy",
+        query = "SELECT a FROM Audit a WHERE a.updatedBy = :updatedBy"
+    ) , @NamedQuery(
+        name  = "Audit.findByIsActive",
+        query = "SELECT a FROM Audit a WHERE a.isActive = :isActive"
+    )
+})
 public class Audit implements Serializable {
-
     private static final long serialVersionUID = 1L;
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Basic(optional = false)
-    @Column(name = "id", nullable = false)
-    private Integer id;
+    @Column(
+        name                                   = "id",
+        nullable                               = false
+    )
+    private Integer           id;
     @Basic(optional = false)
-    @Column(name = "params", nullable = false, length = 1000)
-    private String params;
+    @Column(
+        name     = "params",
+        nullable = false,
+        length   = 1000
+    )
+    private String            params;
     @Basic(optional = false)
-    @Column(name = "description", nullable = false, length = 100)
-    private String description;
+    @Column(
+        name     = "description",
+        nullable = false,
+        length   = 100
+    )
+    private String            description;
     @Basic(optional = false)
-    @Column(name = "record_type", nullable = false, length = 30)
-    private String recordType;
+    @Column(
+        name     = "record_type",
+        nullable = false,
+        length   = 30
+    )
+    private String            recordType;
     @Column(name = "create_time")
     @Temporal(TemporalType.TIMESTAMP)
-    private Date createTime;
+    private Date              createTime;
     @Column(name = "created_by")
-    private Integer createdBy;
+    private Integer           createdBy;
     @Column(name = "update_time")
     @Temporal(TemporalType.TIMESTAMP)
-    private Date updateTime;
+    private Date              updateTime;
     @Column(name = "updated_by")
-    private Integer updatedBy;
+    private Integer           updatedBy;
     @Basic(optional = false)
-    @Column(name = "is_active", nullable = false)
-    private short isActive;
+    @Column(
+        name     = "is_active",
+        nullable = false
+    )
+    private short             isActive;
 
-    public Audit() {
-    }
+    public Audit() {}
 
     public Audit(Integer id) {
         this.id = id;
     }
 
     public Audit(Integer id, String params, String description, String recordType, short isActive) {
-        this.id = id;
-        this.params = params;
+        this.id          = id;
+        this.params      = params;
         this.description = description;
-        this.recordType = recordType;
-        this.isActive = isActive;
+        this.recordType  = recordType;
+        this.isActive    = isActive;
     }
 
     public Integer getId() {
@@ -159,20 +207,28 @@ public class Audit implements Serializable {
     @Override
     public int hashCode() {
         int hash = 0;
-        hash += (id != null ? id.hashCode() : 0);
+
+        hash += ((id != null)
+                 ? id.hashCode()
+                 : 0);
+
         return hash;
     }
 
     @Override
     public boolean equals(Object object) {
+
         // TODO: Warning - this method won't work in the case the id fields are not set
         if (!(object instanceof Audit)) {
             return false;
         }
+
         Audit other = (Audit) object;
-        if ((this.id == null && other.id != null) || (this.id != null && !this.id.equals(other.id))) {
+
+        if (((this.id == null) && (other.id != null)) || ((this.id != null) &&!this.id.equals(other.id))) {
             return false;
         }
+
         return true;
     }
 
@@ -180,5 +236,7 @@ public class Audit implements Serializable {
     public String toString() {
         return "net.crowninteractive.wfmworker.entity.Audit[ id=" + id + " ]";
     }
-    
 }
+
+
+//~ Formatted by Jindent --- http://www.jindent.com

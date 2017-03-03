@@ -1,13 +1,20 @@
+
 /*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
+* To change this license header, choose License Headers in Project Properties.
+* To change this template file, choose Tools | Templates
+* and open the template in the editor.
  */
 package net.crowninteractive.wfmworker.entity;
 
+//~--- JDK imports ------------------------------------------------------------
+
 import java.io.Serializable;
+
 import java.util.Date;
+import java.util.List;
+
 import javax.persistence.Basic;
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -18,6 +25,7 @@ import javax.persistence.Lob;
 import javax.persistence.ManyToOne;
 import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
+import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
@@ -28,89 +36,133 @@ import javax.persistence.TemporalType;
  */
 @Entity
 @Table(name = "inventory_approval")
-@NamedQueries({
-    @NamedQuery(name = "InventoryApproval.findAll", query = "SELECT i FROM InventoryApproval i")
-    , @NamedQuery(name = "InventoryApproval.findById", query = "SELECT i FROM InventoryApproval i WHERE i.id = :id")
-    , @NamedQuery(name = "InventoryApproval.findByPriority", query = "SELECT i FROM InventoryApproval i WHERE i.priority = :priority")
-    , @NamedQuery(name = "InventoryApproval.findByEmailSendTime", query = "SELECT i FROM InventoryApproval i WHERE i.emailSendTime = :emailSendTime")
-    , @NamedQuery(name = "InventoryApproval.findByStatus", query = "SELECT i FROM InventoryApproval i WHERE i.status = :status")
-    , @NamedQuery(name = "InventoryApproval.findByCreateTime", query = "SELECT i FROM InventoryApproval i WHERE i.createTime = :createTime")
-    , @NamedQuery(name = "InventoryApproval.findByActionedTime", query = "SELECT i FROM InventoryApproval i WHERE i.actionedTime = :actionedTime")
-    , @NamedQuery(name = "InventoryApproval.findByOwnerId", query = "SELECT i FROM InventoryApproval i WHERE i.ownerId = :ownerId")
-    , @NamedQuery(name = "InventoryApproval.findByToken", query = "SELECT i FROM InventoryApproval i WHERE i.token = :token")
-    , @NamedQuery(name = "InventoryApproval.findByActionedComment", query = "SELECT i FROM InventoryApproval i WHERE i.actionedComment = :actionedComment")
-    , @NamedQuery(name = "InventoryApproval.findByUpdateTime", query = "SELECT i FROM InventoryApproval i WHERE i.updateTime = :updateTime")
-    , @NamedQuery(name = "InventoryApproval.findByUpdatedBy", query = "SELECT i FROM InventoryApproval i WHERE i.updatedBy = :updatedBy")})
+@NamedQueries( {
+    @NamedQuery(
+        name  = "InventoryApproval.findAll",
+        query = "SELECT i FROM InventoryApproval i"
+    ) , @NamedQuery(
+        name  = "InventoryApproval.findById",
+        query = "SELECT i FROM InventoryApproval i WHERE i.id = :id"
+    ) , @NamedQuery(
+        name  = "InventoryApproval.findByPriority",
+        query = "SELECT i FROM InventoryApproval i WHERE i.priority = :priority"
+    ) , @NamedQuery(
+        name  = "InventoryApproval.findByEmailSendTime",
+        query = "SELECT i FROM InventoryApproval i WHERE i.emailSendTime = :emailSendTime"
+    ) , @NamedQuery(
+        name  = "InventoryApproval.findByStatus",
+        query = "SELECT i FROM InventoryApproval i WHERE i.status = :status"
+    ) , @NamedQuery(
+        name  = "InventoryApproval.findByCreateTime",
+        query = "SELECT i FROM InventoryApproval i WHERE i.createTime = :createTime"
+    ) , @NamedQuery(
+        name  = "InventoryApproval.findByActionedTime",
+        query = "SELECT i FROM InventoryApproval i WHERE i.actionedTime = :actionedTime"
+    ) , @NamedQuery(
+        name  = "InventoryApproval.findByOwnerId",
+        query = "SELECT i FROM InventoryApproval i WHERE i.ownerId = :ownerId"
+    ) , @NamedQuery(
+        name  = "InventoryApproval.findByToken",
+        query = "SELECT i FROM InventoryApproval i WHERE i.token = :token"
+    ) , @NamedQuery(
+        name  = "InventoryApproval.findByActionedComment",
+        query = "SELECT i FROM InventoryApproval i WHERE i.actionedComment = :actionedComment"
+    ) , @NamedQuery(
+        name  = "InventoryApproval.findByUpdateTime",
+        query = "SELECT i FROM InventoryApproval i WHERE i.updateTime = :updateTime"
+    ) , @NamedQuery(
+        name  = "InventoryApproval.findByUpdatedBy",
+        query = "SELECT i FROM InventoryApproval i WHERE i.updatedBy = :updatedBy"
+    )
+})
 public class InventoryApproval implements Serializable {
 
+    @Basic(optional = false)
+    @Column(name = "is_latest")
+    private short isLatest;
+   
     private static final long serialVersionUID = 1L;
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Basic(optional = false)
     @Column(name = "id")
-    private Integer id;
+    private Integer           id;
     @Basic(optional = false)
     @Column(name = "priority")
-    private int priority;
+    private int               priority;
     @Basic(optional = false)
     @Lob
     @Column(name = "recipients")
-    private String recipients;
+    private String            recipients;
     @Column(name = "email_send_time")
     @Temporal(TemporalType.TIMESTAMP)
-    private Date emailSendTime;
+    private Date              emailSendTime;
     @Column(name = "status")
-    private String status;
+    private String            status;
     @Basic(optional = false)
     @Column(name = "create_time")
     @Temporal(TemporalType.TIMESTAMP)
-    private Date createTime;
+    private Date              createTime;
     @Column(name = "actioned_time")
     @Temporal(TemporalType.TIMESTAMP)
-    private Date actionedTime;
+    private Date              actionedTime;
     @Basic(optional = false)
     @Column(name = "owner_id")
-    private int ownerId;
+    private int               ownerId;
     @Basic(optional = false)
     @Column(name = "token")
-    private String token;
+    private String            token;
     @Column(name = "actioned_comment")
-    private String actionedComment;
+    private String            actionedComment;
     @Column(name = "update_time")
     @Temporal(TemporalType.TIMESTAMP)
-    private Date updateTime;
+    private Date              updateTime;
     @Column(name = "updated_by")
-    private Integer updatedBy;
-    @JoinColumn(name = "level_id", referencedColumnName = "id")
+    private Integer           updatedBy;
+    @JoinColumn(
+        name                 = "level_id",
+        referencedColumnName = "id"
+    )
     @ManyToOne(optional = false)
-    private ApprovalLevel levelId;
-    @JoinColumn(name = "inventory_req_id", referencedColumnName = "id")
+    private ApprovalLevel     levelId;
+    @JoinColumn(
+        name                 = "inventory_req_id",
+        referencedColumnName = "id"
+    )
     @ManyToOne(optional = false)
-    private InventoryRequest inventoryReqId;
-    @JoinColumn(name = "actioned_by", referencedColumnName = "id")
+    private InventoryRequest  inventoryReqId;
+    @JoinColumn(
+        name                 = "actioned_by",
+        referencedColumnName = "id"
+    )
     @ManyToOne
-    private Users actionedBy;
-    @JoinColumn(name = "created_by", referencedColumnName = "id")
+    private Users             actionedBy;
+    @JoinColumn(
+        name                 = "created_by",
+        referencedColumnName = "id"
+    )
     @ManyToOne(optional = false)
-    private Users createdBy;
-    @JoinColumn(name = "work_order_id", referencedColumnName = "id")
+    private Users             createdBy;
+    @JoinColumn(
+        name                 = "work_order_id",
+        referencedColumnName = "id"
+    )
     @ManyToOne(optional = false)
-    private WorkOrder workOrderId;
+    private WorkOrder         workOrderId;
 
-    public InventoryApproval() {
-    }
+    public InventoryApproval() {}
 
     public InventoryApproval(Integer id) {
         this.id = id;
     }
 
     public InventoryApproval(Integer id, int priority, String recipients, Date createTime, int ownerId, String token) {
-        this.id = id;
-        this.priority = priority;
+        this.id         = id;
+        this.priority   = priority;
         this.recipients = recipients;
         this.createTime = createTime;
-        this.ownerId = ownerId;
-        this.token = token;
+        this.ownerId    = ownerId;
+        this.token      = token;
     }
 
     public Integer getId() {
@@ -252,20 +304,28 @@ public class InventoryApproval implements Serializable {
     @Override
     public int hashCode() {
         int hash = 0;
-        hash += (id != null ? id.hashCode() : 0);
+
+        hash += ((id != null)
+                 ? id.hashCode()
+                 : 0);
+
         return hash;
     }
 
     @Override
     public boolean equals(Object object) {
+
         // TODO: Warning - this method won't work in the case the id fields are not set
         if (!(object instanceof InventoryApproval)) {
             return false;
         }
+
         InventoryApproval other = (InventoryApproval) object;
-        if ((this.id == null && other.id != null) || (this.id != null && !this.id.equals(other.id))) {
+
+        if (((this.id == null) && (other.id != null)) || ((this.id != null) &&!this.id.equals(other.id))) {
             return false;
         }
+
         return true;
     }
 
@@ -273,5 +333,17 @@ public class InventoryApproval implements Serializable {
     public String toString() {
         return "net.crowninteractive.wfmworker.entity.InventoryApproval[ id=" + id + " ]";
     }
+
+    public short getIsLatest() {
+        return isLatest;
+    }
+
+    public void setIsLatest(short isLatest) {
+        this.isLatest = isLatest;
+    }
+
     
 }
+
+
+//~ Formatted by Jindent --- http://www.jindent.com

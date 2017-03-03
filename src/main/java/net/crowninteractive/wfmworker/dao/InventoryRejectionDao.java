@@ -1,37 +1,37 @@
+
 /*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
+* To change this license header, choose License Headers in Project Properties.
+* To change this template file, choose Tools | Templates
+* and open the template in the editor.
  */
 package net.crowninteractive.wfmworker.dao;
 
-import java.util.List;
-import javax.persistence.EntityManager;
+//~--- non-JDK imports --------------------------------------------------------
+
 import net.crowninteractive.wfmworker.entity.InventoryRejection;
-import org.springframework.beans.factory.annotation.Autowired;
+
 import org.springframework.stereotype.Component;
 
+//~--- JDK imports ------------------------------------------------------------
+
+import java.util.List;
 
 /**
  *
  * @author USER
  */
 @Component
-public class InventoryRejectionDao extends AbstractDao<Integer, InventoryRejectionDao>{
-    @Autowired
-    private EntityManager entityManager;
-     public List<InventoryRejection> findByEmailSendTimeNULL(){
-       String query="SELECT * from inventory_REJECTION where email_send_time is null";
-       return getEntityManager().createNativeQuery(query, InventoryRejection.class).getResultList();
-   }
-     
-    public  void updateInventoryRejection(InventoryRejection inventoryRejection)  {
-       
-          entityManager.getTransaction().begin();
-           entityManager.merge(inventoryRejection);
-           entityManager.flush();
-         entityManager.getTransaction().commit();
-          
-      
+public class InventoryRejectionDao extends AbstractDao<Integer, InventoryRejection> {
+    public List<InventoryRejection> findByEmailSendTimeNULL() {
+        String query = "SELECT * from inventory_REJECTION where email_send_time is null";
+
+        return getEntityManager().createNativeQuery(query, InventoryRejection.class).getResultList();
+    }
+
+    public void updateInventoryRejection(InventoryRejection inventoryRejection) {
+        this.edit(inventoryRejection);
     }
 }
+
+
+//~ Formatted by Jindent --- http://www.jindent.com

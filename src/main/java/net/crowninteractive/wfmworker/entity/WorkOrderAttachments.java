@@ -1,12 +1,17 @@
+
 /*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
+* To change this license header, choose License Headers in Project Properties.
+* To change this template file, choose Tools | Templates
+* and open the template in the editor.
  */
 package net.crowninteractive.wfmworker.entity;
 
+//~--- JDK imports ------------------------------------------------------------
+
 import java.io.Serializable;
+
 import java.util.Date;
+
 import javax.persistence.Basic;
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -20,6 +25,7 @@ import javax.persistence.NamedQuery;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
+
 import javax.xml.bind.annotation.XmlRootElement;
 
 /**
@@ -27,75 +33,133 @@ import javax.xml.bind.annotation.XmlRootElement;
  * @author osita
  */
 @Entity
-@Table(name = "work_order_attachments", catalog = "wfm_new", schema = "")
+@Table(
+    name      = "work_order_attachments",
+    catalog   = "wfm_new",
+    schema    = ""
+)
 @XmlRootElement
-@NamedQueries({
-    @NamedQuery(name = "WorkOrderAttachments.findAll", query = "SELECT w FROM WorkOrderAttachments w"),
-    @NamedQuery(name = "WorkOrderAttachments.findById", query = "SELECT w FROM WorkOrderAttachments w WHERE w.id = :id"),
-    @NamedQuery(name = "WorkOrderAttachments.findByToken", query = "SELECT w FROM WorkOrderAttachments w WHERE w.token = :token"),
-    @NamedQuery(name = "WorkOrderAttachments.findByOwnerId", query = "SELECT w FROM WorkOrderAttachments w WHERE w.ownerId = :ownerId"),
-    @NamedQuery(name = "WorkOrderAttachments.findByFilename", query = "SELECT w FROM WorkOrderAttachments w WHERE w.filename = :filename"),
-    @NamedQuery(name = "WorkOrderAttachments.findByDescription", query = "SELECT w FROM WorkOrderAttachments w WHERE w.description = :description"),
-    @NamedQuery(name = "WorkOrderAttachments.findByCreateTime", query = "SELECT w FROM WorkOrderAttachments w WHERE w.createTime = :createTime"),
-    @NamedQuery(name = "WorkOrderAttachments.findByCreatedBy", query = "SELECT w FROM WorkOrderAttachments w WHERE w.createdBy = :createdBy"),
-    @NamedQuery(name = "WorkOrderAttachments.findByUpdateTime", query = "SELECT w FROM WorkOrderAttachments w WHERE w.updateTime = :updateTime"),
-    @NamedQuery(name = "WorkOrderAttachments.findByUpdatedBy", query = "SELECT w FROM WorkOrderAttachments w WHERE w.updatedBy = :updatedBy"),
-    @NamedQuery(name = "WorkOrderAttachments.findByIsActive", query = "SELECT w FROM WorkOrderAttachments w WHERE w.isActive = :isActive")})
+@NamedQueries( {
+    @NamedQuery(
+        name  = "WorkOrderAttachments.findAll",
+        query = "SELECT w FROM WorkOrderAttachments w"
+    ) , @NamedQuery(
+        name  = "WorkOrderAttachments.findById",
+        query = "SELECT w FROM WorkOrderAttachments w WHERE w.id = :id"
+    ) , @NamedQuery(
+        name  = "WorkOrderAttachments.findByToken",
+        query = "SELECT w FROM WorkOrderAttachments w WHERE w.token = :token"
+    ) , @NamedQuery(
+        name  = "WorkOrderAttachments.findByOwnerId",
+        query = "SELECT w FROM WorkOrderAttachments w WHERE w.ownerId = :ownerId"
+    ) , @NamedQuery(
+        name  = "WorkOrderAttachments.findByFilename",
+        query = "SELECT w FROM WorkOrderAttachments w WHERE w.filename = :filename"
+    ) , @NamedQuery(
+        name  = "WorkOrderAttachments.findByDescription",
+        query = "SELECT w FROM WorkOrderAttachments w WHERE w.description = :description"
+    ) , @NamedQuery(
+        name  = "WorkOrderAttachments.findByCreateTime",
+        query = "SELECT w FROM WorkOrderAttachments w WHERE w.createTime = :createTime"
+    ) , @NamedQuery(
+        name  = "WorkOrderAttachments.findByCreatedBy",
+        query = "SELECT w FROM WorkOrderAttachments w WHERE w.createdBy = :createdBy"
+    ) , @NamedQuery(
+        name  = "WorkOrderAttachments.findByUpdateTime",
+        query = "SELECT w FROM WorkOrderAttachments w WHERE w.updateTime = :updateTime"
+    ) , @NamedQuery(
+        name  = "WorkOrderAttachments.findByUpdatedBy",
+        query = "SELECT w FROM WorkOrderAttachments w WHERE w.updatedBy = :updatedBy"
+    ) , @NamedQuery(
+        name  = "WorkOrderAttachments.findByIsActive",
+        query = "SELECT w FROM WorkOrderAttachments w WHERE w.isActive = :isActive"
+    )
+})
 public class WorkOrderAttachments implements Serializable {
-
     private static final long serialVersionUID = 1L;
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Basic(optional = false)
-    @Column(name = "id", nullable = false)
-    private Integer id;
+    @Column(
+        name                                   = "id",
+        nullable                               = false
+    )
+    private Integer           id;
     @Basic(optional = false)
-    @Column(name = "token", nullable = false, length = 30)
-    private String token;
+    @Column(
+        name     = "token",
+        nullable = false,
+        length   = 30
+    )
+    private String            token;
     @Basic(optional = false)
-    @Column(name = "owner_id", nullable = false)
-    private int ownerId;
+    @Column(
+        name     = "owner_id",
+        nullable = false
+    )
+    private int               ownerId;
     @Basic(optional = false)
-    @Column(name = "filename", nullable = false, length = 100)
-    private String filename;
+    @Column(
+        name     = "filename",
+        nullable = false,
+        length   = 100
+    )
+    private String            filename;
     @Basic(optional = false)
-    @Column(name = "description", nullable = false, length = 200)
-    private String description;
+    @Column(
+        name     = "description",
+        nullable = false,
+        length   = 200
+    )
+    private String            description;
     @Basic(optional = false)
-    @Column(name = "create_time", nullable = false)
+    @Column(
+        name     = "create_time",
+        nullable = false
+    )
     @Temporal(TemporalType.TIMESTAMP)
-    private Date createTime;
+    private Date              createTime;
     @Basic(optional = false)
-    @Column(name = "created_by", nullable = false)
-    private int createdBy;
+    @Column(
+        name     = "created_by",
+        nullable = false
+    )
+    private int               createdBy;
     @Column(name = "update_time")
     @Temporal(TemporalType.TIMESTAMP)
-    private Date updateTime;
+    private Date              updateTime;
     @Column(name = "updated_by")
-    private Integer updatedBy;
+    private Integer           updatedBy;
     @Basic(optional = false)
-    @Column(name = "is_active", nullable = false)
-    private int isActive;
-    @JoinColumn(name = "work_order_id", referencedColumnName = "id", nullable = false)
+    @Column(
+        name     = "is_active",
+        nullable = false
+    )
+    private int               isActive;
+    @JoinColumn(
+        name                 = "work_order_id",
+        referencedColumnName = "id",
+        nullable             = false
+    )
     @ManyToOne(optional = false)
-    private WorkOrder workOrderId;
+    private WorkOrder         workOrderId;
 
-    public WorkOrderAttachments() {
-    }
+    public WorkOrderAttachments() {}
 
     public WorkOrderAttachments(Integer id) {
         this.id = id;
     }
 
-    public WorkOrderAttachments(Integer id, String token, int ownerId, String filename, String description, Date createTime, int createdBy, int isActive) {
-        this.id = id;
-        this.token = token;
-        this.ownerId = ownerId;
-        this.filename = filename;
+    public WorkOrderAttachments(Integer id, String token, int ownerId, String filename, String description,
+                                Date createTime, int createdBy, int isActive) {
+        this.id          = id;
+        this.token       = token;
+        this.ownerId     = ownerId;
+        this.filename    = filename;
         this.description = description;
-        this.createTime = createTime;
-        this.createdBy = createdBy;
-        this.isActive = isActive;
+        this.createTime  = createTime;
+        this.createdBy   = createdBy;
+        this.isActive    = isActive;
     }
 
     public Integer getId() {
@@ -189,20 +253,28 @@ public class WorkOrderAttachments implements Serializable {
     @Override
     public int hashCode() {
         int hash = 0;
-        hash += (id != null ? id.hashCode() : 0);
+
+        hash += ((id != null)
+                 ? id.hashCode()
+                 : 0);
+
         return hash;
     }
 
     @Override
     public boolean equals(Object object) {
+
         // TODO: Warning - this method won't work in the case the id fields are not set
         if (!(object instanceof WorkOrderAttachments)) {
             return false;
         }
+
         WorkOrderAttachments other = (WorkOrderAttachments) object;
-        if ((this.id == null && other.id != null) || (this.id != null && !this.id.equals(other.id))) {
+
+        if (((this.id == null) && (other.id != null)) || ((this.id != null) &&!this.id.equals(other.id))) {
             return false;
         }
+
         return true;
     }
 
@@ -210,5 +282,7 @@ public class WorkOrderAttachments implements Serializable {
     public String toString() {
         return "net.crowninteractive.wfmworker.entity.WorkOrderAttachments[ id=" + id + " ]";
     }
-    
 }
+
+
+//~ Formatted by Jindent --- http://www.jindent.com

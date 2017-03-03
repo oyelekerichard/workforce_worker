@@ -48,7 +48,7 @@
     <entry key="ObjectStoreEnvironmentBean.objectStoreDir">/opt/wildfly/standalone</entry>
 
     <!-- The VolatileStore won't be able to recover anything - use only for simple tests! -->
-   <entry key="ObjectStoreEnvironmentBean.objectStoreType">com.arjuna.ats.internal.arjuna.objectstore.VolatileStore</entry> 
+    <entry key="ObjectStoreEnvironmentBean.objectStoreType">com.arjuna.ats.internal.arjuna.objectstore.VolatileStore</entry> 
 
     <!-- (default is ON) -->
     <entry key="ObjectStoreEnvironmentBean.transactionSync">ON</entry>
@@ -56,8 +56,8 @@
     <!-- (Must be unique across all Arjuna instances.) -->
     <entry key="CoreEnvironmentBean.nodeIdentifier">1</entry>
 
-	<!-- Which Xid types to recover -->
-	<entry key="JTAEnvironmentBean.xaRecoveryNodes">1</entry>
+    <!-- Which Xid types to recover -->
+    <entry key="JTAEnvironmentBean.xaRecoveryNodes">1</entry>
 
     <entry key="JTAEnvironmentBean.xaResourceOrphanFilterClassNames">
         com.arjuna.ats.internal.jta.recovery.arjunacore.JTATransactionLogXAResourceOrphanFilter
