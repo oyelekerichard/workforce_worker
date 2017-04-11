@@ -56,14 +56,14 @@
 <task:scheduled-tasks scheduler="myScheduler2">
     <task:scheduled ref="timerTask2" method="run" initial-delay="10000" fixed-delay="70000" /> 
 </task:scheduled-tasks>
-<task:scheduler id="myScheduler2" pool-size="5"/>
+<task:scheduler id="myScheduler2" pool-size="5"/>-->
 
 
     <bean id="timerTask3" class="net.crowninteractive.wfmworker.EmailSender"> </bean> 
     <task:scheduled-tasks scheduler="myScheduler3">
         <task:scheduled ref="timerTask3" method="run" initial-delay="15000" fixed-delay="80000" /> 
     </task:scheduled-tasks>
-    <task:scheduler id="myScheduler3" pool-size="3"/>-->
+    <task:scheduler id="myScheduler3" pool-size="3"/>
 
     <bean id="timerTask4" class="net.crowninteractive.wfmworker.SendApprovalEmails"> </bean> 
     <task:scheduled-tasks scheduler="myScheduler4">
