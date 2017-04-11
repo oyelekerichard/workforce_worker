@@ -7,7 +7,6 @@
 package net.crowninteractive.wfmworker;
 
 //~--- non-JDK imports --------------------------------------------------------
-
 import net.crowninteractive.wfmworker.dao.EmailSendDao;
 import net.crowninteractive.wfmworker.entity.EmailSend;
 
@@ -18,7 +17,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 //~--- JDK imports ------------------------------------------------------------
-
 import java.util.Date;
 import java.util.List;
 import java.util.TimerTask;
@@ -29,6 +27,7 @@ import java.util.TimerTask;
  */
 @Component
 public class EmailSender extends TimerTask {
+
     @Autowired
     private EmailSendDao emailSendDao;
 
@@ -40,13 +39,17 @@ public class EmailSender extends TimerTask {
             List<EmailSend> les = emailSendDao.findUnsentEmails();
 
             for (EmailSend es : les) {
-                int res = sendNoReplyEmail(es.getSubject(), es.getRecipients(), es.getMessage());
+                String[] recipients = es.getRecipients().split(",");
+                for (String recipient : recipients) {
+                    int res = sendNoReplyEmail(es.getSubject(), recipient, es.getMessage());
 
-                if (res == 1) {
-                    System.out.println("sent email to: " + es.getRecipients() + " - Id: " + es.getId());
-                    es.setSentTime(new Date());
-                    emailSendDao.update(es);
+                    if (res == 1) {
+                        System.out.println("sent email to: " + recipient + " - Id: " + es.getId());
+                        es.setSentTime(new Date());
+                        emailSendDao.update(es);
+                    }
                 }
+
             }
         } catch (Exception ex) {
             ex.printStackTrace();
@@ -62,7 +65,7 @@ public class EmailSender extends TimerTask {
         emailAgent.setTLS(true);
 
         try {
-            
+
             emailAgent.setFrom("no-reply@ekedp.com");
             emailAgent.setSubject(subject);
             emailAgent.setCharset("utf8");
