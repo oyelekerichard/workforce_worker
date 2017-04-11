@@ -45,11 +45,12 @@ public class EmailSender extends TimerTask {
 
                     if (res == 1) {
                         System.out.println("sent email to: " + recipient + " - Id: " + es.getId());
-                        es.setSentTime(new Date());
-                        emailSendDao.update(es);
-                    }
-                }
 
+                    }
+
+                }
+                es.setSentTime(new Date());
+                emailSendDao.update(es);
             }
         } catch (Exception ex) {
             ex.printStackTrace();
