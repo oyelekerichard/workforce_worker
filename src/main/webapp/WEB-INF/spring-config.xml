@@ -70,12 +70,12 @@
         <task:scheduled ref="timerTask4" method="run" initial-delay="20000" fixed-delay="90000" /> <!-- 45 secs -->
     </task:scheduled-tasks>
     <task:scheduler id="myScheduler4" pool-size="3"/>
-    <!--
+
     <bean id="timerTask5" class="net.crowninteractive.wfmworker.SendRejectEmails"> </bean> 
     <task:scheduled-tasks scheduler="myScheduler5">
         <task:scheduled ref="timerTask5" method="run" initial-delay="25000" fixed-delay="100000" /> 
     </task:scheduled-tasks>
-    <task:scheduler id="myScheduler5" pool-size="3"/>-->
+    <task:scheduler id="myScheduler5" pool-size="3"/>
 
 
 

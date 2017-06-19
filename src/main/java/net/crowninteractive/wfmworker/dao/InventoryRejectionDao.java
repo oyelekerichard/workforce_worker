@@ -12,9 +12,9 @@ import net.crowninteractive.wfmworker.entity.InventoryRejection;
 
 import org.springframework.stereotype.Component;
 
-//~--- JDK imports ------------------------------------------------------------
-
 import java.util.List;
+
+//~--- JDK imports ------------------------------------------------------------
 
 /**
  *
@@ -23,7 +23,7 @@ import java.util.List;
 @Component
 public class InventoryRejectionDao extends AbstractDao<Integer, InventoryRejection> {
     public List<InventoryRejection> findByEmailSendTimeNULL() {
-        String query = "SELECT * from inventory_REJECTION where email_send_time is null";
+        String query = "SELECT * from inventory_rejection where email_send_time is null";
 
         return getEntityManager().createNativeQuery(query, InventoryRejection.class).getResultList();
     }

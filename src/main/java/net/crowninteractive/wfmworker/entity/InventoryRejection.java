@@ -7,6 +7,7 @@ package net.crowninteractive.wfmworker.entity;
 
 import java.io.Serializable;
 import java.util.Date;
+
 import javax.persistence.Basic;
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -58,15 +59,18 @@ public class InventoryRejection implements Serializable {
     @Column(name = "update_time")
     @Temporal(TemporalType.TIMESTAMP)
     private Date updateTime;
-    @JoinColumn(name = "request_id", referencedColumnName = "inventory_req_id")
+    @JoinColumn(name = "request_id", referencedColumnName = "id")
     @ManyToOne(optional = false)
-    private InventoryApproval requestId;
+    private InventoryRequest requestId;
     @JoinColumn(name = "created_by", referencedColumnName = "id")
     @ManyToOne(optional = false)
     private Users createdBy;
     @JoinColumn(name = "updated_by", referencedColumnName = "id")
     @ManyToOne
     private Users updatedBy;
+    @JoinColumn(name = "work_order_id", referencedColumnName = "id")
+    @ManyToOne(optional = false)
+    private WorkOrder workOrderId;
 
     public InventoryRejection() {
     }
@@ -139,11 +143,11 @@ public class InventoryRejection implements Serializable {
         this.updateTime = updateTime;
     }
 
-    public InventoryApproval getRequestId() {
+    public InventoryRequest getRequestId() {
         return requestId;
     }
 
-    public void setRequestId(InventoryApproval requestId) {
+    public void setRequestId(InventoryRequest requestId) {
         this.requestId = requestId;
     }
 
@@ -187,5 +191,12 @@ public class InventoryRejection implements Serializable {
     public String toString() {
         return "net.crowninteractive.wfmworker.entity.InventoryRejection[ id=" + id + " ]";
     }
-    
+
+    public WorkOrder getWorkOrderId() {
+        return workOrderId;
+    }
+
+    public void setWorkOrderId(WorkOrder workOrderId) {
+        this.workOrderId = workOrderId;
+    }
 }
