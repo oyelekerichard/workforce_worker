@@ -70,13 +70,9 @@ public class SendApprovalEmails extends TimerTask {
                                 content);
                         System.out.println("SendApprovalEmails sent to " + recipient);
                     }
-                    inventoryApproval.setEmailSendTime(new Date());
-                    inventoryApproval.setUpdateTime(new Date());
-                    inventoryApprovalDao.edit(inventoryApproval);
+                    updateAll(requests.get(workorderId));
                     System.out.println("SendApprovalEmails done processing inventory " + inventoryApproval);
                 }
-            
-            
             }
             System.out.println("SendApprovalEmails run ended successfully!");
         } catch (IOException ex) {
@@ -118,6 +114,14 @@ public class SendApprovalEmails extends TimerTask {
         }
         
         return sb.toString();
+    }
+    
+    private void updateAll(List<InventoryApproval> get) {        
+        for(InventoryApproval inventoryApproval : get){
+            inventoryApproval.setEmailSendTime(new Date());
+            inventoryApproval.setUpdateTime(new Date());
+            inventoryApprovalDao.edit(inventoryApproval);
+        }
     }
 }
 
