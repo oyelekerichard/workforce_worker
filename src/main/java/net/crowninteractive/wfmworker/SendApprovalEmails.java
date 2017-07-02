@@ -22,6 +22,7 @@ import java.util.List;
 import java.util.TimerTask;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import net.crowninteractive.wfmworker.misc.Config;
 
 /**
  *
@@ -51,9 +52,9 @@ public class SendApprovalEmails extends TimerTask {
 
                 System.out.println("SendApprovalEmails processing "+ request);
                
-
+                String url = Config.getInstance().wfmFrontendUrl();
                 for (String recipient : recipients) {
-                    String content = String.format(template,workOrderId.getSummary(), workOrderId.getDescription(), request.getItemName(), request.getLocationName(), request.getQuantity().toString()).replaceFirst("(%%)","%");
+                    String content = String.format(template,workOrderId.getSummary(), workOrderId.getDescription(), request.getItemName(), request.getLocationName(), request.getQuantity().toString(),url).replaceFirst("(%%)","%");
 
                     System.out.println("SendApprovalEmails to " + recipient);
                     emailSender.sendNoReplyEmail(
@@ -66,7 +67,7 @@ public class SendApprovalEmails extends TimerTask {
                 inventoryApprovalDao.edit(inventoryApproval);
                 System.out.println("SendApprovalEmails done processing inventory " + inventoryApproval);
             }
-      System.out.println("SendApprovalEmails run ended successfully!");
+            System.out.println("SendApprovalEmails run ended successfully!");
         } catch (IOException ex) {
             System.out.println("SendApprovalEmails an exception occurred  " + ex);
             Logger.getLogger(SendApprovalEmails.class.getName()).log(Level.ALL, null, ex);

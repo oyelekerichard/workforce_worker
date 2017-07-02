@@ -42,9 +42,14 @@ public class Config extends Properties {
     }
 
     public String approvalEmailTemplateUrl(){
-    return getProperty("email.approval");
+        return getProperty("email.approval");
     }
+    
     public String rejectionEmailTemplateUrl(){
-    return getProperty("email.rejection");
+        return getProperty("email.rejection");
+    }
+    
+    public String wfmFrontendUrl(){
+        return getProperty("wfm.ui.url");
     }
 }
