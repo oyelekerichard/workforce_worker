@@ -48,6 +48,7 @@ public class SendApprovalEmails extends TimerTask {
             
             if(inventoryApprovals != null && inventoryApprovals.size() > 0){
                 Map<Integer, List<InventoryApproval>> requests = getRequests(inventoryApprovals);
+                System.out.println("size of requests is: "+requests.size());
                 for (Integer workorderId  : requests.keySet()) {
                     InventoryApproval inventoryApproval = requests.get(workorderId).get(0);
                     
@@ -106,14 +107,16 @@ public class SendApprovalEmails extends TimerTask {
 
     private String getItems(List<InventoryApproval> get) {
         StringBuilder sb = new StringBuilder();
-        sb.append("<tr>");
+        
         for(InventoryApproval inventoryApproval : get){
+            sb.append("<tr>");
             InventoryRequest request = inventoryApproval.getInventoryReqId();
             sb.append("<td style='padding: 10px;'>").append(request.getItemName()).append("</td>");
             sb.append("<td style='padding: 10px;'>").append(request.getLocationName()).append("</td>");
             sb.append("<td style='padding: 10px;'>").append(request.getQuantity()).append("</td>");
+            sb.append("</tr>");
         }
-        sb.append("</tr>");
+        
         return sb.toString();
     }
 }
