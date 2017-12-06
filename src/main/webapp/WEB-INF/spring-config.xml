@@ -11,6 +11,9 @@
 
  <context:component-scan base-package="net.crowninteractive.wfmworker" />
   <context:component-scan base-package="net.crowninteractive.wfmworker.dao" />
+  
+  <context:property-placeholder location="file:/var/config/wfm/config.properties" />
+
 
  <mvc:annotation-driven />
  <tx:annotation-driven transaction-manager="transactionManager"  />
@@ -52,11 +55,11 @@
     <task:scheduled ref="timerTask" method="run" />
 
 
-<bean id="timerTask2" class="net.crowninteractive.wfmworker.EscalationCreator"> </bean> 
-<task:scheduled-tasks scheduler="myScheduler2">
-    <task:scheduled ref="timerTask2" method="run" initial-delay="10000" fixed-delay="70000" /> 
-</task:scheduled-tasks>
-<task:scheduler id="myScheduler2" pool-size="5"/>-->
+    <bean id="timerTask2" class="net.crowninteractive.wfmworker.EscalationCreator"> </bean> 
+    <task:scheduled-tasks scheduler="myScheduler2">
+        <task:scheduled ref="timerTask2" method="run" initial-delay="10000" fixed-delay="70000" /> 
+    </task:scheduled-tasks>
+    <task:scheduler id="myScheduler2" pool-size="5"/>-->
 
 
     <bean id="timerTask3" class="net.crowninteractive.wfmworker.EmailSender"> </bean> 
@@ -76,6 +79,7 @@
         <task:scheduled ref="timerTask5" method="run" initial-delay="25000" fixed-delay="100000" /> 
     </task:scheduled-tasks>
     <task:scheduler id="myScheduler5" pool-size="3"/>
+    
 
 
 
@@ -119,5 +123,26 @@
 
     <bean id="persistenceExceptionTranslationPostProcessor"
           class="org.springframework.dao.annotation.PersistenceExceptionTranslationPostProcessor" />
+    
+    
+<!--     Activemq connection factory 
+    <bean id="amqConnectionFactory" class="org.apache.activemq.ActiveMQConnectionFactory">
+        <constructor-arg index="0" value="${activemq.url}"/>
+    </bean>
+
+     ConnectionFactory Definition 
+    <bean id="connectionFactory" class="org.springframework.jms.connection.CachingConnectionFactory">
+        <constructor-arg ref="amqConnectionFactory" />
+    </bean> 
+
+     Message Receiver Definition 
+    <bean id="messageReceiver" class="net.crowninteractive.wfmworker.ReportRequestReceiver">
+    </bean>
+
+    <bean class="org.springframework.jms.listener.SimpleMessageListenerContainer">
+        <property name="connectionFactory" ref="connectionFactory" />
+        <property name="destinationName" value="${nerc.report.queue}" />
+        <property name="messageListener" ref="messageReceiver" />
+    </bean>-->
 
 </beans>
