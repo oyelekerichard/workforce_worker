@@ -1,52 +1,53 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <persistence version="2.1" xmlns="http://xmlns.jcp.org/xml/ns/persistence" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://xmlns.jcp.org/xml/ns/persistence http://xmlns.jcp.org/xml/ns/persistence/persistence_2_1.xsd">
-    <persistence-unit name="wfmworkerPU" transaction-type="JTA">
-        <provider>org.hibernate.jpa.HibernatePersistenceProvider</provider>
-        <jta-data-source>java:/jboss/datasources/wfm_new</jta-data-source>
-        <class>net.crowninteractive.wfmworker.entity.EmailSend</class>
-        <class>net.crowninteractive.wfmworker.entity.Engineer</class>
-        <class>net.crowninteractive.wfmworker.entity.InventoryRequest</class>
-        <class>net.crowninteractive.wfmworker.entity.InventoryApproval</class>
-        <class>net.crowninteractive.wfmworker.entity.InventoryRejection</class>
-        <class>net.crowninteractive.wfmworker.entity.ApprovalLevel</class>
-        <class>net.crowninteractive.wfmworker.entity.Audit</class>
-        <class>net.crowninteractive.wfmworker.entity.Billing</class>
-        <class>net.crowninteractive.wfmworker.entity.Customer</class>
-        <class>net.crowninteractive.wfmworker.entity.District</class>
-        <class>net.crowninteractive.wfmworker.entity.EBackgroundJob</class>
-        <class>net.crowninteractive.wfmworker.entity.EngineerAttachments</class>
-        <class>net.crowninteractive.wfmworker.entity.EngineerLevel</class>
-        <class>net.crowninteractive.wfmworker.entity.EngineerSchedule</class>
-        <class>net.crowninteractive.wfmworker.entity.EngineerShift</class>
-        <class>net.crowninteractive.wfmworker.entity.EngineerToWorkOrder</class>
-        <class>net.crowninteractive.wfmworker.entity.EngineerType</class>
-        <class>net.crowninteractive.wfmworker.entity.EngineerTypeToQueueType</class>
-        <class>net.crowninteractive.wfmworker.entity.EscalationRole</class>
-        <class>net.crowninteractive.wfmworker.entity.EscalationSettings</class>
-        <class>net.crowninteractive.wfmworker.entity.EscalationTemp</class>
-        <class>net.crowninteractive.wfmworker.entity.EscalationWorkOrder</class>
-        <class>net.crowninteractive.wfmworker.entity.Feeder</class>
-        <class>net.crowninteractive.wfmworker.entity.InventoryRequestItem</class>
-        <class>net.crowninteractive.wfmworker.entity.PaymentRequest</class>
-        <class>net.crowninteractive.wfmworker.entity.Queue</class>
-        <class>net.crowninteractive.wfmworker.entity.QueueType</class>
-        <class>net.crowninteractive.wfmworker.entity.SettlementRequest</class>
-        <class>net.crowninteractive.wfmworker.entity.Team</class>
-        <class>net.crowninteractive.wfmworker.entity.Users</class>
-        <class>net.crowninteractive.wfmworker.entity.WorkOrder</class>
-        <class>net.crowninteractive.wfmworker.entity.WorkOrderAttachments</class>
-        <class>net.crowninteractive.wfmworker.entity.WorkOrderRemark</class>
-        <class>net.crowninteractive.wfmworker.entity.WorkOrderStatus</class>
-        <class>net.crowninteractive.wfmworker.entity.WorkOrderStatusQueueType</class>
-        <class>net.crowninteractive.wfmworker.entity.WorkOrderUpdate</class>
-        <class>net.crowninteractive.wfmworker.entity.Zone</class>
-        <exclude-unlisted-classes>false</exclude-unlisted-classes>
-        <properties>
-            <property name="hibernate.archive.autodetection" value="class"/>
-            <property name="hibernate.show_sql" value="true"/>
-            <property name="hibernate.format_sql" value="true"/>
-            <property name="hibernate.hbm2ddl.auto" value="update"/>
-            <property name="hibernate.transaction.jta.platform" value="org.hibernate.service.jta.platform.internal.JBossAppServerJtaPlatform"/>
-        </properties>
-    </persistence-unit>
+  <persistence-unit name="wfmworkerPU" transaction-type="JTA">
+    <provider>org.hibernate.jpa.HibernatePersistenceProvider</provider>
+    <jta-data-source>java:/jboss/datasources/wfm_new</jta-data-source>
+    <class>net.crowninteractive.wfmworker.entity.EmailSend</class>
+    <class>net.crowninteractive.wfmworker.entity.Engineer</class>
+    <class>net.crowninteractive.wfmworker.entity.InventoryRequest</class>
+    <class>net.crowninteractive.wfmworker.entity.InventoryApproval</class>
+    <class>net.crowninteractive.wfmworker.entity.InventoryRejection</class>
+    <class>net.crowninteractive.wfmworker.entity.ApprovalLevel</class>
+    <class>net.crowninteractive.wfmworker.entity.Audit</class>
+    <class>net.crowninteractive.wfmworker.entity.Billing</class>
+    <class>net.crowninteractive.wfmworker.entity.Customer</class>
+    <class>net.crowninteractive.wfmworker.entity.District</class>
+    <class>net.crowninteractive.wfmworker.entity.EBackgroundJob</class>
+    <class>net.crowninteractive.wfmworker.entity.EngineerAttachments</class>
+    <class>net.crowninteractive.wfmworker.entity.EngineerLevel</class>
+    <class>net.crowninteractive.wfmworker.entity.EngineerSchedule</class>
+    <class>net.crowninteractive.wfmworker.entity.EngineerShift</class>
+    <class>net.crowninteractive.wfmworker.entity.EngineerToWorkOrder</class>
+    <class>net.crowninteractive.wfmworker.entity.EngineerType</class>
+    <class>net.crowninteractive.wfmworker.entity.EngineerTypeToQueueType</class>
+    <class>net.crowninteractive.wfmworker.entity.EscalationRole</class>
+    <class>net.crowninteractive.wfmworker.entity.EscalationSettings</class>
+    <class>net.crowninteractive.wfmworker.entity.EscalationTemp</class>
+    <class>net.crowninteractive.wfmworker.entity.EscalationWorkOrder</class>
+    <class>net.crowninteractive.wfmworker.entity.Feeder</class>
+    <class>net.crowninteractive.wfmworker.entity.InventoryRequestItem</class>
+    <class>net.crowninteractive.wfmworker.entity.PaymentRequest</class>
+    <class>net.crowninteractive.wfmworker.entity.Queue</class>
+    <class>net.crowninteractive.wfmworker.entity.QueueType</class>
+    <class>net.crowninteractive.wfmworker.entity.SettlementRequest</class>
+    <class>net.crowninteractive.wfmworker.entity.Team</class>
+    <class>net.crowninteractive.wfmworker.entity.Users</class>
+    <class>net.crowninteractive.wfmworker.entity.WorkOrder</class>
+    <class>net.crowninteractive.wfmworker.entity.WorkOrderAttachments</class>
+    <class>net.crowninteractive.wfmworker.entity.WorkOrderRemark</class>
+    <class>net.crowninteractive.wfmworker.entity.WorkOrderStatus</class>
+    <class>net.crowninteractive.wfmworker.entity.WorkOrderStatusQueueType</class>
+    <class>net.crowninteractive.wfmworker.entity.WorkOrderUpdate</class>
+    <class>net.crowninteractive.wfmworker.entity.Zone</class>
+    <class>net.crowninteractive.wfmworker.entity.WorkOrderTemp</class>
+    <exclude-unlisted-classes>false</exclude-unlisted-classes>
+    <properties>
+      <property name="hibernate.archive.autodetection" value="class"/>
+      <property name="hibernate.show_sql" value="true"/>
+      <property name="hibernate.format_sql" value="true"/>
+      <property name="hibernate.hbm2ddl.auto" value="update"/>
+      <property name="hibernate.transaction.jta.platform" value="org.hibernate.service.jta.platform.internal.JBossAppServerJtaPlatform"/>
+    </properties>
+  </persistence-unit>
 </persistence>

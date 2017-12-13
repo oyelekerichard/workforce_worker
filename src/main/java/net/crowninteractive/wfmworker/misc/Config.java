@@ -52,4 +52,8 @@ public class Config extends Properties {
     public String wfmFrontendUrl(){
         return getProperty("wfm.ui.url");
     }
+
+    public String getEMCCGetCustomerDetailsURL() {
+       return getProperty("emcc.customer.detail");   
+    }
 }
