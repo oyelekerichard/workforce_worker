@@ -26,7 +26,7 @@ public class EnumController {
     @Autowired
     private EnumService enumService;
     
-    @RequestMapping(method = RequestMethod.POST, value = "test")
+    @RequestMapping(method = RequestMethod.GET, value = "test")
     public ResponseEntity testEndpoint() {
        return new ResponseEntity<String>("Test value",HttpStatus.OK);
     }
