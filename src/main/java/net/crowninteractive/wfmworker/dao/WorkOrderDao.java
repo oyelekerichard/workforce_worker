@@ -59,8 +59,8 @@ public class WorkOrderDao extends AbstractDao<Integer, WorkOrder> {
             if (w.getReferenceType() != null && w.getReferenceTypeData() != null && w.getReferenceType().equals("Billing ID") && !w.getReferenceTypeData().equals("Not Applicable")) {
                 String qry = "select name from esbdb.customer where account_number='%s' order by customer_id desc limit 1";
                 Query q = getEntityManager().createNativeQuery(String.format(qry, w.getReferenceTypeData()));
-                List<String>fo  = (List<String>) q.getResultList();
-                name = fo.isEmpty() ? w.getReportedBy() : "";
+                String fo  = (String )q.getSingleResult();
+                name = fo == null ? w.getReportedBy() : fo;
                
             } else {
                 name = w.getReportedBy();
@@ -99,17 +99,14 @@ public class WorkOrderDao extends AbstractDao<Integer, WorkOrder> {
             return null;
         }
     }
+    
+    
 
     public String getQueueTypeName(int i, QueueType queueTypeId) {
-        String name = null;
         String qry = "select name from queue_type where id=%d and owner_id=%d";
-        qry = String.format(qry, i,queueTypeId.getId());
+        qry = String.format(qry, queueTypeId.getId(),i);
         Query q = getEntityManager().createNativeQuery(qry);
-         if(q.getResultList().isEmpty()){
-             return name ="-";
-         }else
-        name = ((List<String>) q.getResultList()).get(0);
-        return name;
+        return (String)q.getSingleResult();
 
     }
 

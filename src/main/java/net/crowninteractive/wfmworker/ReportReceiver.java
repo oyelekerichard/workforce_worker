@@ -47,13 +47,9 @@ public class ReportReceiver {
     @JmsListener(destination = "${nerc.report.queue}")
     public void handleMessage(Message message) {
 
-        System.out.println("report receiver - Message Received From New BRoker");
-
         if (message instanceof TextMessage) {
             try {
                 TextMessage textMessage = (TextMessage) message;
-                System.out.println("report processor - processing: '" + textMessage.getText());
-                System.out.println(">>>>>>.msg >>>>>>>>>>>> " + textMessage);
                 String[] txt = textMessage.getText().split(",");
                 processWrite(txt[0], txt[1], txt[2]);
             } catch (JMSException ex) {
