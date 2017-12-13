@@ -14,9 +14,9 @@ import org.springframework.stereotype.Component;
 
 //~--- JDK imports ------------------------------------------------------------
 import java.util.List;
+import javax.persistence.NoResultException;
 import javax.persistence.Query;
 import net.crowninteractive.wfmworker.entity.QueueType;
-import net.crowninteractive.wfmworker.entity.WorkOrderUpdate;
 
 /**
  *
@@ -58,18 +58,16 @@ public class WorkOrderDao extends AbstractDao<Integer, WorkOrder> {
         try {
             if (w.getReferenceType() != null && w.getReferenceTypeData() != null && w.getReferenceType().equals("Billing ID") && !w.getReferenceTypeData().equals("Not Applicable")) {
                 String qry = "select name from esbdb.customer where account_number='%s' order by customer_id desc limit 1";
-                Query q = getEntityManager().createNativeQuery(String.format(qry, w.getReferenceTypeData()));
+                String qryv = String.format(qry, w.getReferenceTypeData());
+                Query q = getEntityManager().createNativeQuery(qryv);
                 String fo  = (String )q.getSingleResult();
                 name = fo == null ? w.getReportedBy() : fo;
-               
-            } else {
+             } else {
                 name = w.getReportedBy();
-            }
-        } catch (Exception e) {
-            e.printStackTrace();
-            name = "n/a";
+                }
+        } catch (NoResultException e) {
+           name =  w.getReportedBy();
         }
-
         return name;
     }
 
