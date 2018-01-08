@@ -1,17 +1,6 @@
 package net.crowninteractive.wfmworker.service;
 
-
-
-
-import org.apache.http.HttpResponse;
-import org.apache.http.client.methods.HttpGet;
-import org.apache.http.impl.client.CloseableHttpClient;
-import org.apache.http.impl.client.HttpClients;
-
-
-import java.io.BufferedReader;
 import java.io.IOException;
-import java.io.InputStreamReader;
 import java.security.KeyManagementException;
 import java.security.NoSuchAlgorithmException;
 import java.security.cert.X509Certificate;
@@ -23,6 +12,8 @@ import javax.net.ssl.SSLContext;
 import javax.net.ssl.TrustManager;
 import javax.net.ssl.X509TrustManager;
 import net.crowninteractive.wfmworker.misc.Config;
+import org.springframework.web.client.RestTemplate;
+import org.springframework.web.util.UriComponentsBuilder;
 
 /**
  * @author Charlee
@@ -66,34 +57,6 @@ public class HttpQuery {
         }
     }
 
- 
-
-    public String getCustomerDetails(String number, String type) throws IOException {
-        Config c = Config.getInstance();
-
-        CloseableHttpClient httpclient = HttpClients.createDefault();
-        HashMap<String, String> queryparams = new HashMap<String, String>();
-
-        if (type.toLowerCase().equals("a")) {
-            queryparams.put("accountNumber", number);
-
-        } else {
-            queryparams.put("meterNumber", number);
-        }
-        String url = URLBuilder.queryURLBuilder(c.getEMCCGetCustomerDetailsURL(), queryparams);
-        HttpGet httpGet = new HttpGet(url);
-        httpGet.addHeader("Content-Type", "application/json");
-        HttpResponse response = httpclient.execute(httpGet);
-        StringBuilder sb = new StringBuilder();
-        String line;
-        BufferedReader br = new BufferedReader(new InputStreamReader(response.getEntity().getContent()));
-        while ((line = br.readLine()) != null) {
-            sb.append(line);
-        }
-        System.out.println("string resp:  " + sb.toString());
-        return (sb.toString());
-
-    }
-
     
+
 }

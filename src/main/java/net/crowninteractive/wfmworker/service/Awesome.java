@@ -5,13 +5,13 @@
  */
 package net.crowninteractive.wfmworker.service;
 
-import javax.xml.bind.annotation.XmlRootElement;
+
 
 /**
  *
  * @author osita
  */
-@XmlRootElement
+
 public class Awesome {
 
     private int resp;

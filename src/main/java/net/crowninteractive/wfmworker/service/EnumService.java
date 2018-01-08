@@ -7,13 +7,18 @@ package net.crowninteractive.wfmworker.service;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
+import java.io.IOException;
+import java.util.HashMap;
 import java.util.Map;
 import static jdk.nashorn.internal.objects.NativeMath.log;
 import net.crowninteractive.wfmworker.dao.WorkOrderDao;
 import net.crowninteractive.wfmworker.entity.WorkOrderTemp;
+import net.crowninteractive.wfmworker.misc.Config;
 import net.crowninteractive.wfmworker.misc.StandardResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.web.client.RestTemplate;
+import org.springframework.web.util.UriComponentsBuilder;
 
 /**
  *
@@ -59,29 +64,36 @@ public class EnumService {
                     }
 
                 }
-                return String.format((success > 0 ? success + " work orders were successfully approved," : "") + (failure > 0 ? failure + " approval request failed," : "") + (approved > 0 ? approved + " already approved" : ""));
+                return String.format((success > 0 ? success + " work order(s) were successfully approved," : "") + (failure > 0 ? failure + " approval request failed," : "") + (approved > 0 ? approved + " already approved" : ""));
             }
 
         } catch (Exception e) {
+            e.printStackTrace();
           return e.getMessage();
         }
        
     }
+    
+    
+    public Awesome getCustomerDetails(String number, String type) throws IOException {
+        Config c = Config.getInstance();
+       
+        HashMap<String, String> queryparams = new HashMap<String, String>();
 
-    private Awesome getCustomerDetails(String referenceTypeData, String type) {
-        try {
-            HttpQuery httpQuery = new HttpQuery();
-            String resp = httpQuery.getCustomerDetails(referenceTypeData, type);
-            if (resp != null && !resp.isEmpty()) {
-                Awesome a = new Gson().fromJson(resp, Awesome.class);
-                return a;
-            }
-            System.out.print(resp);
-            return StandardResponse.errorDuringProcessing();
-        } catch (Exception e) {
-            log(e, "getcategories");
-            return StandardResponse.systemError();
+        UriComponentsBuilder builder = UriComponentsBuilder
+                .fromUriString(c.getEMCCGetCustomerDetailsURL());
+
+        if (type.toLowerCase().equals("a")) {
+            builder.queryParam("accountNumber", number);
+        } else {
+            builder.queryParam("meterNumber", number);
         }
+        RestTemplate restTemplate = new RestTemplate();
+        Awesome response = restTemplate.getForObject(builder.toUriString(), Awesome.class);
+        return response;
+        
     }
+
+    
     
 }

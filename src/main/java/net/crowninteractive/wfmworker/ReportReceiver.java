@@ -69,7 +69,7 @@ public class ReportReceiver {
         FileInputStream file = new FileInputStream(new File("/var/files/wfm/nerctemplate.xlsx"));
 
         //String[] mths = {"-", "JAN", "FEB", "MAR", "APR", "MAY", "JUN", "JUL", "AUG", "SEP", "OCT", "NOV", "DEC"};
-        String[] districts = {"APAPA", "MUSHIN", "AGBARA", "ISLANDS", "IJORA", "LEKKI", "OJO", "FESTAC", "UNKNOWN","IBEJU"};
+        String[] districts = {"APAPA", "MUSHIN", "AGBARA", "ISLANDS", "IJORA", "LEKKI", "OJO", "FESTAC", "UNKNOWN","IBEJU","ORILE"};
 
         XSSFWorkbook workbook = new XSSFWorkbook(file);
 

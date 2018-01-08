@@ -48,6 +48,15 @@ public abstract class AbstractDao<PK extends Serializable, T> {
         sess.persist(entity);
         sess.getTransaction().commit();
     }
+    
+     public T save(T entity) {
+        Session sess = getSession();
+        sess.getTransaction().begin();
+        sess.persist(entity);
+        sess.flush();
+        sess.getTransaction().commit();
+        return entity;
+    }
 
     public void edit(T entity) {
         Session sess = getSession();

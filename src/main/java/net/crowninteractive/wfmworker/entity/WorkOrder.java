@@ -121,8 +121,7 @@ public class WorkOrder implements Serializable {
     @Basic(optional = false)
     @Column(name = "id", nullable = false)
     private Integer id;
-    @Basic(optional = false)
-    @Column(name = "ticket_id", nullable = false)
+    @Column(name = "ticket_id")
     private int ticketId;
     @Basic(optional = false)
     @Column(name = "token", nullable = false, length = 30)

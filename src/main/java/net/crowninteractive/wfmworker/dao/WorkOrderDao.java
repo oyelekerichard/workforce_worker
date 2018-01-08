@@ -14,11 +14,12 @@ import org.springframework.stereotype.Component;
 
 //~--- JDK imports ------------------------------------------------------------
 import java.util.List;
-import javax.persistence.EntityManager;
 import javax.persistence.NoResultException;
 import javax.persistence.Query;
 import net.crowninteractive.wfmworker.entity.QueueType;
 import net.crowninteractive.wfmworker.entity.WorkOrderTemp;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.transaction.annotation.Transactional;
 
 /**
  *
@@ -27,6 +28,14 @@ import net.crowninteractive.wfmworker.entity.WorkOrderTemp;
 @Component
 public class WorkOrderDao extends AbstractDao<Integer, WorkOrder> {
 
+    @Autowired private WorkOrderTempDap temp;
+    
+    public int ticketCount(){
+     Integer max =  (Integer)getEntityManager()
+             .createNativeQuery("select max(ticket_id) from work_order").getSingleResult();
+      return max.intValue()+1;
+    }
+    
     public WorkOrder findById(int id) {
         String query = String.format("select * from work_order where id=?1");
         List<WorkOrder> options = getEntityManager().createNativeQuery(query, WorkOrder.class).setParameter(1,
@@ -114,22 +123,24 @@ public class WorkOrderDao extends AbstractDao<Integer, WorkOrder> {
         return (WorkOrderTemp) q.getSingleResult();
     }
 
-     public QueueType getQueueTypeByQueueNameQueueTypeName(int queueName, int queueTypeName) {
-        String sql = String.format( "select * from queue_type where queue_id=(select id from queue where name='%s') and name='%s' ", queueName,queueTypeName);
-        return (QueueType)getEntityManager().createNativeQuery(sql,QueueType.class);
+     public QueueType getQueueTypeByID(int queueTypeId) {
+        String sql = String.format( "select * from queue_type where id=%d ", queueTypeId);
+        System.out.println(sql);
+        return (QueueType)getEntityManager().createNativeQuery(sql,QueueType.class).getSingleResult();
     }
     
     public void approveEnumWorkOrder(WorkOrderTemp wot) {
-       QueueType qt =  getQueueTypeByQueueNameQueueTypeName(wot.getQueueId(),wot.getQueueTypeId());
+       QueueType qt =  getQueueTypeByID(wot.getQueueTypeId());
        int ticketId = this.createWorkOrder(wot, qt);
        if(ticketId!=0){
            wot.setTicketId(ticketId);
            wot.setCurrentStatus("OPEN");
            wot.setToken(wot.getToken());
-           getEntityManager().merge(wot);
+           temp.edit(wot);
        }
     }
     
+    @Transactional
     public int createWorkOrder(WorkOrderTemp wot,QueueType qt){
         WorkOrder wo = new WorkOrder();
         wo.setBusinessUnit(wot.getBusinessUnit());
@@ -137,19 +148,25 @@ public class WorkOrderDao extends AbstractDao<Integer, WorkOrder> {
         wo.setAddressLine2(wot.getAddressLine2());
         wo.setQueueId(qt.getQueueId());
         wo.setQueueTypeId(qt);
+        wo.setTicketId(ticketCount());
         wo.setContactNumber(wot.getContactNumber());
         wo.setCustomerName(wot.getCustomerName());
         wo.setOwnerId(wot.getOwnerId());
         wo.setReportedBy(wot.getReportedBy());
-        wo.setCreateTime(wot.getCreateTime());
-        wo.setCurrentStatus(wo.getCurrentStatus());
+        wo.setCreateTime(new Date());
+        wo.setCurrentStatus("OPEN");
         wo.setCustomerTariff(wot.getCustomerTariff());
         wo.setCity(wot.getCity());
+        wo.setPriority(wot.getPriority());
+        wo.setReferenceType(wot.getReferenceType());
+        wo.setReferenceTypeData(wot.getReferenceTypeData());
+        wo.setState(wot.getState());
+        wo.setSummary(wot.getSummary());
+        wo.setToken(wot.getToken());
+        wo.setSlot(wot.getSlot());
         
-        EntityManager em = getEntityManager();
-        em.persist(wo);
-        em.flush();
-        return wo.getTicketId();
+        WorkOrder w = save(wo);
+        return w.getTicketId();
     }
 
 }
