@@ -6,6 +6,7 @@
 package net.crowninteractive.wfmworker.entity;
 
 import java.math.BigDecimal;
+import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.List;
 import net.crowninteractive.wfmworker.dao.BarChartWidget;
@@ -21,8 +22,8 @@ public class Dashboard {
      
     private List<LowerWidget> districtStatuses = new ArrayList();
     private List<BarChartWidget>conData = new ArrayList();
-    private BigDecimal totalClosed;
-    private BigDecimal totalOpened;
+    private BigInteger totalClosed;
+    private BigInteger totalOpened;
 
     public List<LowerWidget> getDistrictStatuses() {
         return districtStatuses;
@@ -40,19 +41,19 @@ public class Dashboard {
         this.conData = conData;
     }
 
-    public BigDecimal getTotalClosed() {
+    public BigInteger getTotalClosed() {
         return totalClosed;
     }
 
-    public void setTotalClosed(BigDecimal totalClosed) {
+    public void setTotalClosed(BigInteger totalClosed) {
         this.totalClosed = totalClosed;
     }
 
-    public BigDecimal getTotalOpened() {
+    public BigInteger getTotalOpened() {
         return totalOpened;
     }
 
-    public void setTotalOpened(BigDecimal totalOpened) {
+    public void setTotalOpened(BigInteger totalOpened) {
         this.totalOpened = totalOpened;
     }
     

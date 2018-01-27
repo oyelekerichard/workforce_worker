@@ -165,13 +165,10 @@ public class EnumService {
 
         }
 
-        List<Object[]> res = wdao.getTotalCount();
-        Object[] o =res.get(0);
-        Object[] p =res.get(1);
-        String closed =(String)o[0];
-        String opened =(String)p[0];
-        bss.setTotalClosed(new BigDecimal(closed));
-        bss.setTotalOpened(new BigDecimal(opened));
+        List<BigInteger> res = wdao.getTotalCount();
+        
+        bss.setTotalClosed(res.get(0));
+        bss.setTotalOpened(res.get(1));
 
         //Graph Data
         return bss;
