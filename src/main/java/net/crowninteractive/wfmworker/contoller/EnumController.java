@@ -5,6 +5,7 @@
  */
 package net.crowninteractive.wfmworker.contoller;
 
+import net.crowninteractive.wfmworker.entity.Dashboard;
 import net.crowninteractive.wfmworker.service.EnumService;
 import net.crowninteractive.wfmworker.service.Token;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -13,6 +14,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 /**
@@ -25,10 +27,10 @@ public class EnumController {
 
     @Autowired
     private EnumService enumService;
-    
+
     @RequestMapping(method = RequestMethod.GET, value = "test")
     public ResponseEntity testEndpoint() {
-       return new ResponseEntity<String>("Test value",HttpStatus.OK);
+        return new ResponseEntity<String>("Test value", HttpStatus.OK);
     }
 
     @RequestMapping(method = RequestMethod.POST, value = "approve_enum_work_order")
@@ -36,5 +38,16 @@ public class EnumController {
         String message = enumService.approveWorkOrders(tokens);
         return new ResponseEntity<String>(message, HttpStatus.OK);
     }
+
+    @RequestMapping(method = RequestMethod.GET, value = "enumerationDashboard")
+    public ResponseEntity dashboard(
+            @RequestParam(value = "startDate", required = false) String startDate,
+            @RequestParam(value = "endDate", required = false) String endDate,
+            @RequestParam(value = "showWidget2", required = false) String flag1,
+            @RequestParam(value = "showWidget1", required = false) String flag2) {
+        Dashboard d = enumService.getDashboard(startDate, endDate,flag1,flag2);
+        return new ResponseEntity<Dashboard>(d, HttpStatus.OK);
+    }
+    
 
 }

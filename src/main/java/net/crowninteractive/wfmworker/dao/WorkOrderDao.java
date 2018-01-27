@@ -7,6 +7,8 @@
 package net.crowninteractive.wfmworker.dao;
 
 //~--- non-JDK imports --------------------------------------------------------
+import java.math.BigDecimal;
+import java.util.ArrayList;
 import java.util.Date;
 import net.crowninteractive.wfmworker.entity.WorkOrder;
 
@@ -28,14 +30,15 @@ import org.springframework.transaction.annotation.Transactional;
 @Component
 public class WorkOrderDao extends AbstractDao<Integer, WorkOrder> {
 
-    @Autowired private WorkOrderTempDap temp;
-    
-    public int ticketCount(){
-     Integer max =  (Integer)getEntityManager()
-             .createNativeQuery("select max(ticket_id) from work_order").getSingleResult();
-      return max.intValue()+1;
+    @Autowired
+    private WorkOrderTempDap temp;
+
+    public int ticketCount() {
+        Integer max = (Integer) getEntityManager()
+                .createNativeQuery("select max(ticket_id) from work_order").getSingleResult();
+        return max.intValue() + 1;
     }
-    
+
     public WorkOrder findById(int id) {
         String query = String.format("select * from work_order where id=?1");
         List<WorkOrder> options = getEntityManager().createNativeQuery(query, WorkOrder.class).setParameter(1,
@@ -83,30 +86,33 @@ public class WorkOrderDao extends AbstractDao<Integer, WorkOrder> {
     }
 
     public Date getDateResolved(WorkOrder w) {
-        if (w.getIsClosed() == 1) {
-            return w.getClosedTime();
-        } else if (w.getCurrentStatus().toLowerCase().equals("completed") || w.getCurrentStatus().toLowerCase().equals("resolved")) {
-            if (w.getWorkOrderStatusId() == null) {
-                return null;
-            }
-            Query q = getEntityManager().createNativeQuery(
-                    String.format("select create_time from work_order_update  where work_order_id=%d and "
-                            + "work_order_status_id=%d order by id desc limit 1", w.getId(), w.getWorkOrderStatusId().getId()));
-            if (q.getResultList() != null) {
+        if (w.getIsClosed() != null) {
+            if (w.getIsClosed() == 1) {
+                return w.getClosedTime();
+            } else if (w.getCurrentStatus().toLowerCase().equals("completed") || w.getCurrentStatus().toLowerCase().equals("resolved")) {
+                if (w.getWorkOrderStatusId() == null) {
+                    return null;
+                }
+                Query q = getEntityManager().createNativeQuery(
+                        String.format("select create_time from work_order_update  where work_order_id=%d and "
+                                + "work_order_status_id=%d order by id desc limit 1", w.getId(), w.getWorkOrderStatusId().getId()));
+                if (q.getResultList() != null) {
 
-                if (!q.getResultList().isEmpty()) {
-                    Date time = (Date) q.getResultList().get(0);
-                    return time;
+                    if (!q.getResultList().isEmpty()) {
+                        Date time = (Date) q.getResultList().get(0);
+                        return time;
+                    } else {
+                        return null;
+                    }
                 } else {
                     return null;
                 }
+
             } else {
                 return null;
             }
-
-        } else {
-            return null;
         }
+        return null;
     }
 
     public String getQueueTypeName(int i, QueueType queueTypeId) {
@@ -123,25 +129,25 @@ public class WorkOrderDao extends AbstractDao<Integer, WorkOrder> {
         return (WorkOrderTemp) q.getSingleResult();
     }
 
-     public QueueType getQueueTypeByID(int queueTypeId) {
-        String sql = String.format( "select * from queue_type where id=%d ", queueTypeId);
+    public QueueType getQueueTypeByID(int queueTypeId) {
+        String sql = String.format("select * from queue_type where id=%d ", queueTypeId);
         System.out.println(sql);
-        return (QueueType)getEntityManager().createNativeQuery(sql,QueueType.class).getSingleResult();
+        return (QueueType) getEntityManager().createNativeQuery(sql, QueueType.class).getSingleResult();
     }
-    
+
     public void approveEnumWorkOrder(WorkOrderTemp wot) {
-       QueueType qt =  getQueueTypeByID(wot.getQueueTypeId());
-       int ticketId = this.createWorkOrder(wot, qt);
-       if(ticketId!=0){
-           wot.setTicketId(ticketId);
-           wot.setCurrentStatus("OPEN");
-           wot.setToken(wot.getToken());
-           temp.edit(wot);
-       }
+        QueueType qt = getQueueTypeByID(wot.getQueueTypeId());
+        int ticketId = this.createWorkOrder(wot, qt);
+        if (ticketId != 0) {
+            wot.setTicketId(ticketId);
+            wot.setCurrentStatus("OPEN");
+            wot.setToken(wot.getToken());
+            temp.edit(wot);
+        }
     }
-    
+
     @Transactional
-    public int createWorkOrder(WorkOrderTemp wot,QueueType qt){
+    public int createWorkOrder(WorkOrderTemp wot, QueueType qt) {
         WorkOrder wo = new WorkOrder();
         wo.setBusinessUnit(wot.getBusinessUnit());
         wo.setAddressLine1(wot.getAddressLine1());
@@ -164,12 +170,81 @@ public class WorkOrderDao extends AbstractDao<Integer, WorkOrder> {
         wo.setSummary(wot.getSummary());
         wo.setToken(wot.getToken());
         wo.setSlot(wot.getSlot());
-        
+
         WorkOrder w = save(wo);
         return w.getTicketId();
     }
 
+    public BigDecimal getWorkOrderByStatusAndDistrict(String status, String district, String reportedBy) {
+        StringBuilder sb = new StringBuilder("select * from work_order where queue_id =  17");
+        if (status != null) {
+            sb.append(String.format(" and current_status = '%s'", status));
+        }
+
+        if (district != null) {
+            sb.append(String.format(" and business_unit = '%s'", district));
+        }
+
+        if (reportedBy != null) {
+            sb.append(String.format(" and reported_by = '%s'", reportedBy));
+        }
+
+        try {
+            BigDecimal bd = (BigDecimal) this.getEntityManager().createNativeQuery(sb.toString()).getSingleResult();
+            return bd;
+        } catch (NoResultException no) {
+            return BigDecimal.ZERO;
+        }
+
+    }
+
+    public List<QueueTypeData> getQueueTypesByQueue(int id) {
+        List<QueueType> qt = getEntityManager().createNativeQuery
+        (String.format("select * from queue_type where queue_id = %d", id),
+                QueueType.class).getResultList();
+        List<QueueTypeData> qs = new ArrayList();
+        for(QueueType qtd : qt){
+            QueueTypeData qp = new QueueTypeData();
+            qp.setQueueTypeId(qtd.getId());
+            qp.setQueueTypeName(qtd.getName());
+            qs.add(qp);
+        }
+        return qs;
+    }
+
+   
+   
+    public BigDecimal getBarWidgetData(int queueTypeId, String conName, String district) {
+        StringBuilder sb = new 
+        StringBuilder(String.format("select * from work_order where queue_type_id = %d", queueTypeId));
+   
+
+        if (district != null) {
+            sb.append(String.format(" and business_unit = '%s'", district));
+        }
+
+        if (conName != null) {
+            sb.append(String.format(" and reported_by = '%s'", conName));
+        }
+
+        try {
+            BigDecimal bd = (BigDecimal) this.getEntityManager().createNativeQuery(sb.toString()).getSingleResult();
+            return bd;
+        } catch (NoResultException no) {
+            return BigDecimal.ZERO;
+        }
+    }
+    
+    
+    public Object[] getTotalCount(){
+      return (Object[])getEntityManager().createNativeQuery("select current_status,count(*) from work_order where "
+               + "current_status = 'OPEN' or current_status= 'CLOSED' group by current_status").getSingleResult();
+        
+    }
+
 }
+
+
 
 
 //~ Formatted by Jindent --- http://www.jindent.com

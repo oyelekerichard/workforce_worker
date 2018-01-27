@@ -61,6 +61,9 @@ public class ReportReceiver {
             } catch (EmailException ex) {
                 Logger.getLogger(ReportRequestReceiver.class.getName()).log(Level.SEVERE, null, ex);
             }
+             catch (Exception ex) {
+                ex.printStackTrace();
+            }
         }
 
     }
