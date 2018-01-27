@@ -238,9 +238,9 @@ public class WorkOrderDao extends AbstractDao<Integer, WorkOrder> {
     }
     
     
-    public Object[] getTotalCount(){
-      return (Object[])getEntityManager().createNativeQuery("select current_status,count(*) from work_order where "
-               + "current_status = 'OPEN' or current_status= 'CLOSED' group by current_status").getSingleResult();
+    public List<Object[]> getTotalCount(){
+      return (List<Object[]>)getEntityManager().createNativeQuery("select count(*) from work_order where "
+               + "current_status = 'OPEN' or current_status= 'CLOSED' group by current_status").getResultList();
         
     }
 
