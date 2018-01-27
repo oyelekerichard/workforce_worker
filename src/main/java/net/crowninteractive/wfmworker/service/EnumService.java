@@ -45,7 +45,7 @@ public class EnumService {
 
     @PostConstruct
     public void initQueueTypes() {
-        qtees = wdao.getQueueTypesByQueue(23);
+        qtees = wdao.getQueueTypesByQueue(17);
 
         String[] districts = new String[]{"AGBARA",
             "APAPA", "FESTAC", "IBEJU", "IJORA", "LEKKI", "MUSHIN", "ISLANDS", "OJO", "ORILE"};

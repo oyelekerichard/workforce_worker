@@ -176,7 +176,7 @@ public class WorkOrderDao extends AbstractDao<Integer, WorkOrder> {
     }
 
     public BigDecimal getWorkOrderByStatusAndDistrict(String status, String district, String reportedBy) {
-        StringBuilder sb = new StringBuilder("select * from work_order where queue_id =  17");
+        StringBuilder sb = new StringBuilder("select count(*) from work_order where queue_id =  17");
         if (status != null) {
             sb.append(String.format(" and current_status = '%s'", status));
         }
@@ -216,7 +216,8 @@ public class WorkOrderDao extends AbstractDao<Integer, WorkOrder> {
    
     public BigDecimal getBarWidgetData(int queueTypeId, String conName, String district) {
         StringBuilder sb = new 
-        StringBuilder(String.format("select * from work_order where queue_type_id = %d", queueTypeId));
+        StringBuilder(String.format("select count(*)"
+                + " from work_order where queue_type_id = %d", queueTypeId));
    
 
         if (district != null) {
