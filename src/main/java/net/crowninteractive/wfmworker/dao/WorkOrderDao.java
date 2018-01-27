@@ -177,7 +177,7 @@ public class WorkOrderDao extends AbstractDao<Integer, WorkOrder> {
     }
 
     public BigInteger getWorkOrderByStatusAndDistrict(String status, String district, String reportedBy) {
-        StringBuilder sb = new StringBuilder("select count(*) from work_order where queue_id =  17");
+        StringBuilder sb = new StringBuilder("select if(count(*),0) from work_order where queue_id =  17");
         if (status != null) {
             sb.append(String.format(" and current_status = '%s'", status));
         }
@@ -217,7 +217,7 @@ public class WorkOrderDao extends AbstractDao<Integer, WorkOrder> {
    
     public BigInteger getBarWidgetData(int queueTypeId, String conName, String district) {
         StringBuilder sb = new 
-        StringBuilder(String.format("select count(*)"
+        StringBuilder(String.format("select ifnull(count(*),0)"
                 + " from work_order where queue_type_id = %d", queueTypeId));
    
 
@@ -239,7 +239,7 @@ public class WorkOrderDao extends AbstractDao<Integer, WorkOrder> {
     
     
     public List<BigInteger> getTotalCount(){
-      return (List<BigInteger>)getEntityManager().createNativeQuery("select count(*) from work_order where "
+      return (List<BigInteger>)getEntityManager().createNativeQuery("select ifnull(count(*),0) from work_order where "
                + "current_status = 'OPEN' or current_status= 'CLOSED' group by current_status").getResultList();
         
     }
