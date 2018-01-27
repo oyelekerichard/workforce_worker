@@ -8,6 +8,7 @@ package net.crowninteractive.wfmworker.entity;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonInclude.Include;
 import java.math.BigDecimal;
+import java.math.BigInteger;
 
 /**
  *
@@ -20,13 +21,13 @@ public class LowerWidget {
     private String districtName;
     @JsonInclude(Include.NON_NULL)
     private String reportedBy;
-    private BigDecimal closed;
-    private BigDecimal open;
+    private BigInteger closed;
+    private BigInteger open;
 
     public LowerWidget() {
     }
 
-    public LowerWidget(String districtName, BigDecimal closed, BigDecimal open) {
+    public LowerWidget(String districtName, BigInteger closed, BigInteger open) {
         this.districtName = districtName;
         this.closed = closed;
         this.open = open;
@@ -42,19 +43,19 @@ public class LowerWidget {
         this.districtName = districtName;
     }
 
-    public BigDecimal getClosed() {
+    public BigInteger getClosed() {
         return closed;
     }
 
-    public void setClosed(BigDecimal closed) {
+    public void setClosed(BigInteger closed) {
         this.closed = closed;
     }
 
-    public BigDecimal getOpen() {
+    public BigInteger getOpen() {
         return open;
     }
 
-    public void setOpen(BigDecimal open) {
+    public void setOpen(BigInteger open) {
         this.open = open;
     }
 

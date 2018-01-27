@@ -9,6 +9,7 @@ import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import java.io.IOException;
 import java.math.BigDecimal;
+import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -179,7 +180,7 @@ public class EnumService {
                 int queueTypeId = qs.getQueueTypeId();
                 String conName = c.get(i).getConsultant() != null ? c.get(i).getConsultant() : null;
                 String district = c.get(i).getDistrict() != null ? c.get(i).getDistrict() : null;
-                BigDecimal wcount = wdao.getBarWidgetData(queueTypeId, conName, district);
+                BigInteger wcount = wdao.getBarWidgetData(queueTypeId, conName, district);
                 qs.setWorkOrderCount(wcount);
             }
 
@@ -196,9 +197,9 @@ public class EnumService {
 
             String name = ds.get(size).getDistrictName() != null ? ds.get(size).getDistrictName() : null;
             String reportedBy = ds.get(size).getReportedBy() != null ? ds.get(size).getReportedBy() : null;
-            BigDecimal openCount
+            BigInteger openCount
                     = wdao.getWorkOrderByStatusAndDistrict("OPEN", name, reportedBy);
-            BigDecimal closedCount
+            BigInteger closedCount
                     = wdao.getWorkOrderByStatusAndDistrict("CLOSED", name, reportedBy);
             LowerWidget dw = ds.get(size);
             dw.setOpen(openCount);

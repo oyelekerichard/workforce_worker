@@ -5,7 +5,7 @@
  */
 package net.crowninteractive.wfmworker.dao;
 
-import java.math.BigDecimal;
+import java.math.BigInteger;
 
 /**
  *
@@ -14,15 +14,15 @@ import java.math.BigDecimal;
 public class QueueTypeData {
     private Integer queueTypeId;
     private String queueTypeName;
-    private BigDecimal workOrderCount;
+    private BigInteger workOrderCount;
 
    
 
-    public BigDecimal getWorkOrderCount() {
+    public BigInteger getWorkOrderCount() {
         return workOrderCount;
     }
 
-    public void setWorkOrderCount(BigDecimal workOrderCount) {
+    public void setWorkOrderCount(BigInteger workOrderCount) {
         this.workOrderCount = workOrderCount;
     }
 

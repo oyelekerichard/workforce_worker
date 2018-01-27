@@ -8,6 +8,7 @@ package net.crowninteractive.wfmworker.dao;
 
 //~--- non-JDK imports --------------------------------------------------------
 import java.math.BigDecimal;
+import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.Date;
 import net.crowninteractive.wfmworker.entity.WorkOrder;
@@ -175,7 +176,7 @@ public class WorkOrderDao extends AbstractDao<Integer, WorkOrder> {
         return w.getTicketId();
     }
 
-    public BigDecimal getWorkOrderByStatusAndDistrict(String status, String district, String reportedBy) {
+    public BigInteger getWorkOrderByStatusAndDistrict(String status, String district, String reportedBy) {
         StringBuilder sb = new StringBuilder("select count(*) from work_order where queue_id =  17");
         if (status != null) {
             sb.append(String.format(" and current_status = '%s'", status));
@@ -190,10 +191,10 @@ public class WorkOrderDao extends AbstractDao<Integer, WorkOrder> {
         }
 
         try {
-            BigDecimal bd = (BigDecimal) this.getEntityManager().createNativeQuery(sb.toString()).getSingleResult();
+            BigInteger bd = (BigInteger) this.getEntityManager().createNativeQuery(sb.toString()).getSingleResult();
             return bd;
         } catch (NoResultException no) {
-            return BigDecimal.ZERO;
+            return BigInteger.ZERO;
         }
 
     }
@@ -214,7 +215,7 @@ public class WorkOrderDao extends AbstractDao<Integer, WorkOrder> {
 
    
    
-    public BigDecimal getBarWidgetData(int queueTypeId, String conName, String district) {
+    public BigInteger getBarWidgetData(int queueTypeId, String conName, String district) {
         StringBuilder sb = new 
         StringBuilder(String.format("select count(*)"
                 + " from work_order where queue_type_id = %d", queueTypeId));
@@ -229,10 +230,10 @@ public class WorkOrderDao extends AbstractDao<Integer, WorkOrder> {
         }
 
         try {
-            BigDecimal bd = (BigDecimal) this.getEntityManager().createNativeQuery(sb.toString()).getSingleResult();
+            BigInteger bd = (BigInteger) this.getEntityManager().createNativeQuery(sb.toString()).getSingleResult();
             return bd;
         } catch (NoResultException no) {
-            return BigDecimal.ZERO;
+            return BigInteger.ZERO;
         }
     }
     
