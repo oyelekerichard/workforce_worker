@@ -59,6 +59,7 @@ public class EnumService {
             statusByDistrict.add(dss);
             BarChartWidget cbd = new BarChartWidget();
             cbd.setDistrict(d);
+            cbd.setQueueData(qtees);
             dataByDistrict.add(cbd);
 
         }
