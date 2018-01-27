@@ -19,7 +19,6 @@ import net.crowninteractive.wfmworker.dao.QueueTypeData;
 import net.crowninteractive.wfmworker.dao.WorkOrderDao;
 import net.crowninteractive.wfmworker.entity.Dashboard;
 import net.crowninteractive.wfmworker.entity.LowerWidget;
-import net.crowninteractive.wfmworker.entity.QueueType;
 import net.crowninteractive.wfmworker.entity.WorkOrderTemp;
 import net.crowninteractive.wfmworker.misc.Config;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -38,11 +37,11 @@ public class EnumService {
     private WorkOrderDao wdao;
 
     private List<QueueTypeData> qtees;
-    private List<LowerWidget> statusByDistrict;
-    private List<LowerWidget> statusByConsultant;
-    private List<BarChartWidget> dataByDistrict;
-    private List<BarChartWidget> dataByConsultant;
-    private List<QueueTypeData> qd;
+    private List<LowerWidget> statusByDistrict = new ArrayList();
+    private List<LowerWidget> statusByConsultant  = new ArrayList();
+    private List<BarChartWidget> dataByDistrict  = new ArrayList();
+    private List<BarChartWidget> dataByConsultant  = new ArrayList();
+    private List<QueueTypeData> qd  = new ArrayList();
 
     @PostConstruct
     public void initQueueTypes() {
