@@ -21,6 +21,7 @@ import net.crowninteractive.wfmworker.dao.WorkOrderDao;
 import net.crowninteractive.wfmworker.entity.Dashboard;
 import net.crowninteractive.wfmworker.entity.LowerWidget;
 import net.crowninteractive.wfmworker.entity.WorkOrderTemp;
+import net.crowninteractive.wfmworker.exception.WfmWorkerException;
 import net.crowninteractive.wfmworker.misc.Config;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -39,10 +40,10 @@ public class EnumService {
 
     private List<QueueTypeData> qtees;
     private List<LowerWidget> statusByDistrict = new ArrayList();
-    private List<LowerWidget> statusByConsultant  = new ArrayList();
-    private List<BarChartWidget> dataByDistrict  = new ArrayList();
-    private List<BarChartWidget> dataByConsultant  = new ArrayList();
-    private List<QueueTypeData> qd  = new ArrayList();
+    private List<LowerWidget> statusByConsultant = new ArrayList();
+    private List<BarChartWidget> dataByDistrict = new ArrayList();
+    private List<BarChartWidget> dataByConsultant = new ArrayList();
+    private List<QueueTypeData> qd = new ArrayList();
 
     @PostConstruct
     public void initQueueTypes() {
@@ -166,7 +167,7 @@ public class EnumService {
         }
 
         List<BigInteger> res = wdao.getTotalCount();
-        
+
         bss.setTotalClosed(res.get(0));
         bss.setTotalOpened(res.get(1));
 
@@ -210,6 +211,12 @@ public class EnumService {
             lowerWidget(ds, size);
         }
 
+    }
+
+    public void updateEnumWorkOrder(Map<String, String> update) throws WfmWorkerException {
+        String ticketId = update.get("ticket_id");
+        String status = update.get("status");
+        WorkOrderTemp wot = wdao.getEnumWorkOrderByTicketId(Integer.parseInt(ticketId));
     }
 
 }

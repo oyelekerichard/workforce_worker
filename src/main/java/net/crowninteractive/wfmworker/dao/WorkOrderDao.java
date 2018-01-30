@@ -7,7 +7,6 @@
 package net.crowninteractive.wfmworker.dao;
 
 //~--- non-JDK imports --------------------------------------------------------
-import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.Date;
@@ -21,6 +20,7 @@ import javax.persistence.NoResultException;
 import javax.persistence.Query;
 import net.crowninteractive.wfmworker.entity.QueueType;
 import net.crowninteractive.wfmworker.entity.WorkOrderTemp;
+import net.crowninteractive.wfmworker.exception.WfmWorkerException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -242,6 +242,19 @@ public class WorkOrderDao extends AbstractDao<Integer, WorkOrder> {
       return (List<BigInteger>)getEntityManager().createNativeQuery("select ifnull(count(*),0) from work_order where "
                + "current_status = 'OPEN' or current_status= 'CLOSED' group by current_status").getResultList();
         
+    }
+
+    public WorkOrderTemp getEnumWorkOrderByTicketId(int ticketId) throws WfmWorkerException {
+        WorkOrderTemp wot = null;
+         try{ wot =  (WorkOrderTemp)getEntityManager().
+                createNativeQuery(String.
+                        format("select * from work_order_temp where ticket id = %d", 
+                                ticketId),WorkOrderTemp.class ).getSingleResult();
+         
+         }catch(NoResultException nre){
+             throw new WfmWorkerException("workorder ticket id doesnt exist ");
+         }
+        return wot;
     }
 
 }

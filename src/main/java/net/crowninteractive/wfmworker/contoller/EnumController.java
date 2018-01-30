@@ -5,7 +5,11 @@
  */
 package net.crowninteractive.wfmworker.contoller;
 
+import java.util.Map;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import net.crowninteractive.wfmworker.entity.Dashboard;
+import net.crowninteractive.wfmworker.exception.WfmWorkerException;
 import net.crowninteractive.wfmworker.service.EnumService;
 import net.crowninteractive.wfmworker.service.Token;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -47,6 +51,18 @@ public class EnumController {
             @RequestParam(value = "showWidget1", required = false) String flag2) {
         Dashboard d = enumService.getDashboard(startDate, endDate,flag1,flag2);
         return new ResponseEntity<Dashboard>(d, HttpStatus.OK);
+    }
+    
+    @RequestMapping(method = RequestMethod.POST, value = "updateWorkOrder")
+    public ResponseEntity updateEnumerationWorkOrder(@RequestBody Map<String,String>update) {
+        try {
+            enumService.updateEnumWorkOrder(update);
+        } catch (WfmWorkerException ex) {
+            
+            Logger.getLogger(EnumController.class.getName()).log(Level.SEVERE, null, ex);
+            return new ResponseEntity<String>(ex.getMessage(), HttpStatus.BAD_REQUEST);
+        }
+        return new ResponseEntity<String>("enum work order update successful ", HttpStatus.OK);
     }
     
 
