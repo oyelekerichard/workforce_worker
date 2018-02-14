@@ -160,9 +160,11 @@ public class EnumService {
         if (flag2 != null) {
 
             barWidgetData(dataByConsultant, 0);
+            bss.setConData(dataByConsultant);
         } else {
 
             barWidgetData(dataByDistrict, 0);
+            bss.setConData(dataByDistrict);
 
         }
 
@@ -170,6 +172,7 @@ public class EnumService {
 
         bss.setTotalClosed(res.get(0));
         bss.setTotalOpened(res.get(1));
+       
 
         //Graph Data
         return bss;

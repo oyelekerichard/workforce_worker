@@ -1,6 +1,8 @@
 package net.crowninteractive.wfmworker.service;
 
+import java.io.BufferedReader;
 import java.io.IOException;
+import java.io.InputStreamReader;
 import java.security.KeyManagementException;
 import java.security.NoSuchAlgorithmException;
 import java.security.cert.X509Certificate;
@@ -12,6 +14,10 @@ import javax.net.ssl.SSLContext;
 import javax.net.ssl.TrustManager;
 import javax.net.ssl.X509TrustManager;
 import net.crowninteractive.wfmworker.misc.Config;
+import org.apache.http.HttpResponse;
+import org.apache.http.client.methods.HttpGet;
+import org.apache.http.impl.client.CloseableHttpClient;
+import org.apache.http.impl.client.HttpClients;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.web.util.UriComponentsBuilder;
 
@@ -19,6 +25,8 @@ import org.springframework.web.util.UriComponentsBuilder;
  * @author Charlee
  */
 public class HttpQuery {
+    
+     private static final Config c = Config.getInstance();
 
     static {
         disableSslVerification();
@@ -55,6 +63,31 @@ public class HttpQuery {
         } catch (KeyManagementException e) {
             e.printStackTrace();
         }
+    }
+
+    public String getCustomerDetails(String billingID, String type) throws IOException {
+    
+         CloseableHttpClient httpclient = HttpClients.createDefault();
+        HashMap<String, String> queryparams = new HashMap<>();
+
+        if (type.toLowerCase().equals("a")) {
+            queryparams.put("accountNumber", billingID);
+
+        } else {
+            queryparams.put("meterNumber", billingID);
+        }
+        String url = URLBuilder.queryURLBuilder(c.getEMCCGetCustomerDetailsURL(), queryparams);
+        HttpGet httpGet = new HttpGet(url);
+        httpGet.addHeader("Content-Type", "application/json");
+        HttpResponse response = httpclient.execute(httpGet);
+        StringBuilder sb = new StringBuilder();
+        String line;
+        BufferedReader br = new BufferedReader(new InputStreamReader(response.getEntity().getContent()));
+        while ((line = br.readLine()) != null) {
+            sb.append(line);
+        }
+        System.out.println("string resp:  " + sb.toString());
+        return (sb.toString());
     }
 
     

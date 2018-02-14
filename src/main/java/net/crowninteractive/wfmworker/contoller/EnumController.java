@@ -25,6 +25,7 @@ import org.springframework.web.bind.annotation.RestController;
  *
  * @author johnson3yo
  */
+
 @RestController
 @RequestMapping("/enum")
 public class EnumController {

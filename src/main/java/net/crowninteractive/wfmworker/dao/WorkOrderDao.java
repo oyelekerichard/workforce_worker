@@ -19,8 +19,11 @@ import java.util.List;
 import javax.persistence.NoResultException;
 import javax.persistence.Query;
 import net.crowninteractive.wfmworker.entity.QueueType;
+import net.crowninteractive.wfmworker.entity.Users;
+import net.crowninteractive.wfmworker.entity.WorkOrderRemark;
 import net.crowninteractive.wfmworker.entity.WorkOrderTemp;
 import net.crowninteractive.wfmworker.exception.WfmWorkerException;
+import org.apache.commons.lang3.RandomStringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -33,6 +36,8 @@ public class WorkOrderDao extends AbstractDao<Integer, WorkOrder> {
 
     @Autowired
     private WorkOrderTempDap temp;
+    @Autowired
+    private WorkOrderRemarkDao wora;
 
     public int ticketCount() {
         Integer max = (Integer) getEntityManager()
@@ -42,6 +47,30 @@ public class WorkOrderDao extends AbstractDao<Integer, WorkOrder> {
 
     public WorkOrder findById(int id) {
         String query = String.format("select * from work_order where id=?1");
+        List<WorkOrder> options = getEntityManager().createNativeQuery(query, WorkOrder.class).setParameter(1,
+                id).getResultList();
+
+        if ((options != null) && !options.isEmpty()) {
+            return options.get(0);
+        } else {
+            return null;
+        }
+    }
+    
+    public Users findUserById(int id) {
+        String query = String.format("select * from users where id=?1");
+        List<Users> options = getEntityManager().createNativeQuery(query, Users.class).setParameter(1,
+                id).getResultList();
+
+        if ((options != null) && !options.isEmpty()) {
+            return options.get(0);
+        } else {
+            return null;
+        }
+    }
+    
+     public WorkOrder findByTicketId(int id) {
+        String query = String.format("select * from work_order where ticket_id=?1");
         List<WorkOrder> options = getEntityManager().createNativeQuery(query, WorkOrder.class).setParameter(1,
                 id).getResultList();
 
@@ -177,7 +206,7 @@ public class WorkOrderDao extends AbstractDao<Integer, WorkOrder> {
     }
 
     public BigInteger getWorkOrderByStatusAndDistrict(String status, String district, String reportedBy) {
-        StringBuilder sb = new StringBuilder("select if(count(*),0) from work_order where queue_id =  17");
+        StringBuilder sb = new StringBuilder("select ifnull(count(*),0) from work_order where queue_id =  17");
         if (status != null) {
             sb.append(String.format(" and current_status = '%s'", status));
         }
@@ -200,11 +229,10 @@ public class WorkOrderDao extends AbstractDao<Integer, WorkOrder> {
     }
 
     public List<QueueTypeData> getQueueTypesByQueue(int id) {
-        List<QueueType> qt = getEntityManager().createNativeQuery
-        (String.format("select * from queue_type where queue_id = %d", id),
+        List<QueueType> qt = getEntityManager().createNativeQuery(String.format("select * from queue_type where queue_id = %d", id),
                 QueueType.class).getResultList();
         List<QueueTypeData> qs = new ArrayList();
-        for(QueueType qtd : qt){
+        for (QueueType qtd : qt) {
             QueueTypeData qp = new QueueTypeData();
             qp.setQueueTypeId(qtd.getId());
             qp.setQueueTypeName(qtd.getName());
@@ -213,13 +241,9 @@ public class WorkOrderDao extends AbstractDao<Integer, WorkOrder> {
         return qs;
     }
 
-   
-   
     public BigInteger getBarWidgetData(int queueTypeId, String conName, String district) {
-        StringBuilder sb = new 
-        StringBuilder(String.format("select ifnull(count(*),0)"
+        StringBuilder sb = new StringBuilder(String.format("select ifnull(count(*),0)"
                 + " from work_order where queue_type_id = %d", queueTypeId));
-   
 
         if (district != null) {
             sb.append(String.format(" and business_unit = '%s'", district));
@@ -236,25 +260,105 @@ public class WorkOrderDao extends AbstractDao<Integer, WorkOrder> {
             return BigInteger.ZERO;
         }
     }
-    
-    
-    public List<BigInteger> getTotalCount(){
-      return (List<BigInteger>)getEntityManager().createNativeQuery("select ifnull(count(*),0) from work_order where "
-               + "current_status = 'OPEN' or current_status= 'CLOSED' group by current_status").getResultList();
-        
+
+    public List<BigInteger> getTotalCount() {
+        return (List<BigInteger>) getEntityManager().createNativeQuery("select ifnull(count(*),0) from work_order where "
+                + "current_status = 'OPEN' or current_status= 'CLOSED' group by current_status").getResultList();
+
     }
 
     public WorkOrderTemp getEnumWorkOrderByTicketId(int ticketId) throws WfmWorkerException {
         WorkOrderTemp wot = null;
-         try{ wot =  (WorkOrderTemp)getEntityManager().
-                createNativeQuery(String.
-                        format("select * from work_order_temp where ticket id = %d", 
-                                ticketId),WorkOrderTemp.class ).getSingleResult();
-         
-         }catch(NoResultException nre){
-             throw new WfmWorkerException("workorder ticket id doesnt exist ");
-         }
+        try {
+            wot = (WorkOrderTemp) getEntityManager().
+                    createNativeQuery(String.
+                            format("select * from work_order_temp where ticket id = %d",
+                                    ticketId), WorkOrderTemp.class).getSingleResult();
+
+        } catch (NoResultException nre) {
+            throw new WfmWorkerException("workorder ticket id doesnt exist ");
+        }
         return wot;
+    }
+
+    public QueueType getEmccConfigDisconnectQueueTypeAndQueue() {
+        QueueType qt = null;
+
+        try {
+            qt = (QueueType) getEntityManager().
+                    createNativeQuery("select * from queue_type where token=(select config_value "
+                            + "from emcc_config where config_key='disconnect_queue_type')",
+                            QueueType.class).getSingleResult();
+
+        } catch (NoResultException nre) {
+            return null;
+        }
+        return qt;
+
+    }
+
+    public int createWorkOrder(QueueType qt, String string, String string0, String businessUnit, String summary, String description, String phone, String city, String address, String tarriff, String billingID, String emcc, String string1, String string2, String reportedBy, String customername) {
+        WorkOrder wo = new WorkOrder();
+        wo.setBusinessUnit(businessUnit);
+        wo.setAddressLine1(address);
+        wo.setAddressLine2(address);
+        wo.setQueueId(qt.getQueueId());
+        wo.setQueueTypeId(qt);
+        wo.setTicketId(ticketCount());
+        wo.setContactNumber(phone);
+        wo.setCustomerName(customername);
+        wo.setOwnerId(1);
+        wo.setReportedBy(reportedBy);
+        wo.setCreateTime(new Date());
+        wo.setCurrentStatus("OPEN");
+        wo.setCustomerTariff(tarriff);
+        wo.setCity(city);
+        wo.setPriority("Low");
+        wo.setReferenceType("Billing ID");
+        wo.setReferenceTypeData(billingID);
+        wo.setState("Lagos");
+        wo.setSummary(summary);
+        wo.setToken((String)getUniqueWorkOrderToken());
+        wo.setChannel("EMCC");
+
+        WorkOrder w = save(wo);
+        return w.getTicketId();
+    }
+
+    public void addRemark(String emcc, String ticketId, String comment, String string) {
+        WorkOrderRemark wor = new WorkOrderRemark();
+        wor.setComment(comment);
+        wor.setChannel(emcc);
+        wor.setToken(RandomStringUtils.randomAlphanumeric(30));
+        wor.setWorkOrderId(findByTicketId(Integer.parseInt(ticketId)));
+        wor.setCreateTime(new Date());
+        wor.setCreatedBy(findUserById(1));
+        wor.setCreatedByName(findUserById(1).getFirstname());
+        wora.save(wor);
+    }
+
+    public List<WorkOrder> getLastWorkOrderinQueueType(String billingId, Integer queueTypeId) {
+
+        String sql = String.format("select * from work_order where reference_type_data = '%s'  and (current_status != '%s' or is_closed = %d) and queue_type_id = %d order by id desc limit 1", billingId,
+                "CLOSED", 0, queueTypeId);
+        System.out.println(">>>>>>>>>Sql >>>>>>>>>>>>>>>>>>" + sql);
+        return (List<WorkOrder>) getEntityManager().createNativeQuery(sql).getResultList();
+
+    }
+
+    private Object getUniqueWorkOrderToken() {
+        String token = RandomStringUtils.randomAlphanumeric(30);
+        try {
+            WorkOrder o = (WorkOrder) getEntityManager().
+                    createNativeQuery(String.format("select * from work_order where token='%s'", token, WorkOrder.class)).getSingleResult();
+            if (o != null) {
+                return getUniqueWorkOrderToken();
+            } else {
+                return token;
+            }
+        } catch (NoResultException no) {
+            return null;
+        }
     }
 
 }
