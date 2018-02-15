@@ -318,7 +318,7 @@ public class WorkOrderDao extends AbstractDao<Integer, WorkOrder> {
         wo.setReferenceTypeData(billingID);
         wo.setState("Lagos");
         wo.setSummary(summary);
-        wo.setToken((String)getUniqueWorkOrderToken());
+        wo.setToken(RandomStringUtils.randomAlphanumeric(30));
         wo.setChannel("EMCC");
 
         WorkOrder w = save(wo);
@@ -342,7 +342,7 @@ public class WorkOrderDao extends AbstractDao<Integer, WorkOrder> {
         String sql = String.format("select * from work_order where reference_type_data = '%s'  and (current_status != '%s' or is_closed = %d) and queue_type_id = %d order by id desc limit 1", billingId,
                 "CLOSED", 0, queueTypeId);
         System.out.println(">>>>>>>>>Sql >>>>>>>>>>>>>>>>>>" + sql);
-        return (List<WorkOrder>) getEntityManager().createNativeQuery(sql).getResultList();
+        return getEntityManager().createNativeQuery(sql,WorkOrder.class).getResultList();
 
     }
 
