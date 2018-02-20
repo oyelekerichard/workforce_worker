@@ -16,6 +16,7 @@ import org.springframework.stereotype.Component;
 
 //~--- JDK imports ------------------------------------------------------------
 import java.util.List;
+import java.util.Map;
 import javax.persistence.NoResultException;
 import javax.persistence.Query;
 import net.crowninteractive.wfmworker.entity.QueueType;
@@ -56,7 +57,7 @@ public class WorkOrderDao extends AbstractDao<Integer, WorkOrder> {
             return null;
         }
     }
-    
+
     public Users findUserById(int id) {
         String query = String.format("select * from users where id=?1");
         List<Users> options = getEntityManager().createNativeQuery(query, Users.class).setParameter(1,
@@ -68,8 +69,8 @@ public class WorkOrderDao extends AbstractDao<Integer, WorkOrder> {
             return null;
         }
     }
-    
-     public WorkOrder findByTicketId(int id) {
+
+    public WorkOrder findByTicketId(int id) {
         String query = String.format("select * from work_order where ticket_id=?1");
         List<WorkOrder> options = getEntityManager().createNativeQuery(query, WorkOrder.class).setParameter(1,
                 id).getResultList();
@@ -341,8 +342,7 @@ public class WorkOrderDao extends AbstractDao<Integer, WorkOrder> {
 
         String sql = String.format("select * from work_order where reference_type_data = '%s'  and (current_status != '%s' or is_closed = %d) and queue_type_id = %d order by id desc limit 1", billingId,
                 "CLOSED", 0, queueTypeId);
-        System.out.println(">>>>>>>>>Sql >>>>>>>>>>>>>>>>>>" + sql);
-        return getEntityManager().createNativeQuery(sql,WorkOrder.class).getResultList();
+        return getEntityManager().createNativeQuery(sql, WorkOrder.class).getResultList();
 
     }
 
@@ -359,6 +359,37 @@ public class WorkOrderDao extends AbstractDao<Integer, WorkOrder> {
         } catch (NoResultException no) {
             return null;
         }
+    }
+
+    public void getData(Map<String,String>map,List<QueueTypeData> qtees, String con, String dis) {
+
+       
+        
+        if (con != null) {
+            for (int q = 0; q < qtees.size(); q++) {
+                QueueTypeData qt = qtees.get(q);              
+                String sql = String.format("select count(*)from work_order "
+                        + "where queue_type_id = %d and reported_by = '%s' ", qt.getQueueTypeId(), con);
+               
+              BigInteger count = (BigInteger) this.getEntityManager().createNativeQuery(sql).getSingleResult();  
+               
+               map.put(qt.getQueueTypeName(), count.toString());
+            }
+
+        } else {
+            for (int q = 0; q < qtees.size(); q++) {
+                QueueTypeData qt = qtees.get(q);
+                String sql = String.format("select count(*)from work_order "
+                        + "where queue_type_id = %d and business_unit = '%s' ", qt.getQueueTypeId(), dis);
+               BigInteger count = (BigInteger) this.getEntityManager().createNativeQuery(sql).getSingleResult(); 
+             
+               map.put(qt.getQueueTypeName(), count.toString());
+            }
+        }
+
+       
+      
+
     }
 
 }

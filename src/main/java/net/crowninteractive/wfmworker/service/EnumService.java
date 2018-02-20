@@ -8,7 +8,6 @@ package net.crowninteractive.wfmworker.service;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import java.io.IOException;
-import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -16,6 +15,7 @@ import java.util.List;
 import java.util.Map;
 import javax.annotation.PostConstruct;
 import net.crowninteractive.wfmworker.dao.BarChartWidget;
+import net.crowninteractive.wfmworker.dao.BarChartWidget_1;
 import net.crowninteractive.wfmworker.dao.QueueTypeData;
 import net.crowninteractive.wfmworker.dao.WorkOrderDao;
 import net.crowninteractive.wfmworker.entity.Dashboard;
@@ -41,10 +41,12 @@ public class EnumService {
     private List<QueueTypeData> qtees;
     private List<LowerWidget> statusByDistrict = new ArrayList();
     private List<LowerWidget> statusByConsultant = new ArrayList();
-    private List<BarChartWidget> dataByDistrict = new ArrayList();
-    private List<BarChartWidget> dataByConsultant = new ArrayList();
+   
     private List<QueueTypeData> qd = new ArrayList();
-
+    private List<Map<String, String>> cslts = new ArrayList();
+     private List<Map<String, String>> dstrts = new ArrayList();
+    
+    
     @PostConstruct
     public void initQueueTypes() {
         qtees = wdao.getQueueTypesByQueue(17);
@@ -58,21 +60,20 @@ public class EnumService {
             LowerWidget dss = new LowerWidget();
             dss.getDistrictName(d);
             statusByDistrict.add(dss);
-            BarChartWidget cbd = new BarChartWidget();
-            cbd.setDistrict(d);
-            cbd.setQueueData(qtees);
-            dataByDistrict.add(cbd);
-
+            BarChartWidget_1 cbd = new BarChartWidget_1();
+            Map<String,String>field = new HashMap();
+            field.put("district", d);
+            dstrts.add(field);
         }
 
         for (String e : consultants) {
             LowerWidget dss = new LowerWidget();
             dss.setReportedBy(e);
             statusByConsultant.add(dss);
-            BarChartWidget cbd = new BarChartWidget();
-            cbd.setQueueData(qtees);
-            cbd.setConsultant(e);
-            dataByConsultant.add(cbd);
+            BarChartWidget_1 bbd = new BarChartWidget_1();
+            Map<String,String>field = new HashMap();
+            field.put("consultant", e);
+            cslts.add(field);
         }
 
     }
@@ -159,12 +160,12 @@ public class EnumService {
 
         if (flag2 != null) {
 
-            barWidgetData(dataByConsultant, 0);
-            bss.setConData(dataByConsultant);
+            barWidgetData(cslts, 0);
+            bss.setConsultants(cslts);
         } else {
 
-            barWidgetData(dataByDistrict, 0);
-            bss.setConData(dataByDistrict);
+            barWidgetData(dstrts, 0);
+            bss.setDistricts(dstrts);
 
         }
 
@@ -172,24 +173,19 @@ public class EnumService {
 
         bss.setTotalClosed(res.get(0));
         bss.setTotalOpened(res.get(1));
-       
 
         //Graph Data
         return bss;
     }
 
-    public void barWidgetData(List<BarChartWidget> c, int i) {
+    public void barWidgetData(List<Map<String, String>> c, int i) {
         if (i == c.size() - 1) {
             return;
         } else {
-            for (QueueTypeData qs : c.get(i).getQueueData()) {
-                int queueTypeId = qs.getQueueTypeId();
-                String conName = c.get(i).getConsultant() != null ? c.get(i).getConsultant() : null;
-                String district = c.get(i).getDistrict() != null ? c.get(i).getDistrict() : null;
-                BigInteger wcount = wdao.getBarWidgetData(queueTypeId, conName, district);
-                qs.setWorkOrderCount(wcount);
-            }
-
+            Map<String, String> get = c.get(i);
+            String con = get.get("consultant");
+            String dis = get.get("district");
+            wdao.getData(get,qtees, con, dis);           
             i++;
             barWidgetData(c, i);
         }

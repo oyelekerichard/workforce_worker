@@ -5,11 +5,13 @@
  */
 package net.crowninteractive.wfmworker.entity;
 
-import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import net.crowninteractive.wfmworker.dao.BarChartWidget;
+import net.crowninteractive.wfmworker.dao.BarChartWidget_1;
 
 /**
  *
@@ -19,11 +21,13 @@ public class Dashboard {
 
     public Dashboard() {
     }
-     
+
     private List<LowerWidget> districtStatuses = new ArrayList();
-    private List<BarChartWidget>conData = new ArrayList();
+
     private BigInteger totalClosed;
     private BigInteger totalOpened;
+    private List<Map<String, String>> consultants = new ArrayList();
+    private List<Map<String, String>> districts = new ArrayList();
 
     public List<LowerWidget> getDistrictStatuses() {
         return districtStatuses;
@@ -31,14 +35,6 @@ public class Dashboard {
 
     public void setDistrictStatuses(List<LowerWidget> districtStatuses) {
         this.districtStatuses = districtStatuses;
-    }
-
-    public List<BarChartWidget> getConData() {
-        return conData;
-    }
-
-    public void setConData(List<BarChartWidget> conData) {
-        this.conData = conData;
     }
 
     public BigInteger getTotalClosed() {
@@ -56,10 +52,25 @@ public class Dashboard {
     public void setTotalOpened(BigInteger totalOpened) {
         this.totalOpened = totalOpened;
     }
+
+    public List<Map<String, String>> getConsultants() {
+        return consultants;
+    }
+
+    public void setConsultants(List<Map<String, String>> consultants) {
+        this.consultants = consultants;
+    }
+
+    public List<Map<String, String>> getDistricts() {
+        return districts;
+    }
+
+    public void setDistricts(List<Map<String, String>> districts) {
+        this.districts = districts;
+    }
+
     
     
     
-    
-    
-    
+
 }
