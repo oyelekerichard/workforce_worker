@@ -48,12 +48,12 @@ public class WorkOrderService {
             //fetch queueTypeToken
             QueueType qt = wdao.getEmccConfigDisconnectQueueTypeAndQueue();
             if (qt != null) {
-
+                int ticketId = 0;
                 List<WorkOrder> wo = wdao.getLastWorkOrderinQueueType(billingID, qt.getId());
                 if (wo != null) {
 
                     if (wo.size() == 0) {
-                        int ticketId = wdao.createWorkOrder(qt, "", "1", businessUnit, summary, description, phone, city, address, tarriff, billingID, "EMCC", "", "", reportedBy, customername);
+                        ticketId = wdao.createWorkOrder(qt, "", "1", businessUnit, summary, description, phone, city, address, tarriff, billingID, "EMCC", "", "", reportedBy, customername);
                         return StandardResponse.ok(ticketId);
                     } else {
                         String comment = String.format("A %s charge of %s with  has been charged to this account.",
@@ -63,12 +63,12 @@ public class WorkOrderService {
                         System.out.println("adding remarks");
                         wdao.addRemark("Emcc", String.valueOf(wor.getTicketId()), comment, "1");
 
-                        return StandardResponse.ok();
+                        return StandardResponse.ok(ticketId);
                     }
 
                 } else {
-                    int ticketId = wdao.createWorkOrder(qt, "", "1", businessUnit, summary, description, phone, city, address, tarriff, billingID, "EMCC", "", "", reportedBy, customername);
-                    return StandardResponse.ok(ticketId);
+                    int tid = wdao.createWorkOrder(qt, "", "1", businessUnit, summary, description, phone, city, address, tarriff, billingID, "EMCC", "", "", reportedBy, customername);
+                    return StandardResponse.ok(tid);
 
                 }
             } else {
