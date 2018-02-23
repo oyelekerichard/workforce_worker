@@ -78,6 +78,7 @@ public class WorkOrderDao extends AbstractDao<Integer, WorkOrder> {
         if ((options != null) && !options.isEmpty()) {
             return options.get(0);
         } else {
+            System.out.println(">>>>>>WOrk ticjet id is null >>>>>>>>>>>>>>>>>>>>>>..");
             return null;
         }
     }
@@ -331,12 +332,15 @@ public class WorkOrderDao extends AbstractDao<Integer, WorkOrder> {
         wor.setComment(comment);
         wor.setChannel(emcc);
         wor.setToken(RandomStringUtils.randomAlphanumeric(30));
-        wor.setWorkOrderId(findByTicketId(Integer.parseInt(ticketId)));
+        WorkOrder w = findByTicketId(Integer.parseInt(ticketId));
+        wor.setWorkOrderId(w);
+        w.getWorkOrderRemarkList().add(wor);    
         wor.setCreateTime(new Date());
         wor.setCreatedBy(findUserById(1));
         wor.setCreatedByName(findUserById(1).getFirstname());
         wora.save(wor);
     }
+    
 
     public List<WorkOrder> getLastWorkOrderinQueueType(String billingId, Integer queueTypeId) {
 

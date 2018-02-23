@@ -6,6 +6,7 @@
 package net.crowninteractive.wfmworker.entity;
 
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import javax.persistence.Basic;
@@ -257,9 +258,9 @@ public class WorkOrder implements Serializable {
     @ManyToOne
     private WorkOrderStatus workOrderStatusId;
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "workOrderId")
-    private List<WorkOrderAttachments> workOrderAttachmentsList;
+    private List<WorkOrderAttachments> workOrderAttachmentsList = new ArrayList();
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "workOrderId")
-    private List<WorkOrderRemark> workOrderRemarkList;
+    private List<WorkOrderRemark> workOrderRemarkList = new ArrayList();
 
     public WorkOrder() {
     }
