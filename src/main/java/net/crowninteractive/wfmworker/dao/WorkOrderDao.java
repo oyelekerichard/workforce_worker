@@ -391,9 +391,10 @@ public class WorkOrderDao extends AbstractDao<Integer, WorkOrder> {
             }
         }
 
-       
-      
-
+    }
+    
+    public BigInteger auditCount(){
+        return (BigInteger)getEntityManager().createNativeQuery("select count(*) from audit").getSingleResult();
     }
 
 }
