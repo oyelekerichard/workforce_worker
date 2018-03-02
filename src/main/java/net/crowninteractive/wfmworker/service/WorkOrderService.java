@@ -57,7 +57,7 @@ public class WorkOrderService {
                                              
                         WorkOrder wor = wo.get(0);
                         wdao.addRemark("Emcc", String.valueOf(wor.getTicketId()), description, "1");
-
+                        ticketId = wor.getTicketId();
                         return StandardResponse.ok(ticketId);
                     }
 
