@@ -53,8 +53,7 @@ public class WorkOrderService {
                     if (wo.size() == 0) {
                         ticketId = wdao.createWorkOrder(qt, "", "1", businessUnit, summary, description, phone, city, address, tarriff, billingID, "EMCC", "", "", reportedBy, customername);
                         return StandardResponse.ok(ticketId);
-                    } else {
-                                             
+                    } else {                            
                         WorkOrder wor = wo.get(0);
                         wdao.addRemark("Emcc", String.valueOf(wor.getTicketId()), description, "1");
                         ticketId = wor.getTicketId();

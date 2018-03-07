@@ -310,6 +310,7 @@ public class WorkOrderDao extends AbstractDao<Integer, WorkOrder> {
         wo.setContactNumber(phone);
         wo.setCustomerName(customername);
         wo.setOwnerId(1);
+        wo.setDescription(description);
         wo.setReportedBy(reportedBy);
         wo.setCreateTime(new Date());
         wo.setCurrentStatus("OPEN");
