@@ -7,6 +7,7 @@ package net.crowninteractive.wfmworker.cron;
 
 import javax.servlet.ServletContextEvent;
 import javax.servlet.ServletContextListener;
+import net.crowninteractive.wfmworker.dao.WorkOrderDao;
 import org.springframework.beans.BeansException;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
@@ -24,7 +25,7 @@ public class LoadStatusContextListener implements ServletContextListener,Applica
     @Override
     public void contextInitialized(ServletContextEvent sce) {
         System.out.println(">>>>>>>>>>>>>>Init Contxt >>>>>>>>>>>>>>");
-        System.out.println("GEt Ac >>>>>>>>>>>>>>>"+getAc());
+       
     }
 
     @Override
@@ -35,16 +36,10 @@ public class LoadStatusContextListener implements ServletContextListener,Applica
     @Override
     public void setApplicationContext(ApplicationContext ac) throws BeansException {
         System.out.println(">>>>>>>>>>>Setting AC >>>>>>>>>>>>>>>>>>"+ac);
-        setAc(ac);
+        System.out.println("<>>>>>>>>Work order Dao>>>>>>>"+ac.getBean(WorkOrderDao.class));
     }
 
-    public ApplicationContext getAc() {
-        return ac;
-    }
-
-    public void setAc(ApplicationContext ac) {
-        this.ac = ac;
-    }
+  
     
     
 
