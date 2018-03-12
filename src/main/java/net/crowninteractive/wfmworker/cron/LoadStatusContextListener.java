@@ -33,6 +33,8 @@ public class LoadStatusContextListener implements ServletContextListener,Applica
 
     @Override
     public void contextInitialized(ServletContextEvent sce) {
+        System.out.println(">>>>>>In Context Initialized >>>>>>>>>>>>>>>>>>>");
+          System.out.println(">>>>>>>Bean Names >>>>>>>>>>>>>"+Arrays.toString(ac.getBeanDefinitionNames()));
         dao =  ac.getBean("workOrderDao",WorkOrderDao.class);
         System.out.println(">>>>DAo >>>>>>> First ANme>>>>>>>>>>>>>>>>>>>>>"+dao.findUserById(1).getFirstname());
      }
