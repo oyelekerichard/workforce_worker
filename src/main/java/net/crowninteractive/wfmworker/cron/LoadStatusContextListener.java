@@ -23,10 +23,7 @@ import org.springframework.web.context.support.WebApplicationContextUtils;
 public class LoadStatusContextListener implements ServletContextListener {
 
    
-    @Override
-    public void setApplicationContext(ApplicationContext ac) throws BeansException {
-      
-    }
+ 
 
     @Override
     public void contextInitialized(ServletContextEvent sce) {
