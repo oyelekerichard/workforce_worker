@@ -13,6 +13,7 @@ import org.springframework.beans.BeansException;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
 import org.springframework.stereotype.Component;
+import org.springframework.web.context.WebApplicationContext;
 
 /**
  *
@@ -22,23 +23,20 @@ import org.springframework.stereotype.Component;
 public class LoadStatusContextListener implements ServletContextListener,ApplicationContextAware {
 
     private WorkOrderDao dao;
-    private ApplicationContext ac;
+    private static ApplicationContext ac;
     
     @Override
     public void setApplicationContext(ApplicationContext ac) throws BeansException {
-        System.out.println(">>>>>>>>>>>>>>Set application context "+ac);
-        System.out.println(">>>>>>>>>>BEans definitations >>>>>>>>>>>names "+Arrays.toString(ac.getBeanDefinitionNames()));
-        this.ac = ac;
+        System.out.println(">>>>>>>>>>>>>>>>>>>>>Accp >>>>>>>>>>>>>>>>>>>>>Cntext ");
     }
 
     @Override
     public void contextInitialized(ServletContextEvent sce) {
-      
-    }
+     }
 
     @Override
     public void contextDestroyed(ServletContextEvent sce) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+      
     }
 
   
