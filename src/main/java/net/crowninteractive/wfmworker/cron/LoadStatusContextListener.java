@@ -23,18 +23,16 @@ import org.springframework.web.context.WebApplicationContext;
 public class LoadStatusContextListener implements ServletContextListener,ApplicationContextAware {
 
     private WorkOrderDao dao;
+    private static ApplicationContext ac;
     
     @Override
     public void setApplicationContext(ApplicationContext ac) throws BeansException {
-       dao =  ac.getBean("workOrderDao",WorkOrderDao.class);
-     System.out.println(">>>>DAo >>>>>>> First ANme>>>>>>>>>>>>>>>>>>>>>"+dao.findUserById(1).getFirstname());
-  
-    }
+        System.out.println(">>>>>>>Bean Names >>>>>>>>>>>>>"+Arrays.toString(ac.getBeanDefinitionNames()));
+       }
 
     @Override
     public void contextInitialized(ServletContextEvent sce) {
-        System.out.println(">>>>>>In Context Initialized >>>>>>>>>>>>>>>>>>>");
-        System.out.println(">>>>DAo >>>>>>> First ANme>>>>>>>>>>>>>>>>>>>>>"+dao.findUserById(1).getFirstname());
+      
      }
 
     @Override
