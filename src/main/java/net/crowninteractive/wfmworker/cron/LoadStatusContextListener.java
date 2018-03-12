@@ -24,6 +24,7 @@ public class LoadStatusContextListener implements ServletContextListener {
     @Override
     public void contextInitialized(ServletContextEvent sce) {
         WebApplicationContext ctx = WebApplicationContextUtils.getWebApplicationContext(sce.getServletContext());
+        System.out.println(">>>>Context >>>>>>>>>>>>>>>>>>>>>>>>>> "+ctx);
         this.dao = (WorkOrderDao) ctx.getBean("workOrderDao");
         
         System.out.println(">>>>>>>>>>>>>>>>>>>>>Wado >>>>>>>>>>>>>>>>>>>>>>>>"+dao);
