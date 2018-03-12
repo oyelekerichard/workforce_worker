@@ -13,33 +13,31 @@ import org.springframework.beans.BeansException;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
 import org.springframework.stereotype.Component;
-import org.springframework.web.context.WebApplicationContext;
+import org.springframework.web.context.support.WebApplicationContextUtils;
 
 /**
  *
  * @author johnson3yo
  */
-@Component
-public class LoadStatusContextListener implements ServletContextListener,ApplicationContextAware {
 
-    private WorkOrderDao dao;
-    private static ApplicationContext ac;
-    
+public class LoadStatusContextListener implements ServletContextListener {
+
+   
     @Override
     public void setApplicationContext(ApplicationContext ac) throws BeansException {
-        System.out.println(">>>>>>>Bean Names >>>>>>>>>>>>>"+Arrays.toString(ac.getBeanDefinitionNames()));
-       }
-
-    @Override
-    public void contextInitialized(ServletContextEvent sce) {
-      
-     }
-
-    @Override
-    public void contextDestroyed(ServletContextEvent sce) {
       
     }
 
-  
+    @Override
+    public void contextInitialized(ServletContextEvent sce) {
+        ApplicationContext appCtx = WebApplicationContextUtils.getWebApplicationContext(sce.getServletContext());
+        System.out.println(">>>>>>>>AppCTAX >>>>>>>>>>>>>>>>>>"+appCtx);
+        System.out.println("?>>>>>>>>>>CAPp CASbizoo    >>>>>>>>>>>>>>"+Arrays.toString(appCtx.getBeanDefinitionNames()));
+    }
+
+    @Override
+    public void contextDestroyed(ServletContextEvent sce) {
+
+    }
 
 }
