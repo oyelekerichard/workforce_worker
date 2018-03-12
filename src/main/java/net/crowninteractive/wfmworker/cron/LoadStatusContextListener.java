@@ -32,8 +32,7 @@ public class LoadStatusContextListener implements ServletContextListener,Applica
 
     @Override
     public void contextInitialized(ServletContextEvent sce) {
-       dao = ac.getBean("workOrderDao", WorkOrderDao.class);
-       System.out.println(">>>>>>>>>>>>Dao >>>>>>>>>>>>>>>>>>>>>>>>>>>>>"+dao);
+      
     }
 
     @Override
