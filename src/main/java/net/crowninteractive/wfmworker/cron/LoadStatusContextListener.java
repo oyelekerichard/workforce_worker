@@ -5,6 +5,7 @@
  */
 package net.crowninteractive.wfmworker.cron;
 
+import java.util.Arrays;
 import javax.servlet.ServletContextEvent;
 import javax.servlet.ServletContextListener;
 import net.crowninteractive.wfmworker.dao.WorkOrderDao;
@@ -27,7 +28,8 @@ public class LoadStatusContextListener implements ServletContextListener, Applic
     public void contextInitialized(ServletContextEvent sce) {
         System.out.println(">>>>>>>>>>>>>>Init Contxt >>>>>>>>>>>>>>");
         ApplicationContext ctx = WebApplicationContextUtils.getWebApplicationContext(sce.getServletContext());
-        System.out.println(">>>>>>CTXC >>>>>>>>>>>>>>>>"+ctx);
+        System.out.println(">>>>>>CTXC >>>>>>>Names>>>>>>>>>"+Arrays.toString(ctx.getBeanDefinitionNames()));
+        
     }
 
     @Override
