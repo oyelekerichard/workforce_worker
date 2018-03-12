@@ -10,14 +10,15 @@ import javax.servlet.ServletContextEvent;
 import javax.servlet.ServletContextListener;
 import net.crowninteractive.wfmworker.dao.WorkOrderDao;
 import org.springframework.beans.BeansException;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
+import org.springframework.stereotype.Component;
 
 /**
  *
  * @author johnson3yo
  */
+@Component
 public class LoadStatusContextListener implements ServletContextListener,ApplicationContextAware {
 
     private WorkOrderDao dao;
