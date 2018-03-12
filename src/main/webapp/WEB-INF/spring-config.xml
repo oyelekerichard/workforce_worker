@@ -124,7 +124,7 @@
     <bean id="persistenceExceptionTranslationPostProcessor"
           class="org.springframework.dao.annotation.PersistenceExceptionTranslationPostProcessor" />
     
-    <bean id="workOrderDao" class="net.crowninteractive.wfmworker.dao.WorkOrderDao" />
+    <bean id="appCxt" class="net.crowninteractive.wfmworker.ApplicationContextProvider" />
     
 <!--     Activemq connection factory 
     <bean id="amqConnectionFactory" class="org.apache.activemq.ActiveMQConnectionFactory">
