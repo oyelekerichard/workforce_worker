@@ -12,20 +12,22 @@ import org.springframework.beans.BeansException;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
 import org.springframework.stereotype.Component;
+import org.springframework.web.context.support.WebApplicationContextUtils;
 
 /**
  *
  * @author johnson3yo
  */
 @Component
-public class LoadStatusContextListener implements ServletContextListener,ApplicationContextAware{
+public class LoadStatusContextListener implements ServletContextListener, ApplicationContextAware {
 
     private ApplicationContext ac;
-  
+
     @Override
     public void contextInitialized(ServletContextEvent sce) {
         System.out.println(">>>>>>>>>>>>>>Init Contxt >>>>>>>>>>>>>>");
-       
+        ApplicationContext ctx = WebApplicationContextUtils.getWebApplicationContext(sce.getServletContext());
+        System.out.println(">>>>>>CTXC >>>>>>>>>>>>>>>>"+ctx);
     }
 
     @Override
@@ -35,12 +37,7 @@ public class LoadStatusContextListener implements ServletContextListener,Applica
 
     @Override
     public void setApplicationContext(ApplicationContext ac) throws BeansException {
-        System.out.println(">>>>>>>>>>>Setting AC >>>>>>>>>>>>>>>>>>"+ac);
-        System.out.println("<>>>>>>>>Work order Dao>>>>>>>"+ac.getBean(WorkOrderDao.class));
+        WorkOrderDao dao = ac.getBean(WorkOrderDao.class);
     }
-
-  
-    
-    
 
 }
