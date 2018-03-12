@@ -19,10 +19,12 @@ import org.springframework.stereotype.Component;
 @Component
 public class LoadStatusContextListener implements ServletContextListener,ApplicationContextAware{
 
+    private ApplicationContext ac;
   
     @Override
     public void contextInitialized(ServletContextEvent sce) {
-        
+        System.out.println(">>>>>>>>>>>>>>Init Contxt >>>>>>>>>>>>>>");
+        System.out.println("GEt Ac >>>>>>>>>>>>>>>"+getAc());
     }
 
     @Override
@@ -32,7 +34,18 @@ public class LoadStatusContextListener implements ServletContextListener,Applica
 
     @Override
     public void setApplicationContext(ApplicationContext ac) throws BeansException {
-        System.out.println(">>>>>>>>>>>>>>>>>>>>>>>>>>Bean AC>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> "+ac);
+        System.out.println(">>>>>>>>>>>Setting AC >>>>>>>>>>>>>>>>>>"+ac);
+        setAc(ac);
     }
+
+    public ApplicationContext getAc() {
+        return ac;
+    }
+
+    public void setAc(ApplicationContext ac) {
+        this.ac = ac;
+    }
+    
+    
 
 }
