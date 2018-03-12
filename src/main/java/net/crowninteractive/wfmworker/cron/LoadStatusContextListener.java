@@ -5,30 +5,34 @@
  */
 package net.crowninteractive.wfmworker.cron;
 
+import javax.servlet.ServletContext;
 import javax.servlet.ServletContextEvent;
 import javax.servlet.ServletContextListener;
+import org.springframework.beans.BeansException;
 import org.springframework.context.ApplicationContext;
-import org.springframework.web.context.support.WebApplicationContextUtils;
+import org.springframework.context.ApplicationContextAware;
 
 /**
  *
  * @author johnson3yo
  */
 
-public class LoadStatusContextListener implements ServletContextListener {
+public class LoadStatusContextListener implements ServletContextListener,ApplicationContextAware{
 
   
     @Override
-    public void contextInitialized(final ServletContextEvent sce) {
-        System.out.println(">>>>>>>>>>>>>>>>Sce >>>>>>>>>>>>>>>>>>>>>"+sce);
-        ApplicationContext appCtx = WebApplicationContextUtils.getWebApplicationContext(sce.getServletContext());
-        System.out.println(">>>>>>>>>App CTC >>>>>>>>>>>>>>>>>>>>>>>");
-        System.out.println(">>>>>>>>>>>>>>>>...CTX >>>>>>>>>"+appCtx);
+    public void contextInitialized(ServletContextEvent sce) {
+        
     }
 
     @Override
     public void contextDestroyed(ServletContextEvent sce) {
 
+    }
+
+    @Override
+    public void setApplicationContext(ApplicationContext ac) throws BeansException {
+        System.out.println(">>>>>>>>>>>>>>>>>>>>>>>>>>Bean AC>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> "+ac);
     }
 
 }
