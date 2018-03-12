@@ -7,6 +7,8 @@ package net.crowninteractive.wfmworker.cron;
 
 import javax.servlet.ServletContextEvent;
 import javax.servlet.ServletContextListener;
+import org.springframework.context.ApplicationContext;
+import org.springframework.web.context.support.WebApplicationContextUtils;
 
 /**
  *
@@ -19,6 +21,9 @@ public class LoadStatusContextListener implements ServletContextListener {
     @Override
     public void contextInitialized(final ServletContextEvent sce) {
         System.out.println(">>>>>>>>>>>>>>>>Sce >>>>>>>>>>>>>>>>>>>>>"+sce);
+        ApplicationContext appCtx = WebApplicationContextUtils.getWebApplicationContext(sce.getServletContext());
+        System.out.println(">>>>>>>>>App CTC >>>>>>>>>>>>>>>>>>>>>>>");
+        System.out.println(">>>>>>>>>>>>>>>>...CTX >>>>>>>>>"+appCtx);
     }
 
     @Override
