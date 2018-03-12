@@ -5,6 +5,7 @@
  */
 package net.crowninteractive.wfmworker.cron;
 
+import java.util.Arrays;
 import javax.servlet.ServletContextEvent;
 import javax.servlet.ServletContextListener;
 import net.crowninteractive.wfmworker.dao.WorkOrderDao;
@@ -22,8 +23,10 @@ public class LoadStatusContextListener implements ServletContextListener,Applica
     private WorkOrderDao dao;
     private ApplicationContext ac;
     
-      @Override
+    @Override
     public void setApplicationContext(ApplicationContext ac) throws BeansException {
+        System.out.println(">>>>>>>>>>>>>>Set application context "+ac);
+        System.out.println(">>>>>>>>>>BEans definitations >>>>>>>>>>>names "+Arrays.toString(ac.getBeanDefinitionNames()));
         this.ac = ac;
     }
 
