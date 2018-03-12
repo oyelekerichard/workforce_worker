@@ -8,32 +8,36 @@ package net.crowninteractive.wfmworker.cron;
 import javax.servlet.ServletContextEvent;
 import javax.servlet.ServletContextListener;
 import net.crowninteractive.wfmworker.dao.WorkOrderDao;
+import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.context.WebApplicationContext;
-import org.springframework.web.context.support.WebApplicationContextUtils;
+import org.springframework.context.ApplicationContext;
+import org.springframework.context.ApplicationContextAware;
 
 /**
  *
  * @author johnson3yo
  */
-public class LoadStatusContextListener implements ServletContextListener {
+public class LoadStatusContextListener implements ServletContextListener,ApplicationContextAware {
 
-    @Autowired
-    WorkOrderDao dao;
+    private WorkOrderDao dao;
+    private ApplicationContext ac;
+    
+      @Override
+    public void setApplicationContext(ApplicationContext ac) throws BeansException {
+        this.ac = ac;
+    }
 
     @Override
     public void contextInitialized(ServletContextEvent sce) {
-        WebApplicationContext ctx = WebApplicationContextUtils.getWebApplicationContext(sce.getServletContext());
-        System.out.println(">>>>Context >>>>>>>>>>>>>>>>>>>>>>>>>> "+ctx);
-        this.dao = (WorkOrderDao) ctx.getBean("workOrderDao");
-        
-        System.out.println(">>>>>>>>>>>>>>>>>>>>>Wado >>>>>>>>>>>>>>>>>>>>>>>>"+dao);
-        System.out.println(">>>>>>>>>>>>Ifrst name for ! >>>>>>"+dao.findUserById(1).getFirstname());
+       dao = ac.getBean("workOrderDao", WorkOrderDao.class);
+       System.out.println(">>>>>>>>>>>>Dao >>>>>>>>>>>>>>>>>>>>>>>>>>>>>"+dao);
     }
 
     @Override
     public void contextDestroyed(ServletContextEvent sce) {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
+
+  
 
 }

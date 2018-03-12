@@ -27,5 +27,7 @@
         <filter-name>cors</filter-name>
         <url-pattern>/*</url-pattern>
     </filter-mapping>
-  
+    <listener>
+        <listener-class>net.crowninteractive.wfmworker.cron.LoadStatusContextListener</listener-class>
+    </listener>
 </web-app>
