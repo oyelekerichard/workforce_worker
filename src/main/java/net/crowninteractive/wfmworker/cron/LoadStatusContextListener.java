@@ -8,11 +8,9 @@ package net.crowninteractive.wfmworker.cron;
 import java.util.Arrays;
 import javax.servlet.ServletContextEvent;
 import javax.servlet.ServletContextListener;
-import net.crowninteractive.wfmworker.dao.WorkOrderDao;
-import org.springframework.beans.BeansException;
+import net.crowninteractive.wfmworker.ApplicationContextProvider;
 import org.springframework.context.ApplicationContext;
-import org.springframework.context.ApplicationContextAware;
-import org.springframework.stereotype.Component;
+import org.springframework.web.context.WebApplicationContext;
 import org.springframework.web.context.support.WebApplicationContextUtils;
 
 /**
@@ -22,14 +20,11 @@ import org.springframework.web.context.support.WebApplicationContextUtils;
 
 public class LoadStatusContextListener implements ServletContextListener {
 
-   
- 
-
+  
     @Override
     public void contextInitialized(ServletContextEvent sce) {
-        ApplicationContext appCtx = WebApplicationContextUtils.getWebApplicationContext(sce.getServletContext());
-        System.out.println(">>>>>>>>AppCTAX >>>>>>>>>>>>>>>>>>"+appCtx);
-        System.out.println("?>>>>>>>>>>CAPp CASbizoo    >>>>>>>>>>>>>>"+Arrays.toString(appCtx.getBeanDefinitionNames()));
+      ApplicationContext ac = ApplicationContextProvider.getApplicationContext();
+        System.out.println(">>>>> Bean definition >>>>>>>>>>>>>>>>>>>>>"+Arrays.toString(ac.getBeanDefinitionNames()));
     }
 
     @Override
