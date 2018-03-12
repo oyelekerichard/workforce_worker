@@ -27,6 +27,8 @@ public class LoadStatusContextListener implements ServletContextListener,Applica
     @Override
     public void setApplicationContext(ApplicationContext ac) throws BeansException {
        dao =  ac.getBean("workOrderDao",WorkOrderDao.class);
+     System.out.println(">>>>DAo >>>>>>> First ANme>>>>>>>>>>>>>>>>>>>>>"+dao.findUserById(1).getFirstname());
+  
     }
 
     @Override
