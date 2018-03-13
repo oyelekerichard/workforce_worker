@@ -336,13 +336,12 @@ public class WorkOrderDao extends AbstractDao<Integer, WorkOrder> {
         wor.setToken(RandomStringUtils.randomAlphanumeric(30));
         WorkOrder w = findByTicketId(Integer.parseInt(ticketId));
         wor.setWorkOrderId(w);
-        w.getWorkOrderRemarkList().add(wor);    
+        w.getWorkOrderRemarkList().add(wor);
         wor.setCreateTime(new Date());
         wor.setCreatedBy(findUserById(1));
         wor.setCreatedByName(findUserById(1).getFirstname());
         wora.save(wor);
     }
-    
 
     public List<WorkOrder> getLastWorkOrderinQueueType(String billingId, Integer queueTypeId) {
 
@@ -367,19 +366,17 @@ public class WorkOrderDao extends AbstractDao<Integer, WorkOrder> {
         }
     }
 
-    public void getData(Map<String,String>map,List<QueueTypeData> qtees, String con, String dis) {
+    public void getData(Map<String, String> map, List<QueueTypeData> qtees, String con, String dis) {
 
-       
-        
         if (con != null) {
             for (int q = 0; q < qtees.size(); q++) {
-                QueueTypeData qt = qtees.get(q);              
+                QueueTypeData qt = qtees.get(q);
                 String sql = String.format("select count(*)from work_order "
                         + "where queue_type_id = %d and reported_by = '%s' ", qt.getQueueTypeId(), con);
-               
-              BigInteger count = (BigInteger) this.getEntityManager().createNativeQuery(sql).getSingleResult();  
-               
-               map.put(qt.getQueueTypeName(), count.toString());
+
+                BigInteger count = (BigInteger) this.getEntityManager().createNativeQuery(sql).getSingleResult();
+
+                map.put(qt.getQueueTypeName(), count.toString());
             }
 
         } else {
@@ -387,24 +384,21 @@ public class WorkOrderDao extends AbstractDao<Integer, WorkOrder> {
                 QueueTypeData qt = qtees.get(q);
                 String sql = String.format("select count(*)from work_order "
                         + "where queue_type_id = %d and business_unit = '%s' ", qt.getQueueTypeId(), dis);
-               BigInteger count = (BigInteger) this.getEntityManager().createNativeQuery(sql).getSingleResult(); 
-             
-               map.put(qt.getQueueTypeName(), count.toString());
+                BigInteger count = (BigInteger) this.getEntityManager().createNativeQuery(sql).getSingleResult();
+
+                map.put(qt.getQueueTypeName(), count.toString());
             }
         }
 
     }
-    
-    public BigInteger auditCount(){
-        return (BigInteger)getEntityManager().createNativeQuery("select count(*) from audit").getSingleResult();
-    }
 
-    public List<WorkOrder> getMeterRollOutNotClosed() {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    public BigInteger auditCount() {
+        return (BigInteger) getEntityManager().createNativeQuery("select count(*) from audit").getSingleResult();
     }
 
     public List<WorkOrder> findNonMigratedWorkOrders() {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        String sql = "select * from work_order where queue_type_id = 30 and current_status not like '%MIGRAT%'";
+        return getEntityManager().createNativeQuery(sql, WorkOrder.class).getResultList();
     }
 
 }

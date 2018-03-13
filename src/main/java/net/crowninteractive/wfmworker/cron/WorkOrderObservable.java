@@ -23,33 +23,36 @@ public class WorkOrderObservable extends Observable implements Runnable {
 
     @Autowired
     private WorkOrderDao dao;
-    private HashMap<Integer,WorkOrder>current;
-    
-    public WorkOrderObservable(){
+    private HashMap<Integer, WorkOrder> current;
+
+    public WorkOrderObservable() {
         current = new HashMap();
     }
 
     @Override
     public void run() {
-        System.out.println(">>>>>FEtch a list of non migrated work orders ");
-           List<WorkOrder>nonMigrated =   dao.findNonMigratedWorkOrders();
-           nonMigrated.forEach(dim->{
-              if(current.containsKey(dim.getTicketId())){
-                 WorkOrder current=  this.current.get(dim.getTicketId());
-                 if(!current.getCurrentStatus().equals(dim.getCurrentStatus())){
-                      this.notifyObservers(new Gson().
-                            toJson(new UpdateMessage(dim.getReferenceTypeData(), dim.getCurrentStatus()))); 
-                 }else if(dim.getCurrentStatus().startsWith("MIGRA")){
-                     this.current.remove(dim.getTicketId());
-                 }
-              }else{
-                  current.put(dim.getTicketId(), dim);
-              }
-           
-           });
-           
-          
-       
+        System.out.println(">>>>>FEtch a list of non migrated work orders >>>>>");
+        List<WorkOrder> nonMigrated = dao.findNonMigratedWorkOrders();
+        if (nonMigrated != null) {
+            if (nonMigrated.size() > 0) {
+                System.out.println(">>>>>>>>>>>>>.....Non migrated found >>>>>>>>>>");
+                nonMigrated.forEach(dim -> {
+                    if (current.containsKey(dim.getTicketId())) {
+                        WorkOrder current = this.current.get(dim.getTicketId());
+                        if (!current.getCurrentStatus().equals(dim.getCurrentStatus())) {
+                            this.notifyObservers(new Gson().
+                                    toJson(new UpdateMessage(dim.getReferenceTypeData(), dim.getCurrentStatus())));
+                        } else if (dim.getCurrentStatus().startsWith("MIGRA")) {
+                            this.current.remove(dim.getTicketId());
+                        }
+                    } else {
+                        current.put(dim.getTicketId(), dim);
+                    }
+
+                });
+            }
+
+        }
 
     }
 
