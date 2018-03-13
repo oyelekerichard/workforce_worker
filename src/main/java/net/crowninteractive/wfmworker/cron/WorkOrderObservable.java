@@ -6,6 +6,7 @@
 package net.crowninteractive.wfmworker.cron;
 
 import com.google.gson.Gson;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Observable;
@@ -37,7 +38,9 @@ public class WorkOrderObservable extends Observable implements Runnable{
         try {
             ApplicationContext ac = new FileSystemXmlApplicationContext(
                     "src/main/webapp/WEB-INF/spring-config.xml" );
+            System.out.println(">>>>>>BEan Def NAme >>>>>>>>>>>>>>>>>>>>>>>>>"+Arrays.toString(ac.getBeanDefinitionNames()));
             dao = ac.getBean(WorkOrderDao.class);
+         
             System.out.println(">>>>>>>Dao <>>>>>>>>>>>>>>>>>>>>>>>"+dao);
             System.out.println(">>>>>FEtch a list of non migrated work orders >>>>>");
             List<WorkOrder> nonMigrated = dao.findNonMigratedWorkOrders();

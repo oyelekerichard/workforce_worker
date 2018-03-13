@@ -26,7 +26,6 @@ public class LoadStatusContextListener implements ServletContextListener {
     @Override
     public void contextInitialized(ServletContextEvent sce) {
         ApplicationContext ctx = WebApplicationContextUtils.getWebApplicationContext(sce.getServletContext());
-        WorkOrderDao dao = ctx.getBean(WorkOrderDao.class);
         WorkOrderObservable processor = new WorkOrderObservable();
         ScheduledExecutorService scheduledThreadPool = Executors.newScheduledThreadPool(5);
         int delay = 50;
