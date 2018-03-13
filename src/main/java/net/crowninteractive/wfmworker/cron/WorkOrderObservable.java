@@ -31,29 +31,39 @@ public class WorkOrderObservable extends Observable implements Runnable {
 
     @Override
     public void run() {
-        System.out.println(">>>>>FEtch a list of non migrated work orders >>>>>");
-        List<WorkOrder> nonMigrated = dao.findNonMigratedWorkOrders();
-        if (nonMigrated != null) {
-            if (nonMigrated.size() > 0) {
-                System.out.println(">>>>>>>>>>>>>.....Non migrated found >>>>>>>>>>");
-                nonMigrated.forEach(dim -> {
-                    if (current.containsKey(dim.getTicketId())) {
-                        WorkOrder current = this.current.get(dim.getTicketId());
-                        if (!current.getCurrentStatus().equals(dim.getCurrentStatus())) {
-                            this.notifyObservers(new Gson().
-                                    toJson(new UpdateMessage(dim.getReferenceTypeData(), dim.getCurrentStatus())));
-                        } else if (dim.getCurrentStatus().startsWith("MIGRA")) {
-                            this.current.remove(dim.getTicketId());
+        try {
+            System.out.println(">>>>>FEtch a list of non migrated work orders >>>>>");
+            List<WorkOrder> nonMigrated = dao.findNonMigratedWorkOrders();
+            if (nonMigrated != null) {
+                if (nonMigrated.size() > 0) {
+                    System.out.println(">>>>>>>>>>>>>.....Found>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> >>>>>>>>>>" + nonMigrated.size());
+                    nonMigrated.forEach(dim -> {
+                        if (current.containsKey(dim.getTicketId())) {
+                            WorkOrder current = this.current.get(dim.getTicketId());
+                            if (!current.getCurrentStatus().equals(dim.getCurrentStatus())) {
+                                this.notifyObservers(new Gson().
+                                        toJson(new UpdateMessage(dim.getReferenceTypeData(), dim.getCurrentStatus())));
+                            } else if (dim.getCurrentStatus().startsWith("MIGRA")) {
+                                this.current.remove(dim.getTicketId());
+                            }
+                        } else {
+                            current.put(dim.getTicketId(), dim);
                         }
-                    } else {
-                        current.put(dim.getTicketId(), dim);
-                    }
 
-                });
+                    });
+                } else {
+                    System.out.println(">>>>>>Notttttttttttttttttttttt FOund >>>>>>>>>>>>>>>>>>>>>>>");
+                }
+
             }
-
+        } catch (Exception e) {
+            System.out.println(">>>>>>>>Exception occured here >>>>>>>>>>>>>>>>>>>>>");
+            e.printStackTrace();
         }
 
+    }
+
+    {
     }
 
     public void addWorkOrderUpdateListener(WorkOrderObserver woo) {
