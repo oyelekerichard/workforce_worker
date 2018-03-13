@@ -22,12 +22,13 @@ import org.springframework.stereotype.Component;
  * @author johnson3yo
  */
 @Component
-public class WorkOrderObservable extends Observable implements Runnable ,ApplicationContextAware{
+public class WorkOrderObservable extends Observable implements Runnable {
 
     private WorkOrderDao dao;
     private HashMap<Integer, WorkOrder> current;
 
-    public WorkOrderObservable() {
+    public WorkOrderObservable(WorkOrderDao dao) {
+        this.dao = dao;
         current = new HashMap();
     }
 
@@ -74,11 +75,6 @@ public class WorkOrderObservable extends Observable implements Runnable ,Applica
         super.addObserver(woo);
     }
 
-    @Override
-    public void setApplicationContext(ApplicationContext ac) throws BeansException {
-        System.out.println(">>>>>>Ac >>>>>>>>>>>>>>>>>"+ac);
-        dao = ac.getBean(WorkOrderDao.class);
-        System.out.println(">>>>>>>>>>>>>>>>>>>>DAo >>>>>>>>>>>>"+dao);
-    }
+  
 
 }

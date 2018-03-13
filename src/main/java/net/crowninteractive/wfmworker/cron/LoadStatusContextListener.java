@@ -22,13 +22,12 @@ import org.springframework.web.context.support.WebApplicationContextUtils;
  */
 public class LoadStatusContextListener implements ServletContextListener {
     
-    private WorkOrderDao dao;
     
     @Override
     public void contextInitialized(ServletContextEvent sce) {
         ApplicationContext ctx = WebApplicationContextUtils.getWebApplicationContext(sce.getServletContext());
-        
-        WorkOrderObservable processor = new WorkOrderObservable();
+        WorkOrderDao dao = ctx.getBean(WorkOrderDao.class);
+        WorkOrderObservable processor = new WorkOrderObservable(dao);
         ScheduledExecutorService scheduledThreadPool = Executors.newScheduledThreadPool(5);
         int delay = 50;
         scheduledThreadPool.scheduleAtFixedRate(processor, 0, delay, TimeUnit.SECONDS);     

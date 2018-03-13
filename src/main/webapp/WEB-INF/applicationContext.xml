@@ -1,65 +1,147 @@
-<?xml version='1.0' encoding='UTF-8' ?>
-<!-- was: <?xml version="1.0" encoding="UTF-8"?> -->
+<?xml version="1.0" encoding="UTF-8"?>
 <beans xmlns="http://www.springframework.org/schema/beans"
-       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-       xmlns:p="http://www.springframework.org/schema/p"
-       xmlns:aop="http://www.springframework.org/schema/aop"
-       xmlns:tx="http://www.springframework.org/schema/tx"
-       xmlns:context="http://www.springframework.org/schema/context"
-       xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-4.0.xsd
-       http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop-4.0.xsd
-       http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-3.2.xsd
-       http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx-4.0.xsd">
+ xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:context="http://www.springframework.org/schema/context" xmlns:task="http://www.springframework.org/schema/task" 
+ xmlns:util="http://www.springframework.org/schema/util" xmlns:mvc="http://www.springframework.org/schema/mvc" xmlns:tx="http://www.springframework.org/schema/tx"
+ xsi:schemaLocation="http://www.springframework.org/schema/mvc http://www.springframework.org/schema/mvc/spring-mvc-3.2.xsd
+  http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
+  http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util-3.2.xsd
+  http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx-4.0.xsd
+  http://www.springframework.org/schema/task http://www.springframework.org/schema/task/spring-task-4.0.xsd
+  http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-3.2.xsd">
 
-    <bean id="entityManagerFactory" class="org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean">
-        <property name="dataSource" ref="dataSource"></property>
-        <property name="packagesToScan" value="ng.push.coreapi.model" />
-        <property name="jpaVendorAdapter">
-            <bean class="org.springframework.orm.jpa.vendor.HibernateJpaVendorAdapter">
-                <property name="database" value="MYSQL"></property>
-                <property name="showSql" value="false"></property>
-                <property name="databasePlatform" value="org.hibernate.dialect.MySQLDialect"></property>
-            </bean>
-        </property>
-        <property name="jpaPropertyMap">
-            <map>
-                <entry key="hibernate.transaction.manager_lookup_class" value="org.hibernate.transaction.JBossTransactionManagerLookup"/>
-                <entry key="hibernate.transaction.flush_before_completion" value="true"/>
-                <entry key="hibernate.transaction.auto_close_session" value="true"/>
-                <entry key="hibernate.current_session_context_class" value="jta"/>
-                <entry key="hibernate.connection.release_mode" value="auto"/>
-            </map>
-        </property>
-        <property name="persistenceUnitPostProcessors">
-            <list>
-                <bean class="JtaPersistenceUnitPostProcessor">
-                    <property name="jtaMode" value="true"></property>
-                    <property name="jtaDataSource" ref="dataSource"></property>
-                </bean>
-            </list>
-        </property>
-    </bean>
-    <!--
-     Datasource Lookup
-    -->
+ <context:component-scan base-package="net.crowninteractive.wfmworker" />
+ <context:component-scan base-package="net.crowninteractive.wfmworker.dao" />
+  
+  <context:property-placeholder location="file:/var/config/wfm/config.properties" />
+
+
+ <mvc:annotation-driven />
+ <tx:annotation-driven transaction-manager="transactionManager"  />
+
+<bean id="entityManagerFactory" class="org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean">
+   <property name="dataSource" ref="dataSource"></property>
+   <property name="packagesToScan" value="net.crowninteractive.wfmworker.entity" />
+   <property name="jpaVendorAdapter">
+	<bean class="org.springframework.orm.jpa.vendor.HibernateJpaVendorAdapter">
+            <property name="database" value="MYSQL"></property>
+            <property name="showSql" value="false"></property>
+            <property name="databasePlatform" value="org.hibernate.dialect.MySQLDialect"></property>
+	</bean>
+   </property>
+   <property name="jpaPropertyMap">
+      <map>
+	<entry key="hibernate.transaction.manager_lookup_class" value="org.hibernate.transaction.JBossTransactionManagerLookup"/>
+	<entry key="hibernate.transaction.flush_before_completion" value="true"/>
+	<entry key="hibernate.transaction.auto_close_session" value="true"/>
+	<entry key="hibernate.current_session_context_class" value="jta"/>
+        <entry key="hibernate.dialect" value="org.hibernate.dialect.MySQLDialect"/>
+        <entry key="hibernate.transaction.factory_class" value="org.hibernate.transaction.JTATransactionFactory"/>
+	<entry key="hibernate.connection.release_mode" value="auto"/>
+      </map>
+   </property>
+   <property name="persistenceUnitPostProcessors">
+      <list>
+         <bean class="JtaPersistenceUnitPostProcessor">
+            <property name="jtaMode" value="true"></property>
+            <property name="jtaDataSource" ref="dataSource"></property>
+         </bean>
+      </list>
+   </property>
+</bean>
+
+
+<!--<bean id="timerTask" class="net.crowninteractive.wfmworker.Worker"> </bean> 
+<task:scheduled-tasks scheduler="myScheduler">
+    <task:scheduled ref="timerTask" method="run" />
+
+
+    <bean id="timerTask2" class="net.crowninteractive.wfmworker.EscalationCreator"> </bean> 
+    <task:scheduled-tasks scheduler="myScheduler2">
+        <task:scheduled ref="timerTask2" method="run" initial-delay="10000" fixed-delay="70000" /> 
+    </task:scheduled-tasks>
+    <task:scheduler id="myScheduler2" pool-size="5"/>-->
+
+
+    <bean id="timerTask3" class="net.crowninteractive.wfmworker.EmailSender"> </bean> 
+    <task:scheduled-tasks scheduler="myScheduler3">
+        <task:scheduled ref="timerTask3" method="run" initial-delay="15000" fixed-delay="80000" /> 
+    </task:scheduled-tasks>
+    <task:scheduler id="myScheduler3" pool-size="3"/>
+
+    <bean id="timerTask4" class="net.crowninteractive.wfmworker.SendApprovalEmails"> </bean> 
+    <task:scheduled-tasks scheduler="myScheduler4">
+        <task:scheduled ref="timerTask4" method="run" initial-delay="20000" fixed-delay="90000" /> <!-- 45 secs -->
+    </task:scheduled-tasks>
+    <task:scheduler id="myScheduler4" pool-size="3"/>
+
+    <bean id="timerTask5" class="net.crowninteractive.wfmworker.SendRejectEmails"> </bean> 
+    <task:scheduled-tasks scheduler="myScheduler5">
+        <task:scheduled ref="timerTask5" method="run" initial-delay="25000" fixed-delay="100000" /> 
+    </task:scheduled-tasks>
+    <task:scheduler id="myScheduler5" pool-size="3"/>
+    
+
+
+
+
     <bean id="dataSource" class="org.springframework.jndi.JndiObjectFactoryBean">
         <property name="resourceRef">
             <value>false</value>
         </property>
         <property name="jndiName">
-            <value>java:jboss/datasources/quicksend</value>
+            <value>java:jboss/datasources/wfm_new</value>
         </property>
     </bean>   <!--
  Transaction Manager
--->   
-    <bean id="transactionManager" class="org.springframework.transaction.jta.JtaTransactionManager">
-        <property name="transactionManagerName" value="java:/TransactionManager"></property>
-        <property name="autodetectUserTransaction" value="false"></property>
+-->  
+    <bean id="jbossTransactionManager" class="com.arjuna.ats.internal.jta.transaction.arjunacore.TransactionManagerImple"> </bean>
+   
+    <bean id="jbossUserTransaction" class="com.arjuna.ats.internal.jta.transaction.arjunacore.UserTransactionImple"/>
+ 
+    <bean id="transactionManager"  class="org.springframework.transaction.jta.JtaTransactionManager">
+        <property name="transactionManager">
+            <ref bean="jbossTransactionManager" />
+        </property>
+        <property name="userTransaction">
+            <ref bean="jbossUserTransaction" />
+        </property>
+    </bean>
+        
+    <bean id="systemPrereqs" class="org.springframework.beans.factory.config.MethodInvokingFactoryBean">
+        <property name="targetObject" value="#{@systemProperties}"></property>
+        <property name="targetMethod" value="putAll"></property>
+        <property name="arguments">
+            <util:properties>
+                <prop key="com.arjuna.ats.arjuna.coordinator.defaultTimeout">60</prop>
+                <prop key="com.arjuna.ats.arjuna.objectstore.objectStoreDir">/opt/wildfly/standalone</prop>
+                <prop key="ObjectStoreEnvironmentBean.objectStoreDir">/opt/wildfly/standalone</prop>
+            </util:properties>
+        </property>
+   
+ 
     </bean>
 
     <bean id="persistenceExceptionTranslationPostProcessor"
           class="org.springframework.dao.annotation.PersistenceExceptionTranslationPostProcessor" />
+    
+<!--     Activemq connection factory 
+    <bean id="amqConnectionFactory" class="org.apache.activemq.ActiveMQConnectionFactory">
+        <constructor-arg index="0" value="${activemq.url}"/>
+    </bean>
 
- 
- 
+     ConnectionFactory Definition 
+    <bean id="connectionFactory" class="org.springframework.jms.connection.CachingConnectionFactory">
+        <constructor-arg ref="amqConnectionFactory" />
+    </bean> 
+
+     Message Receiver Definition 
+    <bean id="messageReceiver" class="net.crowninteractive.wfmworker.ReportRequestReceiver">
+    </bean>
+
+    <bean class="org.springframework.jms.listener.SimpleMessageListenerContainer">
+        <property name="connectionFactory" ref="connectionFactory" />
+        <property name="destinationName" value="${nerc.report.queue}" />
+        <property name="messageListener" ref="messageReceiver" />
+    </bean>-->
+
 </beans>
