@@ -24,7 +24,6 @@ import org.springframework.stereotype.Component;
 @Component
 public class WorkOrderObservable extends Observable implements Runnable ,ApplicationContextAware{
 
-    @Autowired
     private WorkOrderDao dao;
     private HashMap<Integer, WorkOrder> current;
 
@@ -77,6 +76,7 @@ public class WorkOrderObservable extends Observable implements Runnable ,Applica
 
     @Override
     public void setApplicationContext(ApplicationContext ac) throws BeansException {
+        System.out.println(">>>>>>Ac >>>>>>>>>>>>>>>>>"+ac);
         dao = ac.getBean(WorkOrderDao.class);
     }
 
