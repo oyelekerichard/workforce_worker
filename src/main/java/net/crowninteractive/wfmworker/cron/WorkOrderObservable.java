@@ -13,7 +13,7 @@ import java.util.Observable;
 import net.crowninteractive.wfmworker.dao.WorkOrderDao;
 import net.crowninteractive.wfmworker.entity.WorkOrder;
 import org.springframework.context.ApplicationContext;
-import org.springframework.context.support.ClassPathXmlApplicationContext;
+import org.springframework.context.support.FileSystemXmlApplicationContext;
 import org.springframework.stereotype.Component;
 
 /**
@@ -33,8 +33,8 @@ public class WorkOrderObservable extends Observable implements Runnable{
     @Override
     public void run() {
         try {
-            ApplicationContext ac = new ClassPathXmlApplicationContext(
-                    "classpath:src/main/webapp/WEB-INF/spring-config.xml");
+            ApplicationContext ac = new FileSystemXmlApplicationContext(
+                    "/WEB-INF/spring-config.xml");
             System.out.println(">>>>>>BEan Def NAme >>>>>>>>>>>>>>>>>>>>>>>>>"+Arrays.toString(ac.getBeanDefinitionNames()));
             dao = ac.getBean(WorkOrderDao.class);
          
