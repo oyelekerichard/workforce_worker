@@ -13,6 +13,7 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.jms.annotation.EnableJms;
 import org.springframework.jms.config.DefaultJmsListenerContainerFactory;
 import org.springframework.jms.config.JmsListenerContainerFactory;
+import org.springframework.jms.core.JmsTemplate;
 
 /**
  *
@@ -21,8 +22,9 @@ import org.springframework.jms.config.JmsListenerContainerFactory;
 @Configuration
 @EnableJms
 public class ActiveMQConfig {
-    
-    @Value(value = "${activemq.url}") private String activeMqURL;
+
+    @Value(value = "${activemq.url}")
+    private String activeMqURL;
 
     @Bean
     public ConnectionFactory connectionFactory() {
@@ -39,5 +41,12 @@ public class ActiveMQConfig {
         factory.setConcurrency("4-8");
         return factory;
     }
-    
+
+    @Bean
+    public JmsTemplate jmsTemplate() {
+        JmsTemplate template = new JmsTemplate();
+        template.setConnectionFactory(connectionFactory());
+        return template;
+    }
+
 }

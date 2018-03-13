@@ -17,8 +17,7 @@ public class ReportProcessor  extends TimerTask {
 
     @Override
     public void run() {
-        System.out.println(">>>>REport Processor Running >>>>>");
-    
+       
     }
     
 }

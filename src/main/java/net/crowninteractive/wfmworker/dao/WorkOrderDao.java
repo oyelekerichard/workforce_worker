@@ -399,6 +399,14 @@ public class WorkOrderDao extends AbstractDao<Integer, WorkOrder> {
         return (BigInteger)getEntityManager().createNativeQuery("select count(*) from audit").getSingleResult();
     }
 
+    public List<WorkOrder> getMeterRollOutNotClosed() {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
+
+    public List<WorkOrder> findNonMigratedWorkOrders() {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
+
 }
 
 

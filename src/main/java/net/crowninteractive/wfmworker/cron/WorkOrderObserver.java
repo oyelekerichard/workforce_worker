@@ -7,18 +7,42 @@ package net.crowninteractive.wfmworker.cron;
 
 import java.util.Observable;
 import java.util.Observer;
+import javax.jms.JMSException;
+import javax.jms.Message;
+import javax.jms.TextMessage;
+import net.crowninteractive.wfmworker.entity.WorkOrder;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.jms.core.JmsTemplate;
+import org.springframework.jms.core.MessageCreator;
+import org.springframework.stereotype.Component;
 
 /**
  *
  * @author johnson3yo
  */
-public class WorkOrderObserver implements Observer{
+@Component
+public class WorkOrderObserver implements Observer {
+
+    @Autowired
+    private JmsTemplate template;
+
+    
 
     @Override
-    public void update(Observable o, Object arg) {
-      
+    public void update(Observable o, Object found) {
+        System.out.println(">>>>>>>updating in work order observer >>>>>>");
         
-        
+        String value = (String) found;
+        System.out.println(">>>>>value >>>>>>>"+value);
+        template.send("MeterRolloutQueueLocal", new MessageCreator() {
+            @Override
+            public Message createMessage(javax.jms.Session session) throws JMSException {
+                TextMessage message = session.createTextMessage();
+                message.setText(value);
+                return message;
+            }
+        });
+
     }
-    
+
 }
