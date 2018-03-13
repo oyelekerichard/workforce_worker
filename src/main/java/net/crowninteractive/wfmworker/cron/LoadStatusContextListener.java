@@ -28,7 +28,7 @@ public class LoadStatusContextListener implements ServletContextListener {
     public void contextInitialized(ServletContextEvent sce) {
         ApplicationContext ctx = WebApplicationContextUtils.getWebApplicationContext(sce.getServletContext());
         dao = ctx.getBean(WorkOrderDao.class);
-        System.out.println(">>>>>>>>>>>>User ID Name >>>>>><<<<<<<<>>..Suer ID "+dao.findUserById(1).getFirstname());
+      
     }
 
     @Override

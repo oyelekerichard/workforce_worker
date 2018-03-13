@@ -9,8 +9,7 @@
   http://www.springframework.org/schema/task http://www.springframework.org/schema/task/spring-task-4.0.xsd
   http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-3.2.xsd">
 
-  <context:component-scan base-package="net.crowninteractive.wfmworker" />
-  <context:component-scan base-package="net.crowninteractive.wfmworker.dao" />
+  <bean id="workOrderDao" class="net.crowninteractive.wfmworker.dao.WorkOrderDao" ></bean> 
   
   <context:property-placeholder location="file:/var/config/wfm/config.properties" />
 
