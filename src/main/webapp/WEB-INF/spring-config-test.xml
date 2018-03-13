@@ -87,7 +87,7 @@
         <property name="driverClassName" value="com.mysql.jdbc.Driver" />
         <property name="url" value="jdbc:mysql://localhost:3306/wfm_new" />
         <property name="username" value="root" />
-        <property name="password" value="freaks03" />
+        <property name="password" value="int3ractiv3" />
     </bean>
     
         
