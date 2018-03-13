@@ -11,7 +11,10 @@ import java.util.List;
 import java.util.Observable;
 import net.crowninteractive.wfmworker.dao.WorkOrderDao;
 import net.crowninteractive.wfmworker.entity.WorkOrder;
+import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.ApplicationContext;
+import org.springframework.context.ApplicationContextAware;
 import org.springframework.stereotype.Component;
 
 /**
@@ -19,7 +22,7 @@ import org.springframework.stereotype.Component;
  * @author johnson3yo
  */
 @Component
-public class WorkOrderObservable extends Observable implements Runnable {
+public class WorkOrderObservable extends Observable implements Runnable ,ApplicationContextAware{
 
     @Autowired
     private WorkOrderDao dao;
@@ -32,6 +35,7 @@ public class WorkOrderObservable extends Observable implements Runnable {
     @Override
     public void run() {
         try {
+            System.out.println(">>>>>>>Dao <>>>>>>>>>>>>>>>>>>>>>>>"+dao);
             System.out.println(">>>>>FEtch a list of non migrated work orders >>>>>");
             List<WorkOrder> nonMigrated = dao.findNonMigratedWorkOrders();
             if (nonMigrated != null) {
@@ -69,6 +73,11 @@ public class WorkOrderObservable extends Observable implements Runnable {
     public void addWorkOrderUpdateListener(WorkOrderObserver woo) {
 
         super.addObserver(woo);
+    }
+
+    @Override
+    public void setApplicationContext(ApplicationContext ac) throws BeansException {
+        dao = ac.getBean(WorkOrderDao.class);
     }
 
 }
