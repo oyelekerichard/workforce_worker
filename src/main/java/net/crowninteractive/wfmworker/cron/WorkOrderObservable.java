@@ -78,6 +78,7 @@ public class WorkOrderObservable extends Observable implements Runnable ,Applica
     public void setApplicationContext(ApplicationContext ac) throws BeansException {
         System.out.println(">>>>>>Ac >>>>>>>>>>>>>>>>>"+ac);
         dao = ac.getBean(WorkOrderDao.class);
+        System.out.println(">>>>>>>>>>>>>>>>>>>>DAo >>>>>>>>>>>>"+dao);
     }
 
 }
