@@ -34,7 +34,7 @@ public class WorkOrderObservable extends Observable implements Runnable{
     public void run() {
         try {
             ApplicationContext ac = new ClassPathXmlApplicationContext(
-                    "WEB-INF/spring-config.xml");
+                    "classpath*:spring-config.xml");
             System.out.println(">>>>>>BEan Def NAme >>>>>>>>>>>>>>>>>>>>>>>>>"+Arrays.toString(ac.getBeanDefinitionNames()));
             dao = ac.getBean(WorkOrderDao.class);
          
