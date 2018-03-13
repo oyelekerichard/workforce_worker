@@ -15,6 +15,7 @@ import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
+import org.springframework.context.support.FileSystemXmlApplicationContext;
 import org.springframework.stereotype.Component;
 
 /**
@@ -22,19 +23,21 @@ import org.springframework.stereotype.Component;
  * @author johnson3yo
  */
 @Component
-public class WorkOrderObservable extends Observable implements Runnable {
+public class WorkOrderObservable extends Observable implements Runnable{
 
     private WorkOrderDao dao;
     private HashMap<Integer, WorkOrder> current;
 
-    public WorkOrderObservable(WorkOrderDao dao) {
-        this.dao = dao;
+    public WorkOrderObservable() {
         current = new HashMap();
     }
 
     @Override
     public void run() {
         try {
+            ApplicationContext ac = new FileSystemXmlApplicationContext(
+                    "src/main/webapp/WEB-INF/spring-config.xml" );
+            dao = ac.getBean(WorkOrderDao.class);
             System.out.println(">>>>>>>Dao <>>>>>>>>>>>>>>>>>>>>>>>"+dao);
             System.out.println(">>>>>FEtch a list of non migrated work orders >>>>>");
             List<WorkOrder> nonMigrated = dao.findNonMigratedWorkOrders();
@@ -75,6 +78,6 @@ public class WorkOrderObservable extends Observable implements Runnable {
         super.addObserver(woo);
     }
 
-  
+   
 
 }
