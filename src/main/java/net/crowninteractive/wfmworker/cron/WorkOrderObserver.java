@@ -21,18 +21,18 @@ import org.springframework.stereotype.Component;
  * @author johnson3yo
  */
 @Component
-public class WorkOrderObserver implements Observer {
+public class WorkOrderObserver  {
 
     @Autowired
     private JmsTemplate template;
 
     
 
-    @Override
-    public void update(Observable o, Object found) {
+   
+    public void update(String value) {
         System.out.println(">>>>>>>updating in work order observer >>>>>>");
         
-        String value = (String) found;
+      
         System.out.println(">>>>>value >>>>>>>"+value);
         template.send("MeterRolloutQueueLocal", new MessageCreator() {
             @Override

@@ -50,16 +50,17 @@
 </bean>
 
 
-<!--<bean id="timerTask" class="net.crowninteractive.wfmworker.Worker"> </bean> 
-<task:scheduled-tasks scheduler="myScheduler">
-    <task:scheduled ref="timerTask" method="run" />
-
+    <bean id="timerTask" class="net.crowninteractive.wfmworker.cron.WorkOrderObservable"> </bean> 
+   <task:scheduled-tasks scheduler="myScheduler10">
+        <task:scheduled ref="timerTask" method="run" initial-delay="10000" fixed-delay="30000" /> 
+    </task:scheduled-tasks>
+    <task:scheduler id="myScheduler10" pool-size="5"/>
 
     <bean id="timerTask2" class="net.crowninteractive.wfmworker.EscalationCreator"> </bean> 
     <task:scheduled-tasks scheduler="myScheduler2">
         <task:scheduled ref="timerTask2" method="run" initial-delay="10000" fixed-delay="70000" /> 
     </task:scheduled-tasks>
-    <task:scheduler id="myScheduler2" pool-size="5"/>-->
+    <task:scheduler id="myScheduler2" pool-size="5"/>
 
 
     <bean id="timerTask3" class="net.crowninteractive.wfmworker.EmailSender"> </bean> 

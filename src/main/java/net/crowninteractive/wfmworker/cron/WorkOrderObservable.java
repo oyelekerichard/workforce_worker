@@ -8,7 +8,7 @@ package net.crowninteractive.wfmworker.cron;
 import com.google.gson.Gson;
 import java.util.HashMap;
 import java.util.List;
-import java.util.Observable;
+import java.util.TimerTask;
 import net.crowninteractive.wfmworker.dao.WorkOrderDao;
 import net.crowninteractive.wfmworker.entity.WorkOrder;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -19,10 +19,12 @@ import org.springframework.stereotype.Component;
  * @author johnson3yo
  */
 @Component
-public class WorkOrderObservable extends Observable {
+public class WorkOrderObservable extends TimerTask{
 
     @Autowired
     private WorkOrderDao dao;
+    @Autowired
+    private WorkOrderObserver woob;
     private HashMap<Integer, WorkOrder> current;
 
     public WorkOrderObservable() {
@@ -30,6 +32,7 @@ public class WorkOrderObservable extends Observable {
         current = new HashMap();
     }
 
+    @Override
     public void run() {
         try {
           
@@ -43,7 +46,7 @@ public class WorkOrderObservable extends Observable {
                         if (current.containsKey(dim.getTicketId())) {
                             WorkOrder current = this.current.get(dim.getTicketId());
                             if (!current.getCurrentStatus().equals(dim.getCurrentStatus())) {
-                                this.notifyObservers(new Gson().
+                                woob.update(new Gson().
                                         toJson(new UpdateMessage(dim.getReferenceTypeData(), dim.getCurrentStatus())));
                             } else if (dim.getCurrentStatus().startsWith("MIGRA")) {
                                 this.current.remove(dim.getTicketId());
@@ -68,11 +71,7 @@ public class WorkOrderObservable extends Observable {
     {
     }
 
-    public void addWorkOrderUpdateListener(WorkOrderObserver woo) {
-
-        super.addObserver(woo);
-    }
-
+   
    
 
 }
