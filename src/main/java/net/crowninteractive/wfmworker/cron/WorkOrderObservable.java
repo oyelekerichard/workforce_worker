@@ -36,7 +36,7 @@ public class WorkOrderObservable extends TimerTask{
     public void run() {
         try {
           
-            System.out.println(">>>>>>>Dao <>>>>>>>>>>>>>>>>>>>>>>>"+dao);
+            System.out.println(">>>>>>Map printed >>>>>>>>>>>>>>>> "+current);
             System.out.println(">>>>>FEtch a list of non migrated work orders >>>>>");
             List<WorkOrder> nonMigrated = dao.findNonMigratedWorkOrders();
             if (nonMigrated != null) {
@@ -57,10 +57,7 @@ public class WorkOrderObservable extends TimerTask{
                         }
 
                     });
-                } else {
-                    System.out.println(">>>>>>Notttttttttttttttttttttt FOund >>>>>>>>>>>>>>>>>>>>>>>");
-                }
-
+                } 
             }
         } catch (Exception e) {
             System.out.println(">>>>>>>>Exception occured here >>>>>>>>>>>>>>>>>>>>>");
