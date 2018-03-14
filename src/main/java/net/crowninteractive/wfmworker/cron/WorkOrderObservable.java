@@ -37,12 +37,14 @@ public class WorkOrderObservable extends TimerTask{
         try {
            current.forEach((k,v)->{
            
-               System.out.println(">>>>>>Status>>>>>>>>>>>"+v.getCurrentStatus());
+               System.out.println(">>>Map>>>>>>>>Status>>>>>>>>>>>"+v.getCurrentStatus());
            });
             List<WorkOrder> nonMigrated = dao.findNonMigratedWorkOrders();
             if (nonMigrated != null) {
                 if (nonMigrated.size() > 0) {
-                    System.out.println(">>>>>>>>>>>>>.....Found>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> >>>>>>>>>>" + nonMigrated.size());
+                    nonMigrated.forEach(dim->{
+                        System.out.println(">>>>>LISt >>>> status >>>>>>>>>>>>>>>>"+dim.getCurrentStatus());
+                    });
                     nonMigrated.forEach(dim -> {
                         if (current.containsKey(dim.getTicketId())) {
                             WorkOrder current = this.current.get(dim.getTicketId());
@@ -54,6 +56,8 @@ public class WorkOrderObservable extends TimerTask{
                                 this.current.remove(dim.getTicketId());
                             }else{
                                 System.out.println(">>>>Else >>>>>> Isnt Euqal >>>>>>>");
+                                System.out.println("from list >>>>>"+dim.getCurrentStatus());
+                                System.out.println("frpm map >>>>"+current.getCurrentStatus());
                             }
                         } else {
                             System.out.println(">>>Inserting into >>>>> map >>>>>>>>>..");
