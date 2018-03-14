@@ -61,7 +61,7 @@
     </task:scheduled-tasks>
     <task:scheduler id="myScheduler2" pool-size="5"/>-->
 
-    <task:annotation-driven>
+    <task:annotation-driven />
     <bean id="timerTask3" class="net.crowninteractive.wfmworker.EmailSender"> </bean> 
     <task:scheduled-tasks scheduler="myScheduler3">
         <task:scheduled ref="timerTask3" method="run" initial-delay="15000" fixed-delay="80000" /> 
