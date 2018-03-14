@@ -28,6 +28,7 @@ public class WorkOrderObservable extends TimerTask{
     private HashMap<Integer, WorkOrder> current;
 
     public WorkOrderObservable() {
+        System.out.println(">>>>>>Setting Hash Map ?>>>>>>>>>>>>>>>>>");
         current = new HashMap();
     }
 
@@ -35,9 +36,12 @@ public class WorkOrderObservable extends TimerTask{
     public void run() {
         try {
           
+            System.out.println(">>>>>>>Dao <>>>>>>>>>>>>>>>>>>>>>>>"+dao);
+            System.out.println(">>>>>FEtch a list of non migrated work orders >>>>>");
             List<WorkOrder> nonMigrated = dao.findNonMigratedWorkOrders();
             if (nonMigrated != null) {
                 if (nonMigrated.size() > 0) {
+                    System.out.println(">>>>>>>>>>>>>.....Found>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> >>>>>>>>>>" + nonMigrated.size());
                     nonMigrated.forEach(dim -> {
                         if (current.containsKey(dim.getTicketId())) {
                             WorkOrder current = this.current.get(dim.getTicketId());

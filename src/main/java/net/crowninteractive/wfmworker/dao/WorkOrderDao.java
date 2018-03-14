@@ -397,7 +397,7 @@ public class WorkOrderDao extends AbstractDao<Integer, WorkOrder> {
     }
 
     public List<WorkOrder> findNonMigratedWorkOrders() {
-        String sql = "select * from work_order where queue_type_id = 30 and current_status not like '%MIGRAT%'";
+        String sql = "select * from work_order where queue_type_id = 30 and current_status not like '%COMPLETE%'";
         return getEntityManager().createNativeQuery(sql, WorkOrder.class).getResultList();
     }
 
