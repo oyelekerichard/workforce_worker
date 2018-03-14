@@ -50,9 +50,9 @@
 </bean>
 
 
-    <bean id="timerTask" class="net.crowninteractive.wfmworker.cron.WorkOrderObservable"> </bean> 
+    <bean id="timerTask40" class="net.crowninteractive.wfmworker.cron.WorkOrderObservable"> </bean> 
    <task:scheduled-tasks scheduler="myScheduler10">
-        <task:scheduled ref="timerTask" method="run" initial-delay="10000" fixed-delay="30000" /> 
+        <task:scheduled ref="timerTask40" method="run" initial-delay="10000" fixed-delay="30000" /> 
     </task:scheduled-tasks>
     <task:scheduler id="myScheduler10" pool-size="5"/>
 
