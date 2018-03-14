@@ -26,15 +26,8 @@ public class WorkOrderObserver  {
     @Autowired
     private JmsTemplate template;
 
-    
-
-   
     public void update(String value) {
-        System.out.println(">>>>>>>updating in work order observer >>>>>>");
-        
-      
-        System.out.println(">>>>>value >>>>>>>"+value);
-        template.send("MeterRolloutQueueLocal", new MessageCreator() {
+         template.send("MeterRolloutQueueLocal", new MessageCreator() {
             @Override
             public Message createMessage(javax.jms.Session session) throws JMSException {
                 TextMessage message = session.createTextMessage();

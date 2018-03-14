@@ -28,24 +28,16 @@ public class WorkOrderObservable extends TimerTask{
     private HashMap<Integer, WorkOrder> current;
 
     public WorkOrderObservable() {
-        System.out.println(">>>>>>Setting Hash Map ?>>>>>>>>>>>>>>>>>");
         current = new HashMap();
     }
 
     @Override
     public void run() {
-        try {
-           current.forEach((k,v)->{
-           
-               System.out.println(">>>Map>>>>>>>>Status>>>>>>>>>>>"+v.getCurrentStatus());
-           });
+        try {      
             List<WorkOrder> nonMigrated = dao.findNonMigratedWorkOrders();
             if (nonMigrated != null) {
                 if (nonMigrated.size() > 0) {
-                    nonMigrated.forEach(dim->{
-                        System.out.println(">>>>>LISt >>>> status >>>>>>>>>>>>>>>>"+dim.getCurrentStatus());
-                    });
-                    nonMigrated.forEach(dim -> {
+                   nonMigrated.forEach(dim -> {
                         if (current.containsKey(dim.getTicketId())) {
                             WorkOrder current = this.current.get(dim.getTicketId());
                             if (!current.getCurrentStatus().equals(dim.getCurrentStatus())) {
@@ -54,22 +46,15 @@ public class WorkOrderObservable extends TimerTask{
                                 this.current.put(current.getTicketId(), dim);
                             } else if (dim.getCurrentStatus().startsWith("MIGRA")) {
                                 this.current.remove(dim.getTicketId());
-                            }else{
-                                System.out.println(">>>>Else >>>>>> Isnt Euqal >>>>>>>");
-                                System.out.println("from list >>>>>"+dim.getCurrentStatus());
-                                System.out.println("frpm map >>>>"+current.getCurrentStatus());
                             }
                         } else {
-                            System.out.println(">>>Inserting into >>>>> map >>>>>>>>>..");
                             current.put(dim.getTicketId(), dim);
                         }
-
                     });
                 } 
             }
         } catch (Exception e) {
-            System.out.println(">>>>>>>>Exception occured here >>>>>>>>>>>>>>>>>>>>>");
-            e.printStackTrace();
+             e.printStackTrace();
         }
 
     }
