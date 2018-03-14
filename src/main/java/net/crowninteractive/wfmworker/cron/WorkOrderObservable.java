@@ -6,14 +6,12 @@
 package net.crowninteractive.wfmworker.cron;
 
 import com.google.gson.Gson;
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Observable;
 import net.crowninteractive.wfmworker.dao.WorkOrderDao;
 import net.crowninteractive.wfmworker.entity.WorkOrder;
-import org.springframework.context.ApplicationContext;
-import org.springframework.context.support.ClassPathXmlApplicationContext;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 /**
@@ -21,23 +19,20 @@ import org.springframework.stereotype.Component;
  * @author johnson3yo
  */
 @Component
-public class WorkOrderObservable extends Observable implements Runnable{
+public class WorkOrderObservable extends Observable {
 
+    @Autowired
     private WorkOrderDao dao;
     private HashMap<Integer, WorkOrder> current;
 
     public WorkOrderObservable() {
+        System.out.println(">>>>>>Setting Hash Map ?>>>>>>>>>>>>>>>>>");
         current = new HashMap();
     }
 
-    @Override
     public void run() {
         try {
-            ApplicationContext ac = new ClassPathXmlApplicationContext(
-                    "bconfig.xml");
-            System.out.println(">>>>>>BEan Def NAme >>>>>>>>>>>>>>>>>>>>>>>>>"+Arrays.toString(ac.getBeanDefinitionNames()));
-            dao = ac.getBean(WorkOrderDao.class);
-         
+          
             System.out.println(">>>>>>>Dao <>>>>>>>>>>>>>>>>>>>>>>>"+dao);
             System.out.println(">>>>>FEtch a list of non migrated work orders >>>>>");
             List<WorkOrder> nonMigrated = dao.findNonMigratedWorkOrders();
