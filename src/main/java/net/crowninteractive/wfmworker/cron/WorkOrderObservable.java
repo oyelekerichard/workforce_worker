@@ -35,9 +35,10 @@ public class WorkOrderObservable extends TimerTask{
     @Override
     public void run() {
         try {
-          
-            System.out.println(">>>>>>Map printed >>>>>>>>>>>>>>>> "+current);
-            System.out.println(">>>>>FEtch a list of non migrated work orders >>>>>");
+           current.forEach((k,v)->{
+           
+               System.out.println(">>>>>>Status>>>>>>>>>>>"+v.getCurrentStatus());
+           });
             List<WorkOrder> nonMigrated = dao.findNonMigratedWorkOrders();
             if (nonMigrated != null) {
                 if (nonMigrated.size() > 0) {
@@ -51,8 +52,11 @@ public class WorkOrderObservable extends TimerTask{
                                 this.current.put(current.getTicketId(), dim);
                             } else if (dim.getCurrentStatus().startsWith("MIGRA")) {
                                 this.current.remove(dim.getTicketId());
+                            }else{
+                                System.out.println(">>>>Else >>>>>> Isnt Euqal >>>>>>>");
                             }
                         } else {
+                            System.out.println(">>>Inserting into >>>>> map >>>>>>>>>..");
                             current.put(dim.getTicketId(), dim);
                         }
 
