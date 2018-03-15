@@ -31,29 +31,29 @@ import org.springframework.web.bind.annotation.RestController;
  */
 @RestController
 @RequestMapping("work_order")
-public class WorkOrderController extends Extension{
-    
-    @Autowired private WorkOrderService service;
-    
+public class WorkOrderController extends Extension {
+
+    @Autowired
+    private WorkOrderService service;
+
     @RequestMapping(method = RequestMethod.POST, value = "emcc_disconnect")
     public String addToDisconnectQueue(@RequestBody RequestObj obj, @Context HttpServletRequest request) {
         Awesome awe;
         try {
             System.out.println(obj);
             //check deliquency upload 
-                String desc = obj.getDescription().concat(String.format(" | Debt amount is %s Naira", obj.getAmount()));
-                awe = service.addToDisconnectionQueue(obj.getAmount(),obj.getBillingId(), obj.getBusinessUnit(), obj.getTariff(), obj.getCity(), obj.getAddress(), obj.getPhone(), obj.getSummary(), desc, obj.getReportedBy());
-                System.out.println(awe);
+            String desc = obj.getDescription().concat(String.format(" | Debt amount is %s Naira", obj.getAmount()));
+            awe = service.addToDisconnectionQueue(obj.getAmount(), obj.getBillingId(), obj.getBusinessUnit(), obj.getTariff(), obj.getCity(), obj.getAddress(), obj.getPhone(), obj.getSummary(), desc, obj.getReportedBy());
+            System.out.println(awe);
         } catch (Exception ex) {
             ex.printStackTrace();
             awe = StandardResponse.invalidUser();
         }
         return process(awe, request);
     }
-    
-      
-     @RequestMapping(method = RequestMethod.POST, value = "emcc_report_workorder")
-    public String reportWorkOrder(WorkOrderMessage worder) {
+
+    @RequestMapping(method = RequestMethod.POST, value = "emcc_report_workorder")
+    public String reportWorkOrder(@RequestBody WorkOrderMessage worder) {
         try {
             int ticketId = service.createWorkOrder(worder);
             Awesome awe = new Awesome(0, String.format("Work Order with Ticket ID : %d Created Successfully", ticketId));
@@ -64,5 +64,5 @@ public class WorkOrderController extends Extension{
         }
 
     }
-    
+
 }
