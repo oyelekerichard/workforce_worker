@@ -9,12 +9,12 @@ import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import java.util.List;
 import java.util.Map;
-import static jdk.nashorn.internal.objects.NativeMath.log;
 import net.crowninteractive.wfmworker.dao.WorkOrderDao;
 import net.crowninteractive.wfmworker.entity.QueueType;
 import net.crowninteractive.wfmworker.entity.WorkOrder;
+import net.crowninteractive.wfmworker.entity.WorkOrderMessage;
+import net.crowninteractive.wfmworker.exception.WfmWorkerException;
 import net.crowninteractive.wfmworker.misc.StandardResponse;
-import static org.hibernate.annotations.common.util.impl.LoggerFactory.logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -53,7 +53,7 @@ public class WorkOrderService {
                     if (wo.size() == 0) {
                         ticketId = wdao.createWorkOrder(qt, "", "1", businessUnit, summary, description, phone, city, address, tarriff, billingID, "EMCC", "", "", reportedBy, customername);
                         return StandardResponse.ok(ticketId);
-                    } else {                            
+                    } else {
                         WorkOrder wor = wo.get(0);
                         wdao.addRemark("Emcc", String.valueOf(wor.getTicketId()), description, "1");
                         ticketId = wor.getTicketId();
@@ -92,6 +92,10 @@ public class WorkOrderService {
 
     }
 
-    
+    public int createWorkOrder(WorkOrderMessage worder) throws WfmWorkerException {
+        return wdao.createWorkOrder(worder);
+    }
+
+   
 
 }

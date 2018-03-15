@@ -5,13 +5,20 @@
  */
 package net.crowninteractive.wfmworker.contoller;
 
+import com.google.gson.Gson;
+import java.sql.SQLException;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.servlet.http.HttpServletRequest;
 import javax.ws.rs.core.Context;
 import net.crowninteractive.wfmworker.dao.RequestObj;
+import net.crowninteractive.wfmworker.entity.WorkOrderMessage;
+import net.crowninteractive.wfmworker.exception.WfmWorkerException;
 import net.crowninteractive.wfmworker.misc.Extension;
 import net.crowninteractive.wfmworker.misc.StandardResponse;
 import net.crowninteractive.wfmworker.service.Awesome;
 import net.crowninteractive.wfmworker.service.WorkOrderService;
+import static org.hibernate.annotations.SourceType.DB;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -42,6 +49,20 @@ public class WorkOrderController extends Extension{
             awe = StandardResponse.invalidUser();
         }
         return process(awe, request);
+    }
+    
+      
+     @RequestMapping(method = RequestMethod.POST, value = "emcc_report_workorder")
+    public String reportWorkOrder(WorkOrderMessage worder) {
+        try {
+            int ticketId = service.createWorkOrder(worder);
+            Awesome awe = new Awesome(0, String.format("Work Order with Ticket ID : %d Created Successfully", ticketId));
+            return new Gson().toJson(awe);
+        } catch (WfmWorkerException ex) {
+            Awesome awe = new Awesome(400, ex.getMessage());
+            return new Gson().toJson(awe);
+        }
+
     }
     
 }

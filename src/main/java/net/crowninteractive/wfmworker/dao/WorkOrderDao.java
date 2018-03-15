@@ -21,6 +21,7 @@ import javax.persistence.NoResultException;
 import javax.persistence.Query;
 import net.crowninteractive.wfmworker.entity.QueueType;
 import net.crowninteractive.wfmworker.entity.Users;
+import net.crowninteractive.wfmworker.entity.WorkOrderMessage;
 import net.crowninteractive.wfmworker.entity.WorkOrderRemark;
 import net.crowninteractive.wfmworker.entity.WorkOrderTemp;
 import net.crowninteractive.wfmworker.exception.WfmWorkerException;
@@ -400,6 +401,28 @@ public class WorkOrderDao extends AbstractDao<Integer, WorkOrder> {
         String sql = "select * from work_order where queue_type_id = 30 and current_status not like 'COMPLETE%'";
         return getEntityManager().createNativeQuery(sql, WorkOrder.class).getResultList();
     }
+
+
+    public int createWorkOrder(WorkOrderMessage worder) {
+        QueueType qt = getQueueTypeByID(worder.getQueueTypeId());
+       return createWorkOrder(qt, 
+               "", 
+               "1", 
+               worder.getBusinessUnit(), 
+               worder.getSummary(), 
+               worder.getDescription(), 
+               worder.getContactNumber(), 
+               worder.getCity(), 
+               worder.getAddressLine1(), 
+               worder.getCustomerTariff(), 
+               worder.getBillingID(), 
+               "EMCC", 
+               "", 
+               "", 
+               worder.getReportedBy(), 
+               worder.getCustomerName());
+    }
+    
 
 }
 
