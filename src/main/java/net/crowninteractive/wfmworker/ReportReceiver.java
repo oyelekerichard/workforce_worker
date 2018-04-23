@@ -104,7 +104,8 @@ public class ReportReceiver {
                 row.createCell(7).setCellValue(String.valueOf(w.getBusinessUnit()));
                 row.createCell(8).setCellValue(String.valueOf(w.getSummary()));
                 row.createCell(9).setCellValue(String.valueOf(w.getCreateTime()));
-                row.createCell(10).setCellValue(String.valueOf(w.getCurrentStatus()));
+                String status = w.getIsClosed()== 0 ? w.getCurrentStatus(): "CLOSED";
+                row.createCell(10).setCellValue(status);
                 row.createCell(11).setCellValue(wdao.getDateResolved(w));
                 row.createCell(12).setCellValue(getResolution(w));
                 row.createCell(13).setCellValue(String.valueOf(wdao.getQueueTypeName(1, w.getQueueTypeId())));

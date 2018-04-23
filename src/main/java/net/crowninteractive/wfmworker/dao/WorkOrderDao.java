@@ -80,8 +80,7 @@ public class WorkOrderDao extends AbstractDao<Integer, WorkOrder> {
         if ((options != null) && !options.isEmpty()) {
             return options.get(0);
         } else {
-            System.out.println(">>>>>>WOrk ticjet id is null >>>>>>>>>>>>>>>>>>>>>>..");
-            return null;
+           return null;
         }
     }
 
@@ -94,8 +93,7 @@ public class WorkOrderDao extends AbstractDao<Integer, WorkOrder> {
     }
 
     public List<WorkOrder> getWorkOrderByParams(String district, String from, String to) {
-        String qry = "select * from work_order where is_active=1 and business_unit='%s' and date(create_time) "
-                + ">= date('%s') and date(create_time) <= date('%s')";
+        String qry = "select * from work_order where is_active=1 and business_unit='%s' and date(create_time) >= date('%s') and date(create_time) <= date('%s')";
         Query q = getEntityManager().createNativeQuery(String.format(qry, district, from, to), WorkOrder.class);
         return q.getResultList();
     }
