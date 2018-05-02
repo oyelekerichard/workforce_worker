@@ -52,16 +52,10 @@ public class ReportReceiver {
                 TextMessage textMessage = (TextMessage) message;
                 String[] txt = textMessage.getText().split(",");
                 processWrite(txt[0], txt[1], txt[2]);
-            } catch (JMSException ex) {
-                Logger.getLogger(ReportRequestReceiver.class.getName()).log(Level.SEVERE, null, ex);
-            } catch (FileNotFoundException ex) {
-                Logger.getLogger(ReportRequestReceiver.class.getName()).log(Level.SEVERE, null, ex);
-            } catch (IOException ex) {
-                Logger.getLogger(ReportRequestReceiver.class.getName()).log(Level.SEVERE, null, ex);
-            } catch (EmailException ex) {
-                Logger.getLogger(ReportRequestReceiver.class.getName()).log(Level.SEVERE, null, ex);
-            }
+            } 
              catch (Exception ex) {
+                 System.out.println("-----------------------Exception occured --------------------------");
+                 System.out.println("-----------------------Processing file ---------------------------- ");
                 ex.printStackTrace();
             }
         }
