@@ -41,8 +41,6 @@ public class ReportReceiver {
     private WorkOrderDao wdao;
     @Autowired
     private SendEmail emm;
-    
-    
 
     @JmsListener(destination = "${nerc.report.queue}")
     public void handleMessage(Message message) {
@@ -52,10 +50,9 @@ public class ReportReceiver {
                 TextMessage textMessage = (TextMessage) message;
                 String[] txt = textMessage.getText().split(",");
                 processWrite(txt[0], txt[1], txt[2]);
-            } 
-             catch (Exception ex) {
-                 System.out.println("-----------------------Exception occured --------------------------");
-                 System.out.println("-----------------------Processing file ---------------------------- ");
+            } catch (Exception ex) {
+                System.out.println("-----------------------Exception occured --------------------------");
+                System.out.println("-----------------------Processing file ---------------------------- ");
                 ex.printStackTrace();
             }
         }
@@ -66,7 +63,7 @@ public class ReportReceiver {
         FileInputStream file = new FileInputStream(new File("/var/files/wfm/nerctemplate.xlsx"));
 
         //String[] mths = {"-", "JAN", "FEB", "MAR", "APR", "MAY", "JUN", "JUL", "AUG", "SEP", "OCT", "NOV", "DEC"};
-        String[] districts = {"APAPA", "MUSHIN", "AGBARA", "ISLANDS", "IJORA", "LEKKI", "OJO", "FESTAC", "UNKNOWN","IBEJU","ORILE"};
+        String[] districts = {"APAPA", "MUSHIN", "AGBARA", "ISLANDS", "IJORA", "LEKKI", "OJO", "FESTAC", "UNKNOWN", "IBEJU", "ORILE"};
 
         XSSFWorkbook workbook = new XSSFWorkbook(file);
 
@@ -98,7 +95,13 @@ public class ReportReceiver {
                 row.createCell(7).setCellValue(String.valueOf(w.getBusinessUnit()));
                 row.createCell(8).setCellValue(String.valueOf(w.getSummary()));
                 row.createCell(9).setCellValue(String.valueOf(w.getCreateTime()));
-                String status = w.getIsClosed()== 0 ? w.getCurrentStatus(): "CLOSED";
+                String status = "";
+                if (w.getIsClosed() != null) {
+                    if (w.getCurrentStatus() != null) {
+                        status = w.getIsClosed() == 0 ? w.getCurrentStatus() : "CLOSED";
+                    }
+                }
+
                 row.createCell(10).setCellValue(status);
                 row.createCell(11).setCellValue(wdao.getDateResolved(w));
                 row.createCell(12).setCellValue(getResolution(w));
