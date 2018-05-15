@@ -253,6 +253,8 @@ public class ReportReceiver {
         workbook.write(outputStream);
         System.out.println("file is " + report);
 
+        emm.sendAnEmail("a12wq_minions", "NERC customer care report", email, "Your report is now ready. Please find attached the requested report", localfile, null);
+        System.out.println("report processor - Message Sent");
     }
 
 }

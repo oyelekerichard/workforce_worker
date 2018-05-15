@@ -47,8 +47,7 @@ public class UsersDao extends AbstractDao<Integer, Users> {
     }
 
     public String getQueueTypeIds(String email) throws WfmWorkerException {
-        String query = String.format("select queue_type_id from right_template_queue_type where"
-                + " right_template_id = (select right_template_id from users where email = ?1) ");
+        String query = String.format("select queue_type_id from right_template_queue_type where right_template_id = (select right_template_id from users where email = ?1) ");
         List<Integer> queueTypeIds = getEntityManager().createNativeQuery(query).setParameter(1,
                 email).getResultList();
         String values = queueTypeIds.stream().map(found -> String.valueOf(found)).collect(Collectors.joining(","));
@@ -59,8 +58,7 @@ public class UsersDao extends AbstractDao<Integer, Users> {
     }
 
     public String getAssignedTariffs(String email) throws WfmWorkerException {
-        String query = String.format("select tariff from right_template_tariff where"
-                + " right_template_id = (select right_template_id from users where email = ?1) ");
+        String query = String.format("select tariff from right_template_tariff where right_template_id = (select right_template_id from users where email = ?1) ");
         List<String> queueTypeIds = getEntityManager().createNativeQuery(query).setParameter(1,
                 email).getResultList();
         String values = queueTypeIds.stream().map(found -> "'".concat(found).concat("'")).collect(Collectors.joining(","));
