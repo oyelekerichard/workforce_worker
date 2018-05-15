@@ -80,7 +80,7 @@ public class WorkOrderDao extends AbstractDao<Integer, WorkOrder> {
         if ((options != null) && !options.isEmpty()) {
             return options.get(0);
         } else {
-           return null;
+            return null;
         }
     }
 
@@ -94,6 +94,13 @@ public class WorkOrderDao extends AbstractDao<Integer, WorkOrder> {
 
     public List<WorkOrder> getWorkOrderByParams(String district, String from, String to) {
         String qry = "select * from work_order where is_active=1 and business_unit='%s' and date(create_time) >= date('%s') and date(create_time) <= date('%s')";
+        Query q = getEntityManager().createNativeQuery(String.format(qry, district, from, to), WorkOrder.class);
+        return q.getResultList();
+    }
+
+    public List<WorkOrder> getWorkOrderByParams(String district, String from, String to, String queueTypeIds, String tariffs) {
+        String qry = "select * from work_order where is_active=1 and business_unit='%s' and date(create_time) >= date('%s') and date(create_time) <= date('%s') "
+                + "and queue_type_id in ("+queueTypeIds+") and customer_tariff in ("+tariffs+")";
         Query q = getEntityManager().createNativeQuery(String.format(qry, district, from, to), WorkOrder.class);
         return q.getResultList();
     }
@@ -400,27 +407,25 @@ public class WorkOrderDao extends AbstractDao<Integer, WorkOrder> {
         return getEntityManager().createNativeQuery(sql, WorkOrder.class).getResultList();
     }
 
-
     public int createWorkOrder(WorkOrderMessage worder) {
         QueueType qt = getQueueTypeByID(worder.getQueueTypeId());
-       return createWorkOrder(qt, 
-               "", 
-               "1", 
-               worder.getBusinessUnit(), 
-               worder.getSummary(), 
-               worder.getDescription(), 
-               worder.getContactNumber(), 
-               worder.getCity(), 
-               worder.getAddressLine1(), 
-               worder.getCustomerTariff(), 
-               worder.getBillingID(), 
-               "EMCC", 
-               "", 
-               "", 
-               worder.getReportedBy(), 
-               worder.getCustomerName());
+        return createWorkOrder(qt,
+                "",
+                "1",
+                worder.getBusinessUnit(),
+                worder.getSummary(),
+                worder.getDescription(),
+                worder.getContactNumber(),
+                worder.getCity(),
+                worder.getAddressLine1(),
+                worder.getCustomerTariff(),
+                worder.getBillingID(),
+                "EMCC",
+                "",
+                "",
+                worder.getReportedBy(),
+                worder.getCustomerName());
     }
-    
 
 }
 
