@@ -335,6 +335,36 @@ public class WorkOrderDao extends AbstractDao<Integer, WorkOrder> {
         return w.getTicketId();
     }
 
+     public WorkOrder createWorkOrderV2(QueueType qt, String string, String string0, String businessUnit, String summary, String description, String phone, String city, String address, String tarriff, String billingID, String emcc, String string1, String string2, String reportedBy, String customername) {
+        WorkOrder wo = new WorkOrder();
+        wo.setBusinessUnit(businessUnit);
+        wo.setAddressLine1(address);
+        wo.setAddressLine2(address);
+        wo.setQueueId(qt.getQueueId());
+        wo.setQueueTypeId(qt);
+        wo.setTicketId(ticketCount());
+        wo.setContactNumber(phone);
+        wo.setCustomerName(customername);
+        wo.setOwnerId(1);
+        wo.setDescription(description);
+        wo.setReportedBy(reportedBy);
+        wo.setCreateTime(new Date());
+        wo.setCurrentStatus("OPEN");
+        wo.setCustomerTariff(tarriff);
+        wo.setCity(city);
+        wo.setPriority("Low");
+        wo.setReferenceType("Billing ID");
+        wo.setReferenceTypeData(billingID);
+        wo.setState("Lagos");
+        wo.setSummary(summary);
+        wo.setToken(RandomStringUtils.randomAlphanumeric(30));
+        wo.setChannel("EMCC");
+
+        WorkOrder w = save(wo);
+        return w;
+    }
+
+    
     public void addRemark(String emcc, String ticketId, String comment, String string) {
         WorkOrderRemark wor = new WorkOrderRemark();
         wor.setComment(comment);

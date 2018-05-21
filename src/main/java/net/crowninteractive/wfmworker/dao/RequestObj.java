@@ -13,6 +13,7 @@ import java.util.Arrays;
  */
 public class RequestObj {
 
+    private String acctRecId;
     private String ticketId;
     private String amount;
     private String reference;
@@ -49,7 +50,7 @@ public class RequestObj {
     private String frequency;
     private String[] tokens;
     private String[]setup;
-    private  String name;
+    private String name;
     private String district;
   
     
@@ -357,6 +358,15 @@ public class RequestObj {
     public void setDistrict(String district) {
         this.district = district;
     }
+
+    public String getAcctRecId() {
+        return acctRecId;
+    }
+
+    public void setAcctRecId(String acctRecId) {
+        this.acctRecId = acctRecId;
+    }
+    
     
     
     
@@ -364,6 +374,7 @@ public class RequestObj {
     @Override
     public String toString() {
         return "RequestObj{" +
+                "acctRecId='" + acctRecId + '\'' +
                 "ticketId='" + ticketId + '\'' +
                 ", amount='" + amount + '\'' +
                 ", reference='" + reference + '\'' +

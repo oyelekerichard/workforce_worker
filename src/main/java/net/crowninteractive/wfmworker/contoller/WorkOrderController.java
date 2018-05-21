@@ -52,15 +52,6 @@ public class WorkOrderController extends Extension {
     @RequestMapping(method = RequestMethod.POST, value = "emcc_report_workorder")
     public String reportWorkOrder(@RequestBody WorkOrderMessage worder) {
         try {
-            
-             HashMap<String,Integer> rmap = new HashMap();
-          rmap.forEach((k,v)->{
-            if((v>1) && (v%2==1)){
-              System.out.println("No");
-            }else{
-              System.out.println("Yes");
-            }
-        });
             int ticketId = service.createWorkOrder(worder);
             Awesome awe = new Awesome(0, String.format("Work Order with Ticket ID : %d Created Successfully", ticketId));
             return new Gson().toJson(awe);
@@ -68,8 +59,21 @@ public class WorkOrderController extends Extension {
             Awesome awe = new Awesome(400, ex.getMessage());
             return new Gson().toJson(awe);
         }
-       
+
+    }
+
+    @RequestMapping(method = RequestMethod.POST, value = "emcc_disconnectv2")
+    public String addToDisconnectQueueV2(@RequestBody RequestObj[] reqList, @Context HttpServletRequest request) {
+        Awesome awe;
+        try {
+            //check deliquency upload 
+            awe = service.processItems(reqList);
+            System.out.println(awe);
+        } catch (Exception ex) {
+            ex.printStackTrace();
+            awe = StandardResponse.invalidUser();
+        }
+        return process(awe, request);
     }
 
 }
- 

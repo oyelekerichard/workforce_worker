@@ -53,6 +53,8 @@ public class UsersDao extends AbstractDao<Integer, Users> {
         String values = queueTypeIds.stream().map(found -> String.valueOf(found)).collect(Collectors.joining(","));
         if (values == null) {
             throw new WfmWorkerException("No queueTypes found ");
+        }if(values.length()<1){
+            throw new WfmWorkerException("No queueTypes found ");
         }
         return values;
     }
@@ -64,6 +66,8 @@ public class UsersDao extends AbstractDao<Integer, Users> {
         String values = queueTypeIds.stream().map(found -> "'".concat(found).concat("'")).collect(Collectors.joining(","));
         if (values == null) {
             throw new WfmWorkerException("No tariffs  found ");
+        }if(values.length()<1){
+            throw new WfmWorkerException("No tariffs found ");
         }
         return values;
     }

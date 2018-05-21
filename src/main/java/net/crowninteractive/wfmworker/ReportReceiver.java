@@ -110,7 +110,6 @@ public class ReportReceiver {
                         status = w.getIsClosed() == 0 ? w.getCurrentStatus() : "CLOSED";
                     }
                 }
-
                 row.createCell(10).setCellValue(status);
                 row.createCell(11).setCellValue(wdao.getDateResolved(w));
                 row.createCell(12).setCellValue(getResolution(w));
@@ -155,7 +154,9 @@ public class ReportReceiver {
 
         String queueTypeId = usersDao.getQueueTypeIds(email);
         String tariffs = usersDao.getAssignedTariffs(email);
+        
         List<String> districts = new ArrayList<String>(Arrays.asList(commaSeparated.split("\\s*,\\s*")));
+      
         Workbook workbook = new XSSFWorkbook();
 
         CellStyle headerStyle = workbook.createCellStyle();

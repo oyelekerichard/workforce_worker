@@ -5,13 +5,11 @@
  */
 package net.crowninteractive.wfmworker.cron;
 
-import java.util.Observable;
-import java.util.Observer;
 import javax.jms.JMSException;
 import javax.jms.Message;
 import javax.jms.TextMessage;
-import net.crowninteractive.wfmworker.entity.WorkOrder;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.jms.core.JmsTemplate;
 import org.springframework.jms.core.MessageCreator;
 import org.springframework.stereotype.Component;
@@ -21,13 +19,16 @@ import org.springframework.stereotype.Component;
  * @author johnson3yo
  */
 @Component
-public class WorkOrderObserver  {
+public class WorkOrderObserver {
+
+    @Value(value = "${meter.rollout.queue.local}")
+    private String meterRollOutQueueLocal;
 
     @Autowired
     private JmsTemplate template;
 
     public void update(String value) {
-         template.send("MeterRolloutQueueLocal", new MessageCreator() {
+        template.send(meterRollOutQueueLocal, new MessageCreator() {
             @Override
             public Message createMessage(javax.jms.Session session) throws JMSException {
                 TextMessage message = session.createTextMessage();
