@@ -100,7 +100,7 @@ public class WorkOrderDao extends AbstractDao<Integer, WorkOrder> {
 
     public List<WorkOrder> getWorkOrderByParams(String district, String from, String to, String queueTypeIds, String tariffs) {
         String qry = "select * from work_order where is_active=1 and business_unit='%s' and date(create_time) >= date('%s') and date(create_time) <= date('%s') "
-                + "and queue_type_id in ("+queueTypeIds+") and customer_tariff in ("+tariffs+")";
+                + "and queue_type_id in (" + queueTypeIds + ") and customer_tariff in (" + tariffs + ")";
         Query q = getEntityManager().createNativeQuery(String.format(qry, district, from, to), WorkOrder.class);
         return q.getResultList();
     }
@@ -335,7 +335,7 @@ public class WorkOrderDao extends AbstractDao<Integer, WorkOrder> {
         return w.getTicketId();
     }
 
-     public WorkOrder createWorkOrderV2(QueueType qt, String string, String string0, String businessUnit, String summary, String description, String phone, String city, String address, String tarriff, String billingID, String emcc, String string1, String string2, String reportedBy, String customername) {
+    public WorkOrder createWorkOrderV2(QueueType qt, String string, String string0, String businessUnit, String summary, String description, String phone, String city, String address, String tarriff, String billingID, String emcc, String string1, String string2, String reportedBy, String customername) {
         WorkOrder wo = new WorkOrder();
         wo.setBusinessUnit(businessUnit);
         wo.setAddressLine1(address);
@@ -364,7 +364,6 @@ public class WorkOrderDao extends AbstractDao<Integer, WorkOrder> {
         return w;
     }
 
-    
     public void addRemark(String emcc, String ticketId, String comment, String string) {
         WorkOrderRemark wor = new WorkOrderRemark();
         wor.setComment(comment);
@@ -458,15 +457,26 @@ public class WorkOrderDao extends AbstractDao<Integer, WorkOrder> {
     }
 
     public List<WorkOrder> findByQueueId(Integer queueId, int offset, int count) {
-       return getEntityManager().
-                createNativeQuery("select * from work_order where queue_id = ? order by id desc limit ?,? ",WorkOrder.class).
-                setParameter(1,queueId).
+        return getEntityManager().
+                createNativeQuery("select * from work_order where queue_id = ? order by id desc limit ?,? ", WorkOrder.class).
+                setParameter(1, queueId).
                 setParameter(2, offset).
                 setParameter(3, count)
-                .getResultList();    
+                .getResultList();
     }
 
-    
+    public WorkOrder findByQueueTypeId(Integer queueTypeId) {
+        List<WorkOrder> resultList = getEntityManager().
+                createNativeQuery("select * from work_order where queue_type_id = ? ", WorkOrder.class).
+                setParameter(1, queueTypeId)
+                .getResultList();
+        if (resultList != null) {
+            if (resultList.size() > 0) {
+                return resultList.get(0);
+            }
+        }
+        return new WorkOrder();
+    }
 
 }
 
