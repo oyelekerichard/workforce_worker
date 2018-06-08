@@ -87,10 +87,10 @@ public class WorkOrderController extends Extension {
         List<WorkOrder> workorders = service.getWorkOrders(queueId, pageNo);
         return new ResponseEntity<List<WorkOrder>>(workorders, HttpStatus.OK);
     }
-    
-      @RequestMapping(method = RequestMethod.GET, value = "/{queueTypeId}")
-    public ResponseEntity getWorkOrder(@PathVariable("queueTypeId") Integer queueTypeId
-        ) {
+
+    @RequestMapping(method = RequestMethod.GET, value = "/{queueId}/{queueTypeId}")
+    public ResponseEntity getWorkOrder(@PathVariable("queueId") Integer queueId, @PathVariable("queueTypeId") Integer queueTypeId
+    ) {
         WorkOrder workorder = service.getWorkOrder(queueTypeId);
         return new ResponseEntity<WorkOrder>(workorder, HttpStatus.OK);
     }
