@@ -6,10 +6,11 @@
 package net.crowninteractive.wfmworker.contoller;
 
 import com.google.gson.Gson;
-import java.util.HashMap;
+import java.util.List;
 import javax.servlet.http.HttpServletRequest;
 import javax.ws.rs.core.Context;
 import net.crowninteractive.wfmworker.dao.RequestObj;
+import net.crowninteractive.wfmworker.entity.WorkOrder;
 import net.crowninteractive.wfmworker.entity.WorkOrderMessage;
 import net.crowninteractive.wfmworker.exception.WfmWorkerException;
 import net.crowninteractive.wfmworker.misc.Extension;
@@ -17,9 +18,13 @@ import net.crowninteractive.wfmworker.misc.StandardResponse;
 import net.crowninteractive.wfmworker.service.Awesome;
 import net.crowninteractive.wfmworker.service.WorkOrderService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 /**
@@ -74,6 +79,13 @@ public class WorkOrderController extends Extension {
             awe = StandardResponse.invalidUser();
         }
         return process(awe, request);
+    }
+
+    @RequestMapping(method = RequestMethod.GET, value = "/{queueId}")
+    public ResponseEntity getWorkOrders(@PathVariable("queueId") Integer queueId,
+            @RequestParam(value = "pageNo", defaultValue = "1", required = false) Integer pageNo) {
+        List<WorkOrder> workorders = service.getWorkOrders(queueId, pageNo);
+        return new ResponseEntity<List<WorkOrder>>(workorders, HttpStatus.OK);
     }
 
 }

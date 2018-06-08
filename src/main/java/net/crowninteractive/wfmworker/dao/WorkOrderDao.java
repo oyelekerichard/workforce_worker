@@ -433,7 +433,7 @@ public class WorkOrderDao extends AbstractDao<Integer, WorkOrder> {
     }
 
     public List<WorkOrder> findNonMigratedWorkOrders() {
-        String sql = "select * from work_order where queue_type_id = 41 and current_status not like 'COMPLETE%'";
+        String sql = "select * from work_order where queue_type_id = 359 and current_status not like 'COMPLETE%'";
         return getEntityManager().createNativeQuery(sql, WorkOrder.class).getResultList();
     }
 
@@ -456,6 +456,17 @@ public class WorkOrderDao extends AbstractDao<Integer, WorkOrder> {
                 worder.getReportedBy(),
                 worder.getCustomerName());
     }
+
+    public List<WorkOrder> findByQueueId(Integer queueId, int offset, int count) {
+       return getEntityManager().
+                createNativeQuery("select * from work_order where queue_id = ? order by id desc limit ?,? ",WorkOrder.class).
+                setParameter(1,queueId).
+                setParameter(2, offset).
+                setParameter(3, count)
+                .getResultList();    
+    }
+
+    
 
 }
 

@@ -181,4 +181,10 @@ public class WorkOrderService {
         }
     }
 
+    public List<WorkOrder> getWorkOrders(Integer queueId, Integer pageNo) {
+        int count = 100;    
+        return wdao.findByQueueId(queueId,(pageNo-1)*count,count);
+    }
+
+    
 }
