@@ -186,8 +186,8 @@ public class WorkOrderService {
         return wdao.findByQueueId(queueId,(pageNo-1)*count,count);
     }
 
-    public WorkOrder getWorkOrder(Integer queueTypeId) {
-       return  wdao.findByQueueTypeId(queueTypeId);
+    public WorkOrder getWorkOrder(Integer ticketId) {
+       return  wdao.findByQueueTypeId(ticketId);
     }
 
     

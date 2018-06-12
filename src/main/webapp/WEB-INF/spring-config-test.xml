@@ -117,7 +117,7 @@
         </property>
     </bean>
         
-    <bean id="systemPrereqs" class="org.springframework.beans.factory.config.MethodInvokingFactoryBean">
+<!--    <bean id="systemPrereqs" class="org.springframework.beans.factory.config.MethodInvokingFactoryBean">
         <property name="targetObject" value="#{@systemProperties}"></property>
         <property name="targetMethod" value="putAll"></property>
         <property name="arguments">
@@ -129,7 +129,7 @@
         </property>
    
  
-    </bean>
+    </bean>-->
 
     <bean id="persistenceExceptionTranslationPostProcessor"
           class="org.springframework.dao.annotation.PersistenceExceptionTranslationPostProcessor" />

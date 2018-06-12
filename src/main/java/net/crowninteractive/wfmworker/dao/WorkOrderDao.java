@@ -17,17 +17,18 @@ import org.springframework.stereotype.Component;
 //~--- JDK imports ------------------------------------------------------------
 import java.util.List;
 import java.util.Map;
+import java.util.logging.Logger;
 import javax.persistence.NoResultException;
 import javax.persistence.Query;
 import net.crowninteractive.wfmworker.entity.QueueType;
 import net.crowninteractive.wfmworker.entity.Users;
+import net.crowninteractive.wfmworker.entity.WorkOrderExtra;
 import net.crowninteractive.wfmworker.entity.WorkOrderMessage;
 import net.crowninteractive.wfmworker.entity.WorkOrderRemark;
 import net.crowninteractive.wfmworker.entity.WorkOrderTemp;
 import net.crowninteractive.wfmworker.exception.WfmWorkerException;
 import org.apache.commons.lang3.RandomStringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.annotation.Bean;
 import org.springframework.transaction.annotation.Transactional;
 
 /**
@@ -37,10 +38,14 @@ import org.springframework.transaction.annotation.Transactional;
 @Component
 public class WorkOrderDao extends AbstractDao<Integer, WorkOrder> {
 
+    private final Logger logger = Logger.getLogger("");
+
     @Autowired
     private WorkOrderTempDap temp;
     @Autowired
     private WorkOrderRemarkDao wora;
+    @Autowired
+    private WorkOrderExtraDao wdao;
 
     public int ticketCount() {
         Integer max = (Integer) getEntityManager()
@@ -181,7 +186,8 @@ public class WorkOrderDao extends AbstractDao<Integer, WorkOrder> {
             wot.setTicketId(ticketId);
             wot.setCurrentStatus("OPEN");
             wot.setToken(wot.getToken());
-            temp.edit(wot);
+            temp.delete(wot);
+            logger.info("-----------deleting enumeration record -----------------"+wot.getId());
         }
     }
 
@@ -211,6 +217,28 @@ public class WorkOrderDao extends AbstractDao<Integer, WorkOrder> {
         wo.setSlot(wot.getSlot());
 
         WorkOrder w = save(wo);
+        WorkOrderExtra woe = new WorkOrderExtra();
+        woe.setConnectionType(wot.getConnectionType());
+        woe.setTransformer(wot.getTransformer());
+        woe.setDisco(wot.getDisco());
+        woe.setDistributionSubstation(wot.getDistributionSubstation());
+        woe.setDistributionSubstationName(wot.getDistributionSubstationName());
+        woe.setFeeder(wot.getFeeder());
+        woe.setFeederName(wot.getFeederName());
+        woe.setHighTensionPhysicalId(wot.getHighTensionPhysicalId());
+        woe.setHtPole(wot.getHtPole());
+        woe.setInjectionSubstation(wot.getInjectionSubstation());
+        woe.setInjectionSubstationName(wot.getInjectionSubstationName());
+        woe.setNercId(wot.getNercId());
+        woe.setPowerTransformer(wot.getPowerTransformer());
+        woe.setPowerTransformerName(wot.getPowerTransformerName());
+        woe.setServicePole(wot.getServicePole());
+        woe.setServiceWire(wot.getServiceWire());
+        woe.setSubDisco(wot.getSubDisco());
+        woe.setUpriser(wot.getUpriser());
+
+        woe.setId(w);
+        wdao.save(woe);
         return w.getTicketId();
     }
 
@@ -456,6 +484,10 @@ public class WorkOrderDao extends AbstractDao<Integer, WorkOrder> {
                 worder.getCustomerName());
     }
 
+    public WorkOrder createWorkOrder(WorkOrder wo) {
+        return save(wo);
+    }
+
     public List<WorkOrder> findByQueueId(Integer queueId, int offset, int count) {
         return getEntityManager().
                 createNativeQuery("select * from work_order where queue_id = ? order by id desc limit ?,? ", WorkOrder.class).
@@ -465,10 +497,10 @@ public class WorkOrderDao extends AbstractDao<Integer, WorkOrder> {
                 .getResultList();
     }
 
-    public WorkOrder findByQueueTypeId(Integer queueTypeId) {
+    public WorkOrder findByQueueTypeId(Integer ticketId) {
         List<WorkOrder> resultList = getEntityManager().
-                createNativeQuery("select * from work_order where queue_type_id = ? ", WorkOrder.class).
-                setParameter(1, queueTypeId)
+                createNativeQuery("select * from work_order where ticket_id = ? ", WorkOrder.class).
+                setParameter(1, ticketId)
                 .getResultList();
         if (resultList != null) {
             if (resultList.size() > 0) {

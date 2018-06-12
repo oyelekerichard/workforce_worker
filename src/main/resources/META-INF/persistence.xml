@@ -41,6 +41,7 @@
     <class>net.crowninteractive.wfmworker.entity.WorkOrderUpdate</class>
     <class>net.crowninteractive.wfmworker.entity.Zone</class>
     <class>net.crowninteractive.wfmworker.entity.WorkOrderTemp</class>
+    <class>net.crowninteractive.wfmworker.entity.WorkOrderExtra</class>
     <exclude-unlisted-classes>false</exclude-unlisted-classes>
     <properties>
       <property name="hibernate.archive.autodetection" value="class"/>

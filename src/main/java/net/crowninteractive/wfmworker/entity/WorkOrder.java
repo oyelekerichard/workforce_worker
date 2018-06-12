@@ -22,6 +22,7 @@ import javax.persistence.ManyToOne;
 import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
 import javax.persistence.OneToMany;
+import javax.persistence.OneToOne;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
@@ -216,6 +217,8 @@ public class WorkOrder implements Serializable {
     private String agentName;
     @Column(name = "customer_name", length = 60)
     private String customerName;
+    @OneToOne(mappedBy = "id")
+    private WorkOrderExtra extra;
 
     public String getCustomerName() {
         return customerName;
@@ -698,6 +701,16 @@ public class WorkOrder implements Serializable {
     public void setWorkOrderRemarkList(List<WorkOrderRemark> workOrderRemarkList) {
         this.workOrderRemarkList = workOrderRemarkList;
     }
+
+    public WorkOrderExtra getExtra() {
+        return extra;
+    }
+
+    public void setExtra(WorkOrderExtra extra) {
+        this.extra = extra;
+    }
+    
+    
 
     @Override
     public int hashCode() {
