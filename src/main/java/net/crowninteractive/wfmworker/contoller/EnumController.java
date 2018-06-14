@@ -10,6 +10,7 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import net.crowninteractive.wfmworker.entity.Dashboard;
 import net.crowninteractive.wfmworker.exception.WfmWorkerException;
+import net.crowninteractive.wfmworker.service.Awesome;
 import net.crowninteractive.wfmworker.service.EnumService;
 import net.crowninteractive.wfmworker.service.Token;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -41,7 +42,7 @@ public class EnumController {
     @RequestMapping(method = RequestMethod.POST, value = "approve_enum_work_order")
     public ResponseEntity approveEnumWorkOrders(@RequestBody Token tokens) {
         String message = enumService.approveWorkOrders(tokens);
-        return new ResponseEntity<String>(message, HttpStatus.OK);
+        return new ResponseEntity<Awesome>(new Awesome(0, message), HttpStatus.OK);
     }
 
     @RequestMapping(method = RequestMethod.GET, value = "enumerationDashboard")
