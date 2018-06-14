@@ -105,7 +105,10 @@ public class WorkOrderDao extends AbstractDao<Integer, WorkOrder> {
 
     public List<WorkOrder> getWorkOrderByParams(String district, String from, String to, String queueTypeIds, String tariffs) {
         String qry = "select * from work_order where is_active=1 and business_unit='%s' and date(create_time) >= date('%s') and date(create_time) <= date('%s') "
-                + "and queue_type_id in (" + queueTypeIds + ") and customer_tariff in (" + tariffs + ")";
+                + "and queue_type_id in (" + queueTypeIds + ")";
+        if (tariffs.length() > 0) {
+            qry.concat(" and customer_tariff in (" + tariffs + ")");
+        }
         Query q = getEntityManager().createNativeQuery(String.format(qry, district, from, to), WorkOrder.class);
         return q.getResultList();
     }
@@ -187,7 +190,7 @@ public class WorkOrderDao extends AbstractDao<Integer, WorkOrder> {
             wot.setCurrentStatus("OPEN");
             wot.setToken(wot.getToken());
             temp.delete(wot);
-            logger.info("-----------deleting enumeration record -----------------"+wot.getId());
+            logger.info("-----------deleting enumeration record -----------------" + wot.getId());
         }
     }
 
@@ -215,6 +218,7 @@ public class WorkOrderDao extends AbstractDao<Integer, WorkOrder> {
         wo.setSummary(wot.getSummary());
         wo.setToken(wot.getToken());
         wo.setSlot(wot.getSlot());
+        wo.setDebtBalanceAmount(Double.valueOf(0));
 
         WorkOrder w = save(wo);
         WorkOrderExtra woe = new WorkOrderExtra();
@@ -334,7 +338,7 @@ public class WorkOrderDao extends AbstractDao<Integer, WorkOrder> {
 
     }
 
-    public int createWorkOrder(QueueType qt, String string, String string0, String businessUnit, String summary, String description, String phone, String city, String address, String tarriff, String billingID, String emcc, String string1, String string2, String reportedBy, String customername,String amount) {
+    public int createWorkOrder(QueueType qt, String string, String string0, String businessUnit, String summary, String description, String phone, String city, String address, String tarriff, String billingID, String emcc, String string1, String string2, String reportedBy, String customername, String amount) {
         WorkOrder wo = new WorkOrder();
         wo.setBusinessUnit(businessUnit);
         wo.setAddressLine1(address);
@@ -388,6 +392,7 @@ public class WorkOrderDao extends AbstractDao<Integer, WorkOrder> {
         wo.setSummary(summary);
         wo.setToken(RandomStringUtils.randomAlphanumeric(30));
         wo.setChannel("EMCC");
+        wo.setDebtBalanceAmount(Double.valueOf(0));
 
         WorkOrder w = save(wo);
         return w;
@@ -482,7 +487,7 @@ public class WorkOrderDao extends AbstractDao<Integer, WorkOrder> {
                 "",
                 "",
                 worder.getReportedBy(),
-                worder.getCustomerName(),"0");
+                worder.getCustomerName(), "0");
     }
 
     public WorkOrder createWorkOrder(WorkOrder wo) {

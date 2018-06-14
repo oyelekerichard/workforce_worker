@@ -59,15 +59,15 @@ public class UsersDao extends AbstractDao<Integer, Users> {
         return values;
     }
 
-    public String getAssignedTariffs(String email) throws WfmWorkerException {
+    public String getAssignedTariffs(String email)  {
         String query = String.format("select tariff from right_template_tariff where right_template_id = (select right_template_id from users where email = ?1) ");
         List<String> queueTypeIds = getEntityManager().createNativeQuery(query).setParameter(1,
                 email).getResultList();
         String values = queueTypeIds.stream().map(found -> "'".concat(found).concat("'")).collect(Collectors.joining(","));
         if (values == null) {
-            throw new WfmWorkerException("No tariffs  found ");
+           values = "";
         }if(values.length()<1){
-            throw new WfmWorkerException("No tariffs found ");
+           values = "";
         }
         return values;
     }
