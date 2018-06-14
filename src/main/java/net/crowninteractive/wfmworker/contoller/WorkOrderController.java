@@ -88,11 +88,16 @@ public class WorkOrderController extends Extension {
         return new ResponseEntity<List<WorkOrder>>(workorders, HttpStatus.OK);
     }
 
-    @RequestMapping(method = RequestMethod.GET, value = "/fetch/{ticketId}")
-    public ResponseEntity getWorkOrder( @PathVariable("ticketId") Integer ticketId
+    @RequestMapping(method = RequestMethod.GET, value = "/getByTicketId/{ticketId}")
+    public ResponseEntity getWorkOrder(@PathVariable("ticketId") Integer ticketId
     ) {
-        WorkOrder workorder = service.getWorkOrder(ticketId);
-        return new ResponseEntity<WorkOrder>(workorder, HttpStatus.OK);
+        try {
+            WorkOrder workorder = service.getWorkOrder(ticketId);
+           return new ResponseEntity<WorkOrder>(workorder, HttpStatus.OK);
+        } catch (Exception e) {
+            e.printStackTrace();
+            return  new ResponseEntity<String>(e.getMessage(), HttpStatus.BAD_REQUEST);
+        }
     }
 
 }

@@ -334,7 +334,7 @@ public class WorkOrderDao extends AbstractDao<Integer, WorkOrder> {
 
     }
 
-    public int createWorkOrder(QueueType qt, String string, String string0, String businessUnit, String summary, String description, String phone, String city, String address, String tarriff, String billingID, String emcc, String string1, String string2, String reportedBy, String customername) {
+    public int createWorkOrder(QueueType qt, String string, String string0, String businessUnit, String summary, String description, String phone, String city, String address, String tarriff, String billingID, String emcc, String string1, String string2, String reportedBy, String customername,String amount) {
         WorkOrder wo = new WorkOrder();
         wo.setBusinessUnit(businessUnit);
         wo.setAddressLine1(address);
@@ -358,6 +358,7 @@ public class WorkOrderDao extends AbstractDao<Integer, WorkOrder> {
         wo.setSummary(summary);
         wo.setToken(RandomStringUtils.randomAlphanumeric(30));
         wo.setChannel("EMCC");
+        wo.setDebtBalanceAmount(Double.valueOf(amount));
 
         WorkOrder w = save(wo);
         return w.getTicketId();
@@ -481,7 +482,7 @@ public class WorkOrderDao extends AbstractDao<Integer, WorkOrder> {
                 "",
                 "",
                 worder.getReportedBy(),
-                worder.getCustomerName());
+                worder.getCustomerName(),"0");
     }
 
     public WorkOrder createWorkOrder(WorkOrder wo) {

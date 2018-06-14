@@ -65,7 +65,7 @@ public class WorkOrderService {
                 if (wo != null) {
 
                     if (wo.size() == 0) {
-                        ticketId = wdao.createWorkOrder(qt, "", "1", businessUnit, summary, description, phone, city, address, tarriff, billingID, "EMCC", "", "", reportedBy, customername);
+                        ticketId = wdao.createWorkOrder(qt, "", "1", businessUnit, summary, description, phone, city, address, tarriff, billingID, "EMCC", "", "", reportedBy, customername,amount);
                         return StandardResponse.ok(ticketId);
                     } else {
                         WorkOrder wor = wo.get(0);
@@ -75,7 +75,7 @@ public class WorkOrderService {
                     }
 
                 } else {
-                    int tid = wdao.createWorkOrder(qt, "", "1", businessUnit, summary, description, phone, city, address, tarriff, billingID, "EMCC", "", "", reportedBy, customername);
+                    int tid = wdao.createWorkOrder(qt, "", "1", businessUnit, summary, description, phone, city, address, tarriff, billingID, "EMCC", "", "", reportedBy, customername,amount);
                     return StandardResponse.ok(tid);
 
                 }

@@ -5,6 +5,7 @@
  */
 package net.crowninteractive.wfmworker.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Date;
@@ -27,7 +28,6 @@ import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 import javax.persistence.UniqueConstraint;
-import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlTransient;
 
 /**
@@ -37,7 +37,6 @@ import javax.xml.bind.annotation.XmlTransient;
 @Entity
 @Table(name = "work_order", catalog = "wfm_new", schema = "", uniqueConstraints = {
     @UniqueConstraint(columnNames = {"ticket_id"})})
-@XmlRootElement
 @NamedQueries({
     @NamedQuery(name = "WorkOrder.findAll", query = "SELECT w FROM WorkOrder w")
     ,
@@ -114,10 +113,11 @@ import javax.xml.bind.annotation.XmlTransient;
     @NamedQuery(name = "WorkOrder.findByAgentName", query = "SELECT w FROM WorkOrder w WHERE w.agentName = :agentName")})
 public class WorkOrder implements Serializable {
 
+    private static final long serialVersionUID = 1L;
+
+    @JsonIgnore
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "workOrderId")
     private List<InventoryApproval> inventoryApprovalList;
-
-    private static final long serialVersionUID = 1L;
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Basic(optional = false)
@@ -219,51 +219,61 @@ public class WorkOrder implements Serializable {
     private String customerName;
     @OneToOne(mappedBy = "id")
     private WorkOrderExtra extra;
-
-    public String getCustomerName() {
-        return customerName;
-    }
-
-    public void setCustomerName(String customerName) {
-        this.customerName = customerName;
-    }
+    @JsonIgnore
     @OneToMany(mappedBy = "workOrderId")
     private List<EscalationWorkOrder> escalationWorkOrderList;
+    @JsonIgnore
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "workOrderId")
     private List<WorkOrderUpdate> workOrderUpdateList;
+    @JsonIgnore
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "workOrderId")
     private List<EngineerToWorkOrder> engineerToWorkOrderList;
+    @JsonIgnore
     @JoinColumn(name = "engineer_id", referencedColumnName = "id")
     @ManyToOne
     private Engineer engineerId;
+    @JsonIgnore
     @JoinColumn(name = "queue_id", referencedColumnName = "id", nullable = false)
     @ManyToOne(optional = false)
     private Queue queueId;
     @JoinColumn(name = "queue_type_id", referencedColumnName = "id", nullable = false)
     @ManyToOne(optional = false)
+    @JsonIgnore
     private QueueType queueTypeId;
     @JoinColumn(name = "team_id", referencedColumnName = "id")
     @ManyToOne
+    @JsonIgnore
     private Team teamId;
     @JoinColumn(name = "created_by", referencedColumnName = "id")
     @ManyToOne
+    @JsonIgnore
     private Users createdBy;
     @JoinColumn(name = "updated_by", referencedColumnName = "id")
     @ManyToOne
+    @JsonIgnore
     private Users updatedBy;
     @JoinColumn(name = "assigned_by", referencedColumnName = "id")
     @ManyToOne
+    @JsonIgnore
     private Users assignedBy;
     @JoinColumn(name = "closed_by", referencedColumnName = "id")
     @ManyToOne
+    @JsonIgnore
     private Users closedBy;
     @JoinColumn(name = "work_order_status_id", referencedColumnName = "id")
     @ManyToOne
+    @JsonIgnore
     private WorkOrderStatus workOrderStatusId;
+    @JsonIgnore
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "workOrderId")
     private List<WorkOrderAttachments> workOrderAttachmentsList = new ArrayList();
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "workOrderId")
+    @JsonIgnore
     private List<WorkOrderRemark> workOrderRemarkList = new ArrayList();
+    @Column(name = "debt_balance_amount")
+    private Double debtBalanceAmount;
+    
+    
 
     public WorkOrder() {
     }
@@ -585,6 +595,14 @@ public class WorkOrder implements Serializable {
         this.agentName = agentName;
     }
 
+    public String getCustomerName() {
+        return customerName;
+    }
+
+    public void setCustomerName(String customerName) {
+        this.customerName = customerName;
+    }
+
     @XmlTransient
     public List<EscalationWorkOrder> getEscalationWorkOrderList() {
         return escalationWorkOrderList;
@@ -709,8 +727,6 @@ public class WorkOrder implements Serializable {
     public void setExtra(WorkOrderExtra extra) {
         this.extra = extra;
     }
-    
-    
 
     @Override
     public int hashCode() {
@@ -734,7 +750,36 @@ public class WorkOrder implements Serializable {
 
     @Override
     public String toString() {
-        return "net.crowninteractive.wfmworker.entity.WorkOrder[ id=" + id + " ]";
+        return "WorkOrder{" + "inventoryApprovalList="
+                + inventoryApprovalList + ", id=" + id + ", ticketId="
+                + ticketId + ", token=" + token + ", ownerId=" + ownerId + ","
+                + " summary=" + summary + ", description=" + description + ","
+                + " contactNumber=" + contactNumber + ", referenceType="
+                + referenceType + ", referenceTypeData=" + referenceTypeData + ","
+                + " addressLine1=" + addressLine1 + ", addressLine2="
+                + addressLine2 + ", city=" + city + ", state=" + state + ", "
+                + "businessUnit=" + businessUnit + ", customerTariff="
+                + customerTariff + ", priority=" + priority + ", createTime="
+                + createTime + ", isClosed=" + isClosed + ", closedTime="
+                + closedTime + ", isAssigned=" + isAssigned + ", dateAssigned="
+                + dateAssigned + ", channel=" + channel + ", isActive=" + isActive
+                + ", updateTime=" + updateTime + ", currentStatus=" + currentStatus
+                + ", inventoryDescription=" + inventoryDescription + ", reportedBy="
+                + reportedBy + ", inventoryRef=" + inventoryRef + ", "
+                + "requestedInventory=" + requestedInventory + ", dateRequestedInventory="
+                + dateRequestedInventory + ", approvedInventory=" + approvedInventory
+                + ", inventoryApprovedBy=" + inventoryApprovedBy + ", dateApprovedInventory="
+                + dateApprovedInventory + ", inventoryApproved=" + inventoryApproved + ","
+                + " workDate=" + workDate + ", slot=" + slot + ", agentName=" + agentName + ","
+                + " customerName=" + customerName + ", extra=" + extra + ", "
+                + "escalationWorkOrderList=" + escalationWorkOrderList + ", "
+                + "workOrderUpdateList=" + workOrderUpdateList + ", engineerToWorkOrderList="
+                + engineerToWorkOrderList + ", engineerId=" + engineerId + ", "
+                + "queueId=" + queueId + ", queueTypeId=" + queueTypeId + ", "
+                + "teamId=" + teamId + ", createdBy=" + createdBy + ", updatedBy="
+                + updatedBy + ", assignedBy=" + assignedBy + ", closedBy=" + closedBy + ","
+                + " workOrderStatusId=" + workOrderStatusId + ", workOrderAttachmentsList="
+                + workOrderAttachmentsList + ", workOrderRemarkList=" + workOrderRemarkList + '}';
     }
 
     public List<InventoryApproval> getInventoryApprovalList() {
@@ -744,5 +789,15 @@ public class WorkOrder implements Serializable {
     public void setInventoryApprovalList(List<InventoryApproval> inventoryApprovalList) {
         this.inventoryApprovalList = inventoryApprovalList;
     }
+
+    public Double getDebtBalanceAmount() {
+        return debtBalanceAmount;
+    }
+
+    public void setDebtBalanceAmount(Double debtBalanceAmount) {
+        this.debtBalanceAmount = debtBalanceAmount;
+    }
+    
+    
 
 }

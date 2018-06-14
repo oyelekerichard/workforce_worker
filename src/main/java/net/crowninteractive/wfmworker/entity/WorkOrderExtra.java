@@ -222,6 +222,25 @@ public class WorkOrderExtra implements Serializable {
     public void setTransformer(String transformer) {
         this.transformer = transformer;
     }
+
+    @Override
+    public String toString() {
+        return "WorkOrderExtra{" + "id=" + id + ","
+                + " disco=" + disco + ", subDisco=" +
+                subDisco + ", injectionSubstation=" + 
+                injectionSubstation + ", injectionSubstationName=" + 
+                injectionSubstationName + ", powerTransformer=" + 
+                powerTransformer + ", powerTransformerName=" + 
+                powerTransformerName + ", feeder=" + feeder + ","
+                + "eederName=" + feederName + ", htPole=" + htPole + ","
+                + " highTensionPhysicalId=" + highTensionPhysicalId + 
+                ", distributionSubstation=" + distributionSubstation + 
+                ", distributionSubstationName=" + distributionSubstationName 
+                + ", upriser=" + upriser + ", servicePole=" + servicePole +
+                ", serviceWire=" + serviceWire + ", nercId=" + nercId + 
+                ", connectionType=" + connectionType + ", "
+                + "transformer=" + transformer + '}';
+    }
     
     
 

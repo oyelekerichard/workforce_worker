@@ -58,7 +58,7 @@ public class ReportReceiver {
             try {
                 TextMessage textMessage = (TextMessage) message;
                 String[] txt = textMessage.getText().split(",");
-                processWriteV2(txt[0], txt[1], txt[2]);
+                processWrite(txt[0], txt[1], txt[2]);
             } catch (Exception ex) {
                 System.out.println("-----------------------Exception occured --------------------------");
                 System.out.println("-----------------------Processing file ---------------------------- ");
