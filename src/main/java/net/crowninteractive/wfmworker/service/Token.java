@@ -10,7 +10,7 @@ package net.crowninteractive.wfmworker.service;
  * @author johnson3yo
  */
 public class Token {
-    
+  
     private String[]tokens;
 
     public String[] getTokens() {

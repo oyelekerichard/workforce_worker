@@ -27,6 +27,7 @@ import javax.persistence.OneToOne;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
+import javax.persistence.Transient;
 import javax.persistence.UniqueConstraint;
 import javax.xml.bind.annotation.XmlTransient;
 
@@ -272,8 +273,10 @@ public class WorkOrder implements Serializable {
     private List<WorkOrderRemark> workOrderRemarkList = new ArrayList();
     @Column(name = "debt_balance_amount")
     private Double debtBalanceAmount;
-    
-    
+    @Transient
+    private String queueName;
+    @Transient
+    private String queueTypeName;
 
     public WorkOrder() {
     }
@@ -797,7 +800,21 @@ public class WorkOrder implements Serializable {
     public void setDebtBalanceAmount(Double debtBalanceAmount) {
         this.debtBalanceAmount = debtBalanceAmount;
     }
-    
-    
+
+    public String getQueueName() {
+        return queueName;
+    }
+
+    public void setQueueName(String queueName) {
+        this.queueName = this.queueId.getName();
+    }
+
+    public String getQueueTypeName() {
+        return queueTypeName;
+    }
+
+    public void setQueueTypeName(String queueTypeName) {
+        this.queueTypeName = this.queueTypeId.getName();
+    }
 
 }

@@ -130,7 +130,10 @@ public class EnumService {
 
         UriComponentsBuilder builder = UriComponentsBuilder
                 .fromUriString(c.getEMCCGetCustomerDetailsURL());
-
+        
+        if(builder!= null){
+            return new Awesome(5,"no config");
+        }
         if (type.toLowerCase().equals("a")) {
             builder.queryParam("accountNumber", number);
         } else {
