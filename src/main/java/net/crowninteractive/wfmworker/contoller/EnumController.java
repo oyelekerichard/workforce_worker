@@ -79,7 +79,7 @@ public class EnumController {
             @RequestParam(value = "queue", required = false) String queue,
             @RequestParam(value = "queueType", required = false) String queueType,
             @RequestParam(value = "priority", required = false) String priority,
-            @RequestParam(value = "status") String status,
+            @RequestParam(value = "status",required = false) String status,
             @RequestParam(value = "billingId", required = false) String billingId,
             @RequestParam(value = "ticketId", required = false) String ticketId,
             @RequestParam(value = "reportedBy", required = false) String reportedBy) {
