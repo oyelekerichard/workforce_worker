@@ -71,8 +71,8 @@ public class EnumController {
         return new ResponseEntity<String>("enum work order update successful ", HttpStatus.OK);
     }
 
-    @RequestMapping(method = RequestMethod.GET, value = "download_request/{emailAddress}")
-    public Awesome downloadRequest(@PathVariable("emailAddress") String emailAddress,
+    @RequestMapping(method = RequestMethod.GET, value = "download_request")
+    public Awesome downloadRequest(@RequestParam("email") String emailAddress,
             @RequestParam(defaultValue = "business_unit",value = "district", required = false) String district,
             @RequestParam(defaultValue = "create_time",value = "from",required = false) String from,
             @RequestParam(defaultValue = "create_time",value = "to",required = false) String to,
