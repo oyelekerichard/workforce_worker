@@ -7,14 +7,21 @@ package net.crowninteractive.wfmworker.service;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
+import java.io.File;
+import java.io.FileOutputStream;
 import java.io.IOException;
+import java.lang.reflect.Field;
 import java.math.BigInteger;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.logging.Logger;
 import javax.annotation.PostConstruct;
-import net.crowninteractive.wfmworker.dao.BarChartWidget;
 import net.crowninteractive.wfmworker.dao.BarChartWidget_1;
 import net.crowninteractive.wfmworker.dao.QueueTypeData;
 import net.crowninteractive.wfmworker.dao.WorkOrderDao;
@@ -23,7 +30,18 @@ import net.crowninteractive.wfmworker.entity.LowerWidget;
 import net.crowninteractive.wfmworker.entity.WorkOrderTemp;
 import net.crowninteractive.wfmworker.exception.WfmWorkerException;
 import net.crowninteractive.wfmworker.misc.Config;
+import net.crowninteractive.wfmworker.misc.ExcludeForExcel;
+import net.crowninteractive.wfmworker.misc.WorkOrderDownloadModel;
+import org.apache.commons.mail.EmailAttachment;
+import org.apache.commons.mail.EmailException;
+import org.apache.commons.mail.HtmlEmail;
+import org.apache.poi.ss.usermodel.Cell;
+import org.apache.poi.ss.usermodel.Row;
+import org.apache.poi.ss.usermodel.Sheet;
+import org.apache.poi.ss.usermodel.Workbook;
+import org.apache.poi.xssf.streaming.SXSSFWorkbook;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.web.util.UriComponentsBuilder;
@@ -35,18 +53,19 @@ import org.springframework.web.util.UriComponentsBuilder;
 @Service
 public class EnumService {
 
+    private Logger L = Logger.getLogger("enumservice");
+
     @Autowired
     private WorkOrderDao wdao;
 
     private List<QueueTypeData> qtees;
     private List<LowerWidget> statusByDistrict = new ArrayList();
     private List<LowerWidget> statusByConsultant = new ArrayList();
-   
+
     private List<QueueTypeData> qd = new ArrayList();
     private List<Map<String, String>> cslts = new ArrayList();
-     private List<Map<String, String>> dstrts = new ArrayList();
-    
-    
+    private List<Map<String, String>> dstrts = new ArrayList();
+
     @PostConstruct
     public void initQueueTypes() {
         qtees = wdao.getQueueTypesByQueue(17);
@@ -61,7 +80,7 @@ public class EnumService {
             dss.getDistrictName(d);
             statusByDistrict.add(dss);
             BarChartWidget_1 cbd = new BarChartWidget_1();
-            Map<String,String>field = new HashMap();
+            Map<String, String> field = new HashMap();
             field.put("district", d);
             dstrts.add(field);
         }
@@ -71,7 +90,7 @@ public class EnumService {
             dss.setReportedBy(e);
             statusByConsultant.add(dss);
             BarChartWidget_1 bbd = new BarChartWidget_1();
-            Map<String,String>field = new HashMap();
+            Map<String, String> field = new HashMap();
             field.put("consultant", e);
             cslts.add(field);
         }
@@ -130,9 +149,9 @@ public class EnumService {
 
         UriComponentsBuilder builder = UriComponentsBuilder
                 .fromUriString(c.getEMCCGetCustomerDetailsURL());
-        
-        if(builder!= null){
-            return new Awesome(5,"no config");
+
+        if (builder != null) {
+            return new Awesome(5, "no config");
         }
         if (type.toLowerCase().equals("a")) {
             builder.queryParam("accountNumber", number);
@@ -188,7 +207,7 @@ public class EnumService {
             Map<String, String> get = c.get(i);
             String con = get.get("consultant");
             String dis = get.get("district");
-            wdao.getData(get,qtees, con, dis);           
+            wdao.getData(get, qtees, con, dis);
             i++;
             barWidgetData(c, i);
         }
@@ -219,6 +238,136 @@ public class EnumService {
         String ticketId = update.get("ticket_id");
         String status = update.get("status");
         WorkOrderTemp wot = wdao.getEnumWorkOrderByTicketId(Integer.parseInt(ticketId));
+    }
+
+    @Async
+    public Awesome sendWorkOrderFile(String district, String from, String to, String queue, String queueType, String priority, String status, String billingId, String ticketId, String reportedBy, String emailAddress) {
+        List<String> err = validateEnumWorkOrder(to, from);
+
+        if (err.isEmpty()) {
+            final List<WorkOrderDownloadModel> workOrders = wdao.getWorkOrders(district, from, to, queue, queueType, priority,
+                   status, billingId, ticketId, reportedBy);
+            if (!workOrders.isEmpty()) {
+                sendWorkOrderEmailAttachment(emailAddress, workOrders);
+            } else {
+                L.info("No work order found for given params");
+            }
+        } else {
+            L.info("Errors in validating to {} and from {}");
+        }
+
+        return new Awesome(0, "Successful");
+    }
+
+    private void sendWorkOrderEmailAttachment(String emailAddress, List<WorkOrderDownloadModel> data) {
+        L.info("Preparing to send WorkOrder email to " + emailAddress);
+        final File excelFileFor = createExcelFileFor(WorkOrderDownloadModel.class, data, true);
+        if (excelFileFor != null) {
+            try {
+                sendEmailTo(emailAddress, null, "Your work order download file", "Please find "
+                        + "attached your WorkOrder download file", excelFileFor);
+                L.info("Successfully created and sent file to " + emailAddress);
+            } catch (Exception ex) {
+                L.warning("An error occurred while trying to send workorder file to " + emailAddress);
+            }
+        } else {
+            L.warning("Couldn't create excel file to send to " + emailAddress);
+        }
+    }
+
+    private List<String> validateEnumWorkOrder(String to, String from) {
+        List<String> errors = new ArrayList<>();
+        try {
+
+            SimpleDateFormat dtf = new SimpleDateFormat("yyyy-MM-dd");
+            dtf.setLenient(false);
+            if (!to.equals("create_time")) {
+                Date dt = dtf.parse(to);
+            }
+            if (!from.equals("create_time")) {
+                Date dm = dtf.parse(from);
+            }
+
+        } catch (ParseException ex) {
+            errors.add("invalid date format");
+        }
+
+        return errors;
+    }
+
+    private <T> File createExcelFileFor(Class<T> clazz, List<T> data, boolean forEmail) {
+        try {
+            L.info("Creating file with data rows -----------" + data.size());
+
+            final String fileName = "work_order_request" + System.currentTimeMillis() + ".xls";
+            final String filePath;
+
+            if (forEmail) {
+                filePath = "/var/wfm/" + fileName;
+            } else {
+                filePath = "/var/wfm/downloads/" + fileName;
+            }
+
+            final FileOutputStream fileOutputStream = new FileOutputStream(filePath);
+            final Workbook workbook = new SXSSFWorkbook(data.size());
+            final Sheet sheet = workbook.createSheet();
+
+            final Field[] declaredFields = Arrays.stream(clazz.getDeclaredFields()).filter(field -> !field.isAnnotationPresent(ExcludeForExcel.class)).toArray(Field[]::new);
+
+            final Row headRow = sheet.createRow(0);
+
+            for (int j = 0; j < declaredFields.length; j++) {
+                final Cell cellInHeadRow = headRow.createCell(j);
+                cellInHeadRow.setCellValue(declaredFields[j].getName().toUpperCase());
+            }
+
+            int rowCount = 1;
+
+            for (T datum : data) {
+                final Row row = sheet.createRow(rowCount);
+                for (int k = 0; k < declaredFields.length; k++) {
+                    final Cell cell = row.createCell(k);
+                    final Field declaredField = declaredFields[k];
+                    declaredField.setAccessible(true);
+                    final Object value = declaredField.get(datum);
+                    cell.setCellValue(value != null ? value.toString() : " ");
+                }
+
+                rowCount++;
+            }
+            workbook.write(fileOutputStream);
+            fileOutputStream.close();
+            return new File(filePath);
+
+        } catch (Exception ex) {
+            L.warning("An error occurred while trying to createWorkOrderFile" + ex);
+            return null;
+        }
+    }
+
+    private void sendEmailTo(String address, String bcc, String subject, String message, File file) throws EmailException {
+        HtmlEmail emailAgent = new HtmlEmail();
+        EmailAttachment e = new EmailAttachment();
+        e.setPath(file.getAbsolutePath());
+        //TODO stop using hard-coded values!
+        emailAgent.setHostName("smtp.office365.com");
+        emailAgent.setSmtpPort(587);
+        emailAgent.setAuthentication("no-reply@ekedp.com", "CI@ekedp15");
+        emailAgent.setStartTLSEnabled(true);
+        emailAgent.setFrom("no-reply@ekedp.com");
+        emailAgent.setCharset("utf8");
+        emailAgent.setMsg(message);
+        emailAgent.addTo(address);
+        if (bcc != null) {
+            emailAgent.addBcc(bcc);
+        }
+        if (file != null) {
+            if (file.exists()) {
+                emailAgent.attach(e);
+            }
+        }
+        emailAgent.send();
+        L.info("Email sent to " + address);
     }
 
 }

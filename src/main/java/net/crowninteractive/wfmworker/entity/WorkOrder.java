@@ -802,7 +802,7 @@ public class WorkOrder implements Serializable {
     }
 
     public String getQueueName() {
-        return queueName;
+        return queueId.getName();
     }
 
     public void setQueueName(String queueName) {
@@ -810,7 +810,7 @@ public class WorkOrder implements Serializable {
     }
 
     public String getQueueTypeName() {
-        return queueTypeName;
+        return queueTypeId.getName();
     }
 
     public void setQueueTypeName(String queueTypeName) {
