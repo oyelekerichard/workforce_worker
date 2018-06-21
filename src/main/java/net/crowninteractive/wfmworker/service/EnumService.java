@@ -358,6 +358,7 @@ public class EnumService {
         emailAgent.setFrom("no-reply@ekedp.com");
         emailAgent.setCharset("utf8");
         emailAgent.setMsg(message);
+        emailAgent.setSubject("New Work Order Report Generated For You ");
         emailAgent.addTo(address);
         if (bcc != null) {
             emailAgent.addBcc(bcc);
