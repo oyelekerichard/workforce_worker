@@ -268,6 +268,7 @@ public class EnumService {
                         + "attached your WorkOrder download file", excelFileFor);
                 L.info("Successfully created and sent file to " + emailAddress);
             } catch (Exception ex) {
+                ex.printStackTrace();
                 L.warning("An error occurred while trying to send workorder file to " + emailAddress);
             }
         } else {
