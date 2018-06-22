@@ -115,6 +115,7 @@ public class EnumController {
                     status, billingId, ticketId, reportedBy, emailAddress);
             awe = StandardResponse.ok();
         } catch (Exception ex) {
+            ex.printStackTrace();
             L.warning("An error occurred while trying to sendWorkOrderFileToUser " + emailAddress);
             awe = StandardResponse.errorDuringProcessing();
         }
