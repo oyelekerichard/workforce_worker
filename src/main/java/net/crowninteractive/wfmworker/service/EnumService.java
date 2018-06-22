@@ -297,6 +297,7 @@ public class EnumService {
     }
 
     private <T> File createExcelFileFor(Class<T> clazz, List<T> data, boolean forEmail,fileType type) {
+        L.info("------------Logging Here ----------------------------------");
         try {
             L.info("Creating file with data rows -----------" + data.size());
 
@@ -343,7 +344,8 @@ public class EnumService {
             return new File(filePath);
 
         } catch (Exception ex) {
-           System.out.println("-------------------------__Eror occured -----------------");
+            ex.printStackTrace();
+            System.out.println("-------------------------__Eror occured -----------------");
             ex.printStackTrace();
             L.warning("An error occurred while trying to createWorkOrderFile" + ex);
             return null;
