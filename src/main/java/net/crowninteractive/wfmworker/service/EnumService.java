@@ -379,6 +379,7 @@ public class EnumService {
         L.info("Email sent to " + address);
     }
 
+    @Async
     public Awesome sendRequestFile(String district, String from, String to, String queue, String queueType, String priority, String status, String billingId, String ticketId, String reportedBy, String emailAddress) {
         List<String> err = validateEnumWorkOrder(to, from);
 
