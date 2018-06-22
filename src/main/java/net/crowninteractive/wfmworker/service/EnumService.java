@@ -246,9 +246,9 @@ public class EnumService {
 
         if (err.isEmpty()) {
             final List<WorkOrderDownloadModel> workOrders = wdao.getWorkOrders(district, from, to, queue, queueType, priority,
-                   status, billingId, ticketId, reportedBy);
+                    status, billingId, ticketId, reportedBy);
             if (!workOrders.isEmpty()) {
-                sendWorkOrderEmailAttachment(emailAddress, workOrders);
+                sendWorkOrderEmailAttachment(emailAddress, workOrders,fileType.WORKORDER);
             } else {
                 L.info("No work order found for given params");
             }
@@ -259,13 +259,13 @@ public class EnumService {
         return new Awesome(0, "Successful");
     }
 
-    private void sendWorkOrderEmailAttachment(String emailAddress, List<WorkOrderDownloadModel> data) {
+    private void sendWorkOrderEmailAttachment(String emailAddress, List<WorkOrderDownloadModel> data,fileType type) {
         L.info("Preparing to send WorkOrder email to " + emailAddress);
-        final File excelFileFor = createExcelFileFor(WorkOrderDownloadModel.class, data, true);
+        final File excelFileFor = createExcelFileFor(WorkOrderDownloadModel.class, data, true,type);
         if (excelFileFor != null) {
             try {
                 sendEmailTo(emailAddress, null, "Your work order download file", "Please find "
-                        + "attached your WorkOrder download file", excelFileFor);
+                        + "attached your WorkOrder download file", excelFileFor,type);
                 L.info("Successfully created and sent file to " + emailAddress);
             } catch (Exception ex) {
                 ex.printStackTrace();
@@ -296,11 +296,13 @@ public class EnumService {
         return errors;
     }
 
-    private <T> File createExcelFileFor(Class<T> clazz, List<T> data, boolean forEmail) {
+    private <T> File createExcelFileFor(Class<T> clazz, List<T> data, boolean forEmail,fileType type) {
         try {
             L.info("Creating file with data rows -----------" + data.size());
 
-            final String fileName = "work_order_request" + System.currentTimeMillis() + ".xls";
+            String fileName = type.equals(fileType.WORKORDER) ? "work_order_report"+System.currentTimeMillis() + ".xls":
+                    "request_report"+System.currentTimeMillis();
+            
             final String filePath;
 
             if (forEmail) {
@@ -346,7 +348,7 @@ public class EnumService {
         }
     }
 
-    private void sendEmailTo(String address, String bcc, String subject, String message, File file) throws EmailException {
+    private void sendEmailTo(String address, String bcc, String subject, String message, File file,fileType type) throws EmailException {
         HtmlEmail emailAgent = new HtmlEmail();
         EmailAttachment e = new EmailAttachment();
         e.setPath(file.getAbsolutePath());
@@ -358,7 +360,8 @@ public class EnumService {
         emailAgent.setFrom("no-reply@ekedp.com");
         emailAgent.setCharset("utf8");
         emailAgent.setMsg(message);
-        emailAgent.setSubject("New Work Order Report Generated For You ");
+        emailAgent.setSubject(type.equals(fileType.WORKORDER)? "New Work Order Report Generated For You ":
+                "New Enumeration Report Generated For You" );
         emailAgent.addTo(address);
         if (bcc != null) {
             emailAgent.addBcc(bcc);
@@ -372,4 +375,26 @@ public class EnumService {
         L.info("Email sent to " + address);
     }
 
+    public Awesome sendRequestFile(String district, String from, String to, String queue, String queueType, String priority, String status, String billingId, String ticketId, String reportedBy, String emailAddress) {
+        List<String> err = validateEnumWorkOrder(to, from);
+
+        if (err.isEmpty()) {
+            final List<WorkOrderDownloadModel> workOrders = wdao.getRequests(district, from, to, queue, queueType, priority,
+                    status, billingId, ticketId, reportedBy);
+            if (!workOrders.isEmpty()) {
+                sendWorkOrderEmailAttachment(emailAddress, workOrders,fileType.REQUEST);
+            } else {
+                L.info("No work order found for given params");
+            }
+        } else {
+            L.info("Errors in validating to {} and from {}");
+        }
+        return new Awesome(0, "Successful");
+    }
+    
+
+}
+
+enum fileType{
+    REQUEST,WORKORDER;
 }
