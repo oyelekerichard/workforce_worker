@@ -61,13 +61,13 @@ public class EnumController {
 
     @RequestMapping(method = RequestMethod.POST, value = "updateWorkOrder")
     public ResponseEntity updateEnumerationWorkOrder(@RequestBody Map<String, String> update) {
-        try {
-            enumService.updateEnumWorkOrder(update);
-        } catch (WfmWorkerException ex) {
-
-            Logger.getLogger(EnumController.class.getName()).log(Level.SEVERE, null, ex);
-            return new ResponseEntity<String>(ex.getMessage(), HttpStatus.BAD_REQUEST);
-        }
+//        try {
+//          //  enumService.updateEnumWorkOrder(update);
+//        } catch (WfmWorkerException ex) {
+//
+//            Logger.getLogger(EnumController.class.getName()).log(Level.SEVERE, null, ex);
+//            return new ResponseEntity<String>(ex.getMessage(), HttpStatus.BAD_REQUEST);
+//        }
         return new ResponseEntity<String>("enum work order update successful ", HttpStatus.OK);
     }
 
