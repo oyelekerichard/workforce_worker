@@ -798,7 +798,7 @@ public class WorkOrderDao extends AbstractDao<Integer, WorkOrder> {
          getEntityManager().
                  createNativeQuery(sql).
                  setParameter(1, staffCode).
-                 setParameter(2, start);
+                 setParameter(2, start).executeUpdate();
     }
     
     

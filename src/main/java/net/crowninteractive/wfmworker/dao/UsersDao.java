@@ -71,6 +71,10 @@ public class UsersDao extends AbstractDao<Integer, Users> {
         }
         return values;
     }
+
+    Users findById(Integer start) {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
 }
 
 
