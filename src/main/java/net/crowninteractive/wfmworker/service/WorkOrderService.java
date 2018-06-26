@@ -190,5 +190,11 @@ public class WorkOrderService {
        return  wdao.findByQueueTypeId(ticketId);
     }
 
+    public void generateStaffCode(Integer counter) {
+          while (counter != null) {
+            counter = wdao.hasNextRecord(counter);
+        }
+    }
+
     
 }

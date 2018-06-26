@@ -93,11 +93,23 @@ public class WorkOrderController extends Extension {
     ) {
         try {
             WorkOrder workorder = service.getWorkOrder(ticketId);
-           return new ResponseEntity<WorkOrder>(workorder, HttpStatus.OK);
+            return new ResponseEntity<WorkOrder>(workorder, HttpStatus.OK);
         } catch (Exception e) {
             e.printStackTrace();
-            return  new ResponseEntity<String>(e.getMessage(), HttpStatus.BAD_REQUEST);
+            return new ResponseEntity<String>(e.getMessage(), HttpStatus.BAD_REQUEST);
         }
+    }
+
+    @RequestMapping(method = RequestMethod.GET, value = "staff_code/{counter}")
+    public String staffCode(@Context HttpServletRequest request, @PathVariable("counter") Integer counter) {
+        Awesome awesome;
+        try {
+            service.generateStaffCode(counter);
+        } catch (Exception ex) {
+            return "Error occured";
+        }
+
+        return "my name is remi";
     }
 
 }

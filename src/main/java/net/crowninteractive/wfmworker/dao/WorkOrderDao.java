@@ -48,6 +48,8 @@ public class WorkOrderDao extends AbstractDao<Integer, WorkOrder> {
     private WorkOrderRemarkDao wora;
     @Autowired
     private WorkOrderExtraDao wdao;
+    @Autowired
+    private UsersDao udao;
 
     public int ticketCount() {
         Integer max = (Integer) getEntityManager()
@@ -518,7 +520,7 @@ public class WorkOrderDao extends AbstractDao<Integer, WorkOrder> {
         return new WorkOrder();
     }
 
-   public List<WorkOrderDownloadModel> getWorkOrders(String district, String from, String to, String queue, String queueType, String priority, String status, String billingId, String ticketId, String reportedBy) {
+    public List<WorkOrderDownloadModel> getWorkOrders(String district, String from, String to, String queue, String queueType, String priority, String status, String billingId, String ticketId, String reportedBy) {
         String sql = "SELECT wt.id ,customer_tariff,ticket_id,"
                 + "(select name from queue where id=wt.queue_id) as queue_id,"
                 + "(select name from queue_type where id=wt.queue_type_id) "
@@ -571,53 +573,77 @@ public class WorkOrderDao extends AbstractDao<Integer, WorkOrder> {
             sql += String.format("and reported_by ='%s'", reportedBy);
         }
 
-        logger.info("Compiled SQL "+ sql);
+        logger.info("Compiled SQL " + sql);
         List<WorkOrderDownloadModel> model = new ArrayList();
-        List<Object[][]>list = getEntityManager().
+        List<Object[][]> list = getEntityManager().
                 createNativeQuery(sql).getResultList();
-          for(Object[] e : list){
-              WorkOrderDownloadModel m = new WorkOrderDownloadModel();
-              m.setId((Integer)e[0]);
-              m.setCustomerTariff((String)e[1]);
-              m.setTicketId((Integer)e[2]);m.setQueueId((String)e[3]);
-              m.setQueueTypeId((String)e[4]);m.setSummary((String)e[5]);m.setDescription((String)e[6]);
-             m.setContactNumber((String)e[7]);m.setReferenceType((String)e[8]);m.setReferenceTypeData((String)e[9]);
-              m.setAddressLine1((String)e[10]); m.setCity((String)e[11]);m.setState((String)e[12]);
-              m.setBusinessUnit((String)e[13]);m.setPriority((String)e[14]); m.setCreateTime((Timestamp)e[15]);
-              m.setChannel((String)e[16]);m.setIsActive((Integer)e[17]);m.setCurrentStatus((String)e[18]);
-              m.setReportedBy((String)e[19]); m.setCustomerName((String)e[20]);m.setConnectionType((String)e[21]);
-              m.setDisco((String)e[22]);m.setDistributionSubstation((String)e[23]);m.setDistributionSubstationName((String)e[24]);
-              m.setFeeder((String)e[25]);m.setFeederName((String)e[26]);m.setHighTensionPhysicalId((String)e[27]);
-              m.setHtPole((String)e[28]);m.setInjectionSubstation((String)e[29]);m.setInjectionSubstationName((String)e[30]);
-              m.setNercId((String)e[31]);m.setPowerTransformer((String)e[32]);m.setPowerTransformerName((String)e[33]);
-              m.setServicePole((String)e[34]);m.setServiceWire((String)e[35]);m.setSubDisco((String)e[36]);
-              m.setTransformer((String)e[37]);m.setUpriser((String)e[38]);m.setCreatedBy((Integer)e[39]);
-              
-              model.add(m);
-          }
-        
+        for (Object[] e : list) {
+            WorkOrderDownloadModel m = new WorkOrderDownloadModel();
+            m.setId((Integer) e[0]);
+            m.setCustomerTariff((String) e[1]);
+            m.setTicketId((Integer) e[2]);
+            m.setQueueId((String) e[3]);
+            m.setQueueTypeId((String) e[4]);
+            m.setSummary((String) e[5]);
+            m.setDescription((String) e[6]);
+            m.setContactNumber((String) e[7]);
+            m.setReferenceType((String) e[8]);
+            m.setReferenceTypeData((String) e[9]);
+            m.setAddressLine1((String) e[10]);
+            m.setCity((String) e[11]);
+            m.setState((String) e[12]);
+            m.setBusinessUnit((String) e[13]);
+            m.setPriority((String) e[14]);
+            m.setCreateTime((Timestamp) e[15]);
+            m.setChannel((String) e[16]);
+            m.setIsActive((Integer) e[17]);
+            m.setCurrentStatus((String) e[18]);
+            m.setReportedBy((String) e[19]);
+            m.setCustomerName((String) e[20]);
+            m.setConnectionType((String) e[21]);
+            m.setDisco((String) e[22]);
+            m.setDistributionSubstation((String) e[23]);
+            m.setDistributionSubstationName((String) e[24]);
+            m.setFeeder((String) e[25]);
+            m.setFeederName((String) e[26]);
+            m.setHighTensionPhysicalId((String) e[27]);
+            m.setHtPole((String) e[28]);
+            m.setInjectionSubstation((String) e[29]);
+            m.setInjectionSubstationName((String) e[30]);
+            m.setNercId((String) e[31]);
+            m.setPowerTransformer((String) e[32]);
+            m.setPowerTransformerName((String) e[33]);
+            m.setServicePole((String) e[34]);
+            m.setServiceWire((String) e[35]);
+            m.setSubDisco((String) e[36]);
+            m.setTransformer((String) e[37]);
+            m.setUpriser((String) e[38]);
+            m.setCreatedBy((Integer) e[39]);
+
+            model.add(m);
+        }
+
         return model;
     }
 
     public List<WorkOrderDownloadModel> getRequests(String district, String from, String to, String queue, String queueType, String priority, String status, String billingId, String ticketId, String reportedBy) {
-    
-           String sql = "SELECT `id`,customer_tariff,ticket_id,"
+
+        String sql = "SELECT `id`,customer_tariff,ticket_id,"
                 + "(select name from queue where id=wt.queue_id) as queue_id,"
                 + "(select name from queue_type where id=wt.queue_type_id) "
                 + "as queue_type_id, `summary`, `description`, `contact_number`,"
-                   + " `reference_type`, `reference_type_data`, `address_line_1`, "
+                + " `reference_type`, `reference_type_data`, `address_line_1`, "
                 + "`city`, `state`, `business_unit`, `priority`, `create_time`,"
-                   + " `channel`, `is_active`, `current_status`, `reported_by`,  `customer_name` "
+                + " `channel`, `is_active`, `current_status`, `reported_by`,  `customer_name` "
                 + "`disco`, `sub_disco`, `injection_substation`, "
                 + "`injection_substation_name`, `power_transformer`, `power_transformer_name`, "
                 + "`feeder`, `feeder_name`, `ht_pole`, `high_tension_physical_id`, `distribution_substation`, "
                 + "`distribution_substation_name`, `upriser`, `service_pole`, `service_wire`, "
                 + "`nerc_id`, `connection_type`, `transformer`, `created_by` "
                 + "FROM `work_order_temp` wt where business_unit like {unit} "
-                   + "and cast(create_time as date) >= cast({from} as date) "
-                   + "and cast(create_time as date) <= cast({to} as date )";
+                + "and cast(create_time as date) >= cast({from} as date) "
+                + "and cast(create_time as date) <= cast({to} as date )";
 
-        
         if (to.equals("create_time")) {
             sql = sql.replace("{to}", "create_time");
         }
@@ -661,35 +687,119 @@ public class WorkOrderDao extends AbstractDao<Integer, WorkOrder> {
             sql += String.format("and reported_by ='%s'", reportedBy);
         }
 
-        logger.info("Compiled SQL "+ sql);
+        logger.info("Compiled SQL " + sql);
         List<WorkOrderDownloadModel> model = new ArrayList();
-        List<Object[][]>list = getEntityManager().
+        List<Object[][]> list = getEntityManager().
                 createNativeQuery(sql).getResultList();
-          for(Object[] e : list){
-              WorkOrderDownloadModel m = new WorkOrderDownloadModel();
-              m.setId((Integer)e[0]);
-              m.setCustomerTariff((String)e[1]);
-              m.setTicketId((Integer)e[2]);m.setQueueId((String)e[3]);
-              m.setQueueTypeId((String)e[4]);m.setSummary((String)e[5]);m.setDescription((String)e[6]);
-             m.setContactNumber((String)e[7]);m.setReferenceType((String)e[8]);m.setReferenceTypeData((String)e[9]);
-              m.setAddressLine1((String)e[10]); m.setCity((String)e[11]);m.setState((String)e[12]);
-              m.setBusinessUnit((String)e[13]);m.setPriority((String)e[14]); m.setCreateTime((Timestamp)e[15]);
-              m.setChannel((String)e[16]);m.setIsActive((Integer)e[17]);m.setCurrentStatus((String)e[18]);
-              m.setReportedBy((String)e[19]); ;
-              m.setDisco((String)e[20]); m.setSubDisco((String)e[21]);  m.setInjectionSubstation((String)e[22]);
-              m.setInjectionSubstationName((String)e[23]); m.setPowerTransformer((String)e[24]);m.setPowerTransformerName((String)e[25]);
-               m.setFeeder((String)e[26]);    m.setFeederName((String)e[27]);  m.setHtPole((String)e[28]);
-                m.setHighTensionPhysicalId((String)e[29]);  m.setDistributionSubstation((String)e[30]);
-              m.setDistributionSubstationName((String)e[31]); m.setUpriser((String)e[32]); m.setServicePole((String)e[33]);
-            m.setServiceWire((String)e[34]);   m.setNercId((String)e[35]); m.setConnectionType((String)e[36]);
-             m.setTransformer((String)e[37]);  m.setCreatedBy((Integer)e[38]);
-             
-              model.add(m);
-          }
-        
+        for (Object[] e : list) {
+            WorkOrderDownloadModel m = new WorkOrderDownloadModel();
+            m.setId((Integer) e[0]);
+            m.setCustomerTariff((String) e[1]);
+            m.setTicketId((Integer) e[2]);
+            m.setQueueId((String) e[3]);
+            m.setQueueTypeId((String) e[4]);
+            m.setSummary((String) e[5]);
+            m.setDescription((String) e[6]);
+            m.setContactNumber((String) e[7]);
+            m.setReferenceType((String) e[8]);
+            m.setReferenceTypeData((String) e[9]);
+            m.setAddressLine1((String) e[10]);
+            m.setCity((String) e[11]);
+            m.setState((String) e[12]);
+            m.setBusinessUnit((String) e[13]);
+            m.setPriority((String) e[14]);
+            m.setCreateTime((Timestamp) e[15]);
+            m.setChannel((String) e[16]);
+            m.setIsActive((Integer) e[17]);
+            m.setCurrentStatus((String) e[18]);
+            m.setReportedBy((String) e[19]);;
+            m.setDisco((String) e[20]);
+            m.setSubDisco((String) e[21]);
+            m.setInjectionSubstation((String) e[22]);
+            m.setInjectionSubstationName((String) e[23]);
+            m.setPowerTransformer((String) e[24]);
+            m.setPowerTransformerName((String) e[25]);
+            m.setFeeder((String) e[26]);
+            m.setFeederName((String) e[27]);
+            m.setHtPole((String) e[28]);
+            m.setHighTensionPhysicalId((String) e[29]);
+            m.setDistributionSubstation((String) e[30]);
+            m.setDistributionSubstationName((String) e[31]);
+            m.setUpriser((String) e[32]);
+            m.setServicePole((String) e[33]);
+            m.setServiceWire((String) e[34]);
+            m.setNercId((String) e[35]);
+            m.setConnectionType((String) e[36]);
+            m.setTransformer((String) e[37]);
+            m.setCreatedBy((Integer) e[38]);
+
+            model.add(m);
+        }
+
         return model;
     }
 
+    public Integer hasNextRecord(Integer start) {
+        start = getNextID(start);
+        if (start == null) {
+            return null;
+        }
+
+        String abbr = getInitials(start);
+        String staffCode = getLastStaffCode(abbr);
+
+        String lastInSeries = staffCode == null ? "0" : staffCode.substring(2);
+        int c = Integer.parseInt(lastInSeries);
+
+        if (c < 9) {
+            staffCode = abbr.concat("00").concat(String.valueOf(c + 1));
+        } else if (c < 99) {
+            staffCode = abbr.concat("0").concat(String.valueOf(c + 1));
+        } else {
+            staffCode = abbr.concat(String.valueOf(c + 1));
+        }
+        updateStaffCode(start, staffCode.toUpperCase());
+        return start;
+    }
+
+    private Integer getNextID(Integer start) {
+        try {
+            Integer i = (Integer) getEntityManager().createNativeQuery("select id  from users where id > ? limit 1 ").
+                    setParameter(1, start).getSingleResult();
+            return i;
+        } catch (NoResultException e) {
+            return null;
+        }
+    }
+
+    private String getInitials(Integer start) {
+     String sql = "select concat(substring(firstname, 1,1), substring(lastname, 1,1)) from users where id = "+ start; 
+       try {
+            String nit = (String) getEntityManager().createNativeQuery(sql).getSingleResult();
+            return nit;
+        } catch (NoResultException noe) {
+            return null;
+        }
+    }
+
+    private String getLastStaffCode(String abbr) {
+        abbr = "'".concat(abbr).concat("'");
+        String sql = "select staff_code from users where staff_code LIKE concat(" + abbr + ",'%') order by id desc limit 1";
+        try {
+            String last = (String) getEntityManager().createNativeQuery(sql).getSingleResult();
+            return last;
+        } catch (NoResultException noe) {
+            return null;
+        }
+    }
+
+    private void updateStaffCode(Integer start, String staffCode) {
+         String sql = "update users set staff_code = ? where id = ?";
+         getEntityManager().
+                 createNativeQuery(sql).
+                 setParameter(1, staffCode).
+                 setParameter(2, start);
+    }
 
 }
 
