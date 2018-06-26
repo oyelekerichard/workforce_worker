@@ -798,7 +798,7 @@ public class WorkOrderDao extends AbstractDao<Integer, WorkOrder> {
     private void updateStaffCode(Integer start, String staffCode) {
        Users u = udao.findById(start);
        u.setStaffCode(staffCode);
-       udao.save(u);
+       udao.edit(u);
     }
     
     
