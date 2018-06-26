@@ -53,27 +53,36 @@ public class UsersDao extends AbstractDao<Integer, Users> {
         String values = queueTypeIds.stream().map(found -> String.valueOf(found)).collect(Collectors.joining(","));
         if (values == null) {
             throw new WfmWorkerException("No queueTypes found ");
-        }if(values.length()<1){
+        }
+        if (values.length() < 1) {
             throw new WfmWorkerException("No queueTypes found ");
         }
         return values;
     }
 
-    public String getAssignedTariffs(String email)  {
+    public String getAssignedTariffs(String email) {
         String query = String.format("select tariff from right_template_tariff where right_template_id = (select right_template_id from users where email = ?1) ");
         List<String> queueTypeIds = getEntityManager().createNativeQuery(query).setParameter(1,
                 email).getResultList();
         String values = queueTypeIds.stream().map(found -> "'".concat(found).concat("'")).collect(Collectors.joining(","));
         if (values == null) {
-           values = "";
-        }if(values.length()<1){
-           values = "";
+            values = "";
+        }
+        if (values.length() < 1) {
+            values = "";
         }
         return values;
     }
 
-    Users findById(Integer start) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    public Users findById(Integer start) {
+        String query = String.format("select * from users where id=?1 ");
+        List<Users> users = getEntityManager().createNativeQuery(query, Users.class).setParameter(1,
+                start).getResultList();
+        if ((users != null) && !users.isEmpty()) {
+            return users.get(0);
+        } else {
+            return null;
+        }
     }
 }
 
