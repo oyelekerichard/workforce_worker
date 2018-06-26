@@ -796,14 +796,9 @@ public class WorkOrderDao extends AbstractDao<Integer, WorkOrder> {
     }
 
     private void updateStaffCode(Integer start, String staffCode) {
-         String sql = "update users set staff_code = ? where id = ?";
-       EntityManager em =  getEntityManager();
-       EntityTransaction et = em.getTransaction();
-       et.begin();
-                 em.createNativeQuery(sql).
-                 setParameter(1, staffCode).
-                 setParameter(2, start).executeUpdate();
-                 et.commit();
+       Users u = udao.findById(start);
+       u.setStaffCode(staffCode);
+       udao.save(u);
     }
     
     
