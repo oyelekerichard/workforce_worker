@@ -19,6 +19,8 @@ import org.springframework.stereotype.Component;
 import java.util.List;
 import java.util.Map;
 import java.util.logging.Logger;
+import javax.persistence.EntityManager;
+import javax.persistence.EntityTransaction;
 import javax.persistence.NoResultException;
 import javax.persistence.Query;
 import net.crowninteractive.wfmworker.entity.QueueType;
@@ -795,10 +797,13 @@ public class WorkOrderDao extends AbstractDao<Integer, WorkOrder> {
 
     private void updateStaffCode(Integer start, String staffCode) {
          String sql = "update users set staff_code = ? where id = ?";
-         getEntityManager().
-                 createNativeQuery(sql).
+       EntityManager em =  getEntityManager();
+       EntityTransaction et = em.getTransaction();
+       et.begin();
+                 em.createNativeQuery(sql).
                  setParameter(1, staffCode).
                  setParameter(2, start).executeUpdate();
+                 et.commit();
     }
     
     
