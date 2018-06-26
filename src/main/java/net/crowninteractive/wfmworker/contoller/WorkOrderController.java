@@ -106,6 +106,7 @@ public class WorkOrderController extends Extension {
         try {
             service.generateStaffCode(counter);
         } catch (Exception ex) {
+            ex.printStackTrace();
             return "Error occured";
         }
 
