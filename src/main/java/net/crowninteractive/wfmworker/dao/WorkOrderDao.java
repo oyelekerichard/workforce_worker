@@ -575,7 +575,7 @@ public class WorkOrderDao extends AbstractDao<Integer, WorkOrder> {
             sql += String.format("and reported_by ='%s'", reportedBy);
         }
         
-        sql+=" and status != 'OBSOLETE'";
+        sql+=" and current_status not like '%OBSOLETE%";
 
         logger.info("Compiled SQL " + sql);
         List<WorkOrderDownloadModel> model = new ArrayList();
