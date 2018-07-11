@@ -399,12 +399,12 @@ public class WorkOrderDao extends AbstractDao<Integer, WorkOrder> {
         wo.setToken(RandomStringUtils.randomAlphanumeric(30));
         wo.setChannel("EMCC");
         wo.setDebtBalanceAmount(Double.valueOf(0));
-
+        
         WorkOrder w = save(wo);
         return w;
     }
 
-    public void addRemark(String emcc, String ticketId, String comment, String string) {
+    public void addRemark(String emcc, String ticketId, String comment, String string,Double amount) {
         WorkOrderRemark wor = new WorkOrderRemark();
         wor.setComment(comment);
         wor.setChannel(emcc);
@@ -415,6 +415,7 @@ public class WorkOrderDao extends AbstractDao<Integer, WorkOrder> {
         wor.setCreateTime(new Date());
         wor.setCreatedBy(findUserById(1));
         wor.setCreatedByName(findUserById(1).getFirstname());
+        wor.setAmount(amount);
         wora.save(wor);
     }
 

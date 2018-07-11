@@ -157,6 +157,10 @@ public class WorkOrderRemark implements Serializable {
     @ManyToOne(optional = false)
     private WorkOrder         workOrderId;
 
+    @Column(name = "amount")
+    private Double amount;
+    
+    
     public WorkOrderRemark() {}
 
     public WorkOrderRemark(Integer id) {
@@ -282,6 +286,16 @@ public class WorkOrderRemark implements Serializable {
     public void setWorkOrderId(WorkOrder workOrderId) {
         this.workOrderId = workOrderId;
     }
+
+    public Double getAmount() {
+        return amount;
+    }
+
+    public void setAmount(Double amount) {
+        this.amount = amount;
+    }
+    
+    
 
     @Override
     public int hashCode() {
