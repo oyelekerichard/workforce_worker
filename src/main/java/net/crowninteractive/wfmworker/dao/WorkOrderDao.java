@@ -368,6 +368,7 @@ public class WorkOrderDao extends AbstractDao<Integer, WorkOrder> {
         wo.setChannel("EMCC");
         wo.setDebtBalanceAmount(Double.valueOf(amount));
         wo.setIsAssigned(Short.valueOf("0"));
+        wo.setIsClosed(Short.valueOf("0"));
 
         WorkOrder w = save(wo);
         return w.getTicketId();
