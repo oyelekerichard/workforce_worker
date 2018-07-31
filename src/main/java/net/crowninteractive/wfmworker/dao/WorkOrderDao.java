@@ -367,6 +367,7 @@ public class WorkOrderDao extends AbstractDao<Integer, WorkOrder> {
         wo.setToken(RandomStringUtils.randomAlphanumeric(30));
         wo.setChannel("EMCC");
         wo.setDebtBalanceAmount(Double.valueOf(amount));
+        wo.setIsAssigned(Short.valueOf("0"));
 
         WorkOrder w = save(wo);
         return w.getTicketId();
