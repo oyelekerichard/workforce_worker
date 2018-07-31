@@ -32,6 +32,7 @@ import net.crowninteractive.wfmworker.entity.WorkOrderTemp;
 import net.crowninteractive.wfmworker.exception.WfmWorkerException;
 import net.crowninteractive.wfmworker.misc.WorkOrderDownloadModel;
 import org.apache.commons.lang3.RandomStringUtils;
+import org.hibernate.Session;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -57,6 +58,12 @@ public class WorkOrderDao extends AbstractDao<Integer, WorkOrder> {
         Integer max = (Integer) getEntityManager()
                 .createNativeQuery("select max(ticket_id) from work_order").getSingleResult();
         return max.intValue() + 1;
+    }
+    
+      public int lastTicket() {
+        Integer max = (Integer) getEntityManager()
+                .createNativeQuery("select max(ticket_id) from work_order").getSingleResult();
+        return max.intValue();
     }
 
     public WorkOrder findById(int id) {
@@ -344,34 +351,37 @@ public class WorkOrderDao extends AbstractDao<Integer, WorkOrder> {
 
     }
 
-    public int createWorkOrder(QueueType qt, String string, String string0, String businessUnit, String summary, String description, String phone, String city, String address, String tarriff, String billingID, String emcc, String string1, String string2, String reportedBy, String customername, String amount) {
-        WorkOrder wo = new WorkOrder();
-        wo.setBusinessUnit(businessUnit);
-        wo.setAddressLine1(address);
-        wo.setAddressLine2(address);
-        wo.setQueueId(qt.getQueueId());
-        wo.setQueueTypeId(qt);
-        wo.setTicketId(ticketCount());
-        wo.setContactNumber(phone);
-        wo.setCustomerName(customername);
-        wo.setOwnerId(1);
-        wo.setDescription(description);
-        wo.setReportedBy(reportedBy);
-        wo.setCreateTime(new Date());
-        wo.setCurrentStatus("OPEN");
-        wo.setCustomerTariff(tarriff);
-        wo.setCity(city);
-        wo.setPriority("Low");
-        wo.setReferenceType("Billing ID");
-        wo.setReferenceTypeData(billingID);
-        wo.setState("Lagos");
-        wo.setSummary(summary);
-        wo.setToken(RandomStringUtils.randomAlphanumeric(30));
-        wo.setChannel("EMCC");
-        wo.setDebtBalanceAmount(Double.valueOf(amount));
-
-        WorkOrder w = save(wo);
-        return w.getTicketId();
+    public int createWorkOrder(QueueType qt,
+            String string,
+            String string0, 
+            String businessUnit, 
+            String summary,
+            String description,
+            String phone, 
+            String city, 
+            String address, 
+            String tarriff, 
+            String billingID,
+            String emcc, 
+            String string1, 
+            String string2, 
+            String reportedBy,
+            String customername, 
+            String amount) {
+        String sql = String.format("insert into work_order (ticket_id,token,owner_id,queue_id,"
+                        + "queue_type_id,summary,description,contact_number,reference_type,reference_type_data,"
+                        + "address_line_1,address_line_2,city,state,business_unit,customer_tariff,priority,"
+                        + "create_time,channel,update_time,reported_by,"
+                        + "customer_name,debt_balance_amount) "
+                        + " select max(ticket_id)+1,'%s',%d,%d,%d,'%s','%s','%s','%s','%s','%s','%s','%s','%s','%s',"
+                        + "'%s','%s',now(),'%s',now(),'%s','%s',%.2f from work_order ",RandomStringUtils.randomAlphanumeric(30),1,
+                        qt.getQueueId().getId(),qt.getId(),summary,description,phone,"Billing ID",billingID,address,address,
+                        city,"Lagos",businessUnit,tarriff,"Low","EMCC",reportedBy,customername,Double.valueOf(amount));
+       
+        Session session = this.getSession();
+        session.createSQLQuery(sql).executeUpdate();
+       
+        return lastTicket();
     }
 
     public WorkOrder createWorkOrderV2(QueueType qt, String string, String string0, String businessUnit, String summary, String description, String phone, String city, String address, String tarriff, String billingID, String emcc, String string1, String string2, String reportedBy, String customername) {
@@ -394,6 +404,7 @@ public class WorkOrderDao extends AbstractDao<Integer, WorkOrder> {
         wo.setPriority("Low");
         wo.setReferenceType("Billing ID");
         wo.setReferenceTypeData(billingID);
+        wo.setIsAssigned(Short.valueOf("0"));
         wo.setState("Lagos");
         wo.setSummary(summary);
         wo.setToken(RandomStringUtils.randomAlphanumeric(30));
