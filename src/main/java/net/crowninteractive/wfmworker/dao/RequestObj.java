@@ -6,6 +6,7 @@
 package net.crowninteractive.wfmworker.dao;
 
 import java.util.Arrays;
+import java.util.Date;
 
 /**
  *
@@ -49,11 +50,12 @@ public class RequestObj {
     private String chargeTypeToken;
     private String frequency;
     private String[] tokens;
-    private String[]setup;
+    private String[] setup;
     private String name;
     private String district;
-  
-    
+    private String currentBill;
+    private String lastPaidAmount;
+    private Date lastPaymentDate;
 
     public String getAccountNumber() {
         return accountNumber;
@@ -366,50 +368,70 @@ public class RequestObj {
     public void setAcctRecId(String acctRecId) {
         this.acctRecId = acctRecId;
     }
-    
-    
-    
-    
+
+    public String getCurrentBill() {
+        return currentBill;
+    }
+
+    public void setCurrentBill(String currentBill) {
+        this.currentBill = currentBill;
+    }
+
+    public String getLastPaidAmount() {
+        return lastPaidAmount;
+    }
+
+    public void setLastPaidAmount(String lastPaidAmount) {
+        this.lastPaidAmount = lastPaidAmount;
+    }
+
+    public Date getLastPaymentDate() {
+        return lastPaymentDate;
+    }
+
+    public void setLastPaymentDate(Date lastPaymentDate) {
+        this.lastPaymentDate = lastPaymentDate;
+    }
 
     @Override
     public String toString() {
-        return "RequestObj{" +
-                "acctRecId='" + acctRecId + '\'' +
-                "ticketId='" + ticketId + '\'' +
-                ", amount='" + amount + '\'' +
-                ", reference='" + reference + '\'' +
-                ", start='" + start + '\'' +
-                ", count='" + count + '\'' +
-                ", startdate='" + startdate + '\'' +
-                ", enddate='" + enddate + '\'' +
-                ", oldPassword='" + oldPassword + '\'' +
-                ", newPassword='" + newPassword + '\'' +
-                ", roles='" + roles + '\'' +
-                ", loginurl='" + loginurl + '\'' +
-                ", stateId='" + stateId + '\'' +
-                ", email='" + email + '\'' +
-                ", password='" + password + '\'' +
-                ", firstname='" + firstname + '\'' +
-                ", lastname='" + lastname + '\'' +
-                ", phone='" + phone + '\'' +
-                ", address='" + address + '\'' +
-                ", state='" + state + '\'' +
-                ", image='" + image + '\'' +
-                ", thumbnail='" + thumbnail + '\'' +
-                ", token='" + token + '\'' +
-                ", cityToken='" + cityToken + '\'' +
-                ", billingId='" + billingId + '\'' +
-                ", city='" + city + '\'' +
-                ", reportedBy='" + reportedBy + '\'' +
-                ", businessUnit='" + businessUnit + '\'' +
-                ", tariff='" + tariff + '\'' +
-                ", summary='" + summary + '\'' +
-                ", description='" + description + '\'' +
-                ", customerName='" + customerName + '\'' +
-                ", accountNumber='" + accountNumber + '\'' +
-                ", chargeTypeToken='" + chargeTypeToken + '\'' +
-                ", frequency='" + frequency + '\'' +
-                ", tokens=" + Arrays.toString(tokens) +
-                '}';
+        return "RequestObj{"
+                + "acctRecId='" + acctRecId + '\''
+                + "ticketId='" + ticketId + '\''
+                + ", amount='" + amount + '\''
+                + ", reference='" + reference + '\''
+                + ", start='" + start + '\''
+                + ", count='" + count + '\''
+                + ", startdate='" + startdate + '\''
+                + ", enddate='" + enddate + '\''
+                + ", oldPassword='" + oldPassword + '\''
+                + ", newPassword='" + newPassword + '\''
+                + ", roles='" + roles + '\''
+                + ", loginurl='" + loginurl + '\''
+                + ", stateId='" + stateId + '\''
+                + ", email='" + email + '\''
+                + ", password='" + password + '\''
+                + ", firstname='" + firstname + '\''
+                + ", lastname='" + lastname + '\''
+                + ", phone='" + phone + '\''
+                + ", address='" + address + '\''
+                + ", state='" + state + '\''
+                + ", image='" + image + '\''
+                + ", thumbnail='" + thumbnail + '\''
+                + ", token='" + token + '\''
+                + ", cityToken='" + cityToken + '\''
+                + ", billingId='" + billingId + '\''
+                + ", city='" + city + '\''
+                + ", reportedBy='" + reportedBy + '\''
+                + ", businessUnit='" + businessUnit + '\''
+                + ", tariff='" + tariff + '\''
+                + ", summary='" + summary + '\''
+                + ", description='" + description + '\''
+                + ", customerName='" + customerName + '\''
+                + ", accountNumber='" + accountNumber + '\''
+                + ", chargeTypeToken='" + chargeTypeToken + '\''
+                + ", frequency='" + frequency + '\''
+                + ", tokens=" + Arrays.toString(tokens)
+                + '}';
     }
 }

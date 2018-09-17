@@ -11,11 +11,6 @@ import java.math.BigInteger;
 import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.Date;
-import net.crowninteractive.wfmworker.entity.WorkOrder;
-
-import org.springframework.stereotype.Component;
-
-//~--- JDK imports ------------------------------------------------------------
 import java.util.List;
 import java.util.Map;
 import java.util.logging.Logger;
@@ -23,6 +18,7 @@ import javax.persistence.NoResultException;
 import javax.persistence.Query;
 import net.crowninteractive.wfmworker.entity.QueueType;
 import net.crowninteractive.wfmworker.entity.Users;
+import net.crowninteractive.wfmworker.entity.WorkOrder;
 import net.crowninteractive.wfmworker.entity.WorkOrderExtra;
 import net.crowninteractive.wfmworker.entity.WorkOrderMessage;
 import net.crowninteractive.wfmworker.entity.WorkOrderRemark;
@@ -31,6 +27,7 @@ import net.crowninteractive.wfmworker.exception.WfmWorkerException;
 import net.crowninteractive.wfmworker.misc.WorkOrderDownloadModel;
 import org.apache.commons.lang3.RandomStringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
 /**
@@ -223,6 +220,9 @@ public class WorkOrderDao extends AbstractDao<Integer, WorkOrder> {
         wo.setToken(wot.getToken());
         wo.setSlot(wot.getSlot());
         wo.setDebtBalanceAmount(Double.valueOf(0));
+        wo.setCurrentBill(wot.getCurrentBill());
+        wo.setLastPaymentAmount(wot.getLastPaymentAmount());
+        wo.setLastPaymentDate(wot.getLastPaymentDate());
 
         WorkOrder w = save(wo);
         WorkOrderExtra woe = new WorkOrderExtra();
@@ -342,7 +342,7 @@ public class WorkOrderDao extends AbstractDao<Integer, WorkOrder> {
 
     }
 
-    public int createWorkOrder(QueueType qt, String string, String string0, String businessUnit, String summary, String description, String phone, String city, String address, String tarriff, String billingID, String emcc, String string1, String string2, String reportedBy, String customername, String amount) {
+    public int createWorkOrder(QueueType qt, String string, String string0, String businessUnit, String summary, String description, String phone, String city, String address, String tarriff, String billingID, String emcc, String string1, String string2, String reportedBy, String customername, String amount, String currentBill, String lastPaidAmount, Date lastPaymentDate) {
         WorkOrder wo = new WorkOrder();
         wo.setBusinessUnit(businessUnit);
         wo.setAddressLine1(address);
@@ -369,6 +369,9 @@ public class WorkOrderDao extends AbstractDao<Integer, WorkOrder> {
         wo.setDebtBalanceAmount(Double.valueOf(amount));
         wo.setIsAssigned(Short.valueOf("0"));
         wo.setIsClosed(Short.valueOf("0"));
+        wo.setCurrentBill(currentBill);
+        wo.setLastPaymentAmount(Double.valueOf(lastPaidAmount));
+        wo.setLastPaymentDate(lastPaymentDate);
 
         WorkOrder w = save(wo);
         return w.getTicketId();
@@ -493,7 +496,10 @@ public class WorkOrderDao extends AbstractDao<Integer, WorkOrder> {
                 "",
                 "",
                 worder.getReportedBy(),
-                worder.getCustomerName(), "0");
+                worder.getCustomerName(), "0",
+                worder.getCurrentBill(),
+                worder.getLastPaymentAmount(),
+                worder.getLastPaymentDate());
     }
 
     public WorkOrder createWorkOrder(WorkOrder wo) {
@@ -775,8 +781,8 @@ public class WorkOrderDao extends AbstractDao<Integer, WorkOrder> {
     }
 
     private String getInitials(Integer start) {
-     String sql = "select concat(substring(firstname, 1,1), substring(lastname, 1,1)) from users where id = "+ start; 
-       try {
+        String sql = "select concat(substring(firstname, 1,1), substring(lastname, 1,1)) from users where id = " + start;
+        try {
             String nit = (String) getEntityManager().createNativeQuery(sql).getSingleResult();
             return nit;
         } catch (NoResultException noe) {
@@ -796,17 +802,12 @@ public class WorkOrderDao extends AbstractDao<Integer, WorkOrder> {
     }
 
     private void updateStaffCode(Integer start, String staffCode) {
-         String sql = "update users set staff_code = ? where id = ?";
-         getEntityManager().
-                 createNativeQuery(sql).
-                 setParameter(1, staffCode).
-                 setParameter(2, start);
+        String sql = "update users set staff_code = ? where id = ?";
+        getEntityManager().
+                createNativeQuery(sql).
+                setParameter(1, staffCode).
+                setParameter(2, start);
     }
-    
-    
-    
-    
-    
 
 }
 

@@ -7,6 +7,7 @@ package net.crowninteractive.wfmworker.service;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -42,7 +43,7 @@ public class WorkOrderService {
     @Value(value = "${dev.disconnection.complete.out}")
     private String disconnectionQueue;
 
-    public Awesome addToDisconnectionQueue(String amount, String billingID, String businessUnit, String tarriff, String city, String address, String phone, String summary, String description, String reportedBy) {
+    public Awesome addToDisconnectionQueue(String amount, String billingID, String businessUnit, String tarriff, String city, String address, String phone, String summary, String description, String reportedBy, String currentBill, String lastPaidAmount, Date lastPaymentDate) {
 
         try {
 
@@ -65,7 +66,7 @@ public class WorkOrderService {
                 if (wo != null) {
 
                     if (wo.size() == 0) {
-                        ticketId = wdao.createWorkOrder(qt, "", "1", businessUnit, summary, description, phone, city, address, tarriff, billingID, "EMCC", "", "", reportedBy, customername,amount);
+                        ticketId = wdao.createWorkOrder(qt, "", "1", businessUnit, summary, description, phone, city, address, tarriff, billingID, "EMCC", "", "", reportedBy, customername, amount, currentBill, lastPaidAmount, lastPaymentDate);
                         return StandardResponse.ok(ticketId);
                     } else {
                         WorkOrder wor = wo.get(0);
@@ -75,7 +76,7 @@ public class WorkOrderService {
                     }
 
                 } else {
-                    int tid = wdao.createWorkOrder(qt, "", "1", businessUnit, summary, description, phone, city, address, tarriff, billingID, "EMCC", "", "", reportedBy, customername,amount);
+                    int tid = wdao.createWorkOrder(qt, "", "1", businessUnit, summary, description, phone, city, address, tarriff, billingID, "EMCC", "", "", reportedBy, customername, amount, currentBill, lastPaidAmount, lastPaymentDate);
                     return StandardResponse.ok(tid);
 
                 }
@@ -182,19 +183,18 @@ public class WorkOrderService {
     }
 
     public List<WorkOrder> getWorkOrders(Integer queueId, Integer pageNo) {
-        int count = 100;    
-        return wdao.findByQueueId(queueId,(pageNo-1)*count,count);
+        int count = 100;
+        return wdao.findByQueueId(queueId, (pageNo - 1) * count, count);
     }
 
     public WorkOrder getWorkOrder(Integer ticketId) {
-       return  wdao.findByQueueTypeId(ticketId);
+        return wdao.findByQueueTypeId(ticketId);
     }
 
     public void generateStaffCode(Integer counter) {
-          while (counter != null) {
+        while (counter != null) {
             counter = wdao.hasNextRecord(counter);
         }
     }
 
-    
 }

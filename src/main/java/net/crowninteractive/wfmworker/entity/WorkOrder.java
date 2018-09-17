@@ -277,6 +277,13 @@ public class WorkOrder implements Serializable {
     private String queueName;
     @Transient
     private String queueTypeName;
+    @Column(name = "current_bill")
+    private String currentBill;
+    @Column(name = "last_payment_amount")
+    private Double lastPaymentAmount;
+    @Column(name = "last_payment_date")
+    @Temporal(javax.persistence.TemporalType.DATE)
+    private Date lastPaymentDate;
 
     public WorkOrder() {
     }
@@ -815,6 +822,30 @@ public class WorkOrder implements Serializable {
 
     public void setQueueTypeName(String queueTypeName) {
         this.queueTypeName = this.queueTypeId.getName();
+    }
+
+    public String getCurrentBill() {
+        return currentBill;
+    }
+
+    public void setCurrentBill(String currentBill) {
+        this.currentBill = currentBill;
+    }
+
+    public Double getLastPaymentAmount() {
+        return lastPaymentAmount;
+    }
+
+    public void setLastPaymentAmount(Double lastPaymentAmount) {
+        this.lastPaymentAmount = lastPaymentAmount;
+    }
+
+    public Date getLastPaymentDate() {
+        return lastPaymentDate;
+    }
+
+    public void setLastPaymentDate(Date lastPaymentDate) {
+        this.lastPaymentDate = lastPaymentDate;
     }
 
 }

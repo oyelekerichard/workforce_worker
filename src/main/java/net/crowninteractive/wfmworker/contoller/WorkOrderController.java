@@ -43,9 +43,9 @@ public class WorkOrderController extends Extension {
         Awesome awe;
         try {
             System.out.println(obj);
-            //check deliquency upload 
+            //check deliquency upload
             String desc = obj.getDescription().concat(String.format(" | Debt amount is %s Naira", obj.getAmount()));
-            awe = service.addToDisconnectionQueue(obj.getAmount(), obj.getBillingId(), obj.getBusinessUnit(), obj.getTariff(), obj.getCity(), obj.getAddress(), obj.getPhone(), obj.getSummary(), desc, obj.getReportedBy());
+            awe = service.addToDisconnectionQueue(obj.getAmount(), obj.getBillingId(), obj.getBusinessUnit(), obj.getTariff(), obj.getCity(), obj.getAddress(), obj.getPhone(), obj.getSummary(), desc, obj.getReportedBy(), obj.getCurrentBill(), obj.getLastPaidAmount(), obj.getLastPaymentDate());
             System.out.println(awe);
         } catch (Exception ex) {
             ex.printStackTrace();
@@ -71,7 +71,7 @@ public class WorkOrderController extends Extension {
     public String addToDisconnectQueueV2(@RequestBody RequestObj[] reqList, @Context HttpServletRequest request) {
         Awesome awe;
         try {
-            //check deliquency upload 
+            //check deliquency upload
             awe = service.processItems(reqList);
             System.out.println(awe);
         } catch (Exception ex) {
