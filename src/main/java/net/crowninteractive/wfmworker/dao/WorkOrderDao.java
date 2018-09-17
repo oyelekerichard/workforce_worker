@@ -407,7 +407,7 @@ public class WorkOrderDao extends AbstractDao<Integer, WorkOrder> {
         return w;
     }
 
-    public void addRemark(String emcc, String ticketId, String comment, String string) {
+    public void addRemark(String emcc, String ticketId, String comment, String string, Double amount) {
         WorkOrderRemark wor = new WorkOrderRemark();
         wor.setComment(comment);
         wor.setChannel(emcc);
@@ -418,6 +418,7 @@ public class WorkOrderDao extends AbstractDao<Integer, WorkOrder> {
         wor.setCreateTime(new Date());
         wor.setCreatedBy(findUserById(1));
         wor.setCreatedByName(findUserById(1).getFirstname());
+        wor.setAmount(amount);
         wora.save(wor);
     }
 
@@ -475,7 +476,10 @@ public class WorkOrderDao extends AbstractDao<Integer, WorkOrder> {
     }
 
     public List<WorkOrder> findNonMigratedWorkOrders() {
-        String sql = "select * from work_order where queue_type_id = 359 and current_status not like 'COMPLETE%'";
+
+        String sql = "select * from work_order where queue_type_id = (select id from queue_type "
+                + "where token=(select config_value from emcc_config where config_key="
+                + " 'metering_plan_queue_type')) and current_status not like 'COMPLETE%'";
         return getEntityManager().createNativeQuery(sql, WorkOrder.class).getResultList();
     }
 
@@ -580,6 +584,8 @@ public class WorkOrderDao extends AbstractDao<Integer, WorkOrder> {
         if (reportedBy != null) {
             sql += String.format("and reported_by ='%s'", reportedBy);
         }
+
+        sql += " and current_status not like '%OBSOLETE%";
 
         logger.info("Compiled SQL " + sql);
         List<WorkOrderDownloadModel> model = new ArrayList();
@@ -802,11 +808,10 @@ public class WorkOrderDao extends AbstractDao<Integer, WorkOrder> {
     }
 
     private void updateStaffCode(Integer start, String staffCode) {
-        String sql = "update users set staff_code = ? where id = ?";
-        getEntityManager().
-                createNativeQuery(sql).
-                setParameter(1, staffCode).
-                setParameter(2, start);
+
+        Users u = udao.findById(start);
+        u.setStaffCode(staffCode);
+        udao.edit(u);
     }
 
 }

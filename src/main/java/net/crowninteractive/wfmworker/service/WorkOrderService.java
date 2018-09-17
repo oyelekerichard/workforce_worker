@@ -70,7 +70,7 @@ public class WorkOrderService {
                         return StandardResponse.ok(ticketId);
                     } else {
                         WorkOrder wor = wo.get(0);
-                        wdao.addRemark("Emcc", String.valueOf(wor.getTicketId()), description, "1");
+                        wdao.addRemark("Emcc", String.valueOf(wor.getTicketId()), description, "1",Double.valueOf(amount));
                         ticketId = wor.getTicketId();
                         return StandardResponse.ok(ticketId);
                     }
@@ -163,7 +163,7 @@ public class WorkOrderService {
                         return w;
                     } else {
                         WorkOrder wor = wo.get(0);
-                        wdao.addRemark("Emcc", String.valueOf(wor.getTicketId()), description, "1");
+                        wdao.addRemark("Emcc", String.valueOf(wor.getTicketId()), description, "1",Double.valueOf(amount));
                         ticketId = wor.getTicketId();
                         return wor;
                     }

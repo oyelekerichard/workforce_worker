@@ -273,6 +273,8 @@ public class Users implements Serializable {
     private List<WorkOrderStatus> workOrderStatusList;
     @OneToMany(mappedBy = "updatedBy")
     private List<WorkOrderStatus> workOrderStatusList1;
+    @Column(name = "staff_code")
+    public String staffCode;
 
     public Users() {
     }
@@ -995,5 +997,15 @@ public class Users implements Serializable {
     public void setInventoryRejectionList1(List<InventoryRejection> inventoryRejectionList1) {
         this.inventoryRejectionList1 = inventoryRejectionList1;
     }
+
+    public String getStaffCode() {
+        return staffCode;
+    }
+
+    public void setStaffCode(String staffCode) {
+        this.staffCode = staffCode;
+    }
+    
+    
 
 }
