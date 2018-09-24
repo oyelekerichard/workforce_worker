@@ -223,6 +223,7 @@ public class WorkOrderDao extends AbstractDao<Integer, WorkOrder> {
         wo.setToken(wot.getToken());
         wo.setSlot(wot.getSlot());
         wo.setDebtBalanceAmount(Double.valueOf(0));
+        wo.setIsAssigned(Short.valueOf("0"));
 
         WorkOrder w = save(wo);
         WorkOrderExtra woe = new WorkOrderExtra();
