@@ -11,11 +11,6 @@ import java.math.BigInteger;
 import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.Date;
-import net.crowninteractive.wfmworker.entity.WorkOrder;
-
-import org.springframework.stereotype.Component;
-
-//~--- JDK imports ------------------------------------------------------------
 import java.util.List;
 import java.util.Map;
 import java.util.logging.Logger;
@@ -23,6 +18,7 @@ import javax.persistence.NoResultException;
 import javax.persistence.Query;
 import net.crowninteractive.wfmworker.entity.QueueType;
 import net.crowninteractive.wfmworker.entity.Users;
+import net.crowninteractive.wfmworker.entity.WorkOrder;
 import net.crowninteractive.wfmworker.entity.WorkOrderExtra;
 import net.crowninteractive.wfmworker.entity.WorkOrderMessage;
 import net.crowninteractive.wfmworker.entity.WorkOrderRemark;
@@ -30,7 +26,9 @@ import net.crowninteractive.wfmworker.entity.WorkOrderTemp;
 import net.crowninteractive.wfmworker.exception.WfmWorkerException;
 import net.crowninteractive.wfmworker.misc.WorkOrderDownloadModel;
 import org.apache.commons.lang3.RandomStringUtils;
+import org.apache.commons.lang3.time.DateFormatUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
 /**
@@ -136,10 +134,10 @@ public class WorkOrderDao extends AbstractDao<Integer, WorkOrder> {
         return name;
     }
 
-    public Date getDateResolved(WorkOrder w) {
+    public String getDateResolved(WorkOrder w) {
         if (w.getIsClosed() != null) {
             if (w.getIsClosed() == 1) {
-                return w.getClosedTime();
+                return DateFormatUtils.format(w.getClosedTime(), "yyyy-MM-dd HH:mm:SS");
             } else if (w.getCurrentStatus().toLowerCase().equals("completed") || w.getCurrentStatus().toLowerCase().equals("resolved")) {
                 if (w.getWorkOrderStatusId() == null) {
                     return null;
@@ -150,7 +148,7 @@ public class WorkOrderDao extends AbstractDao<Integer, WorkOrder> {
                 if (q.getResultList() != null) {
 
                     if (!q.getResultList().isEmpty()) {
-                        Date time = (Date) q.getResultList().get(0);
+                        String time = (String) q.getResultList().get(0);
                         return time;
                     } else {
                         return null;
@@ -776,8 +774,8 @@ public class WorkOrderDao extends AbstractDao<Integer, WorkOrder> {
     }
 
     private String getInitials(Integer start) {
-     String sql = "select concat(substring(firstname, 1,1), substring(lastname, 1,1)) from users where id = "+ start; 
-       try {
+        String sql = "select concat(substring(firstname, 1,1), substring(lastname, 1,1)) from users where id = " + start;
+        try {
             String nit = (String) getEntityManager().createNativeQuery(sql).getSingleResult();
             return nit;
         } catch (NoResultException noe) {
@@ -797,17 +795,12 @@ public class WorkOrderDao extends AbstractDao<Integer, WorkOrder> {
     }
 
     private void updateStaffCode(Integer start, String staffCode) {
-         String sql = "update users set staff_code = ? where id = ?";
-         getEntityManager().
-                 createNativeQuery(sql).
-                 setParameter(1, staffCode).
-                 setParameter(2, start);
+        String sql = "update users set staff_code = ? where id = ?";
+        getEntityManager().
+                createNativeQuery(sql).
+                setParameter(1, staffCode).
+                setParameter(2, start);
     }
-    
-    
-    
-    
-    
 
 }
 
