@@ -19,8 +19,6 @@ import org.springframework.stereotype.Component;
 import java.util.List;
 import java.util.Map;
 import java.util.logging.Logger;
-import javax.persistence.EntityManager;
-import javax.persistence.EntityTransaction;
 import javax.persistence.NoResultException;
 import javax.persistence.Query;
 import net.crowninteractive.wfmworker.entity.QueueType;
@@ -33,6 +31,7 @@ import net.crowninteractive.wfmworker.exception.WfmWorkerException;
 import net.crowninteractive.wfmworker.misc.WorkOrderDownloadModel;
 import org.apache.commons.lang3.RandomStringUtils;
 import org.hibernate.Session;
+import org.apache.commons.lang3.time.DateFormatUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -145,10 +144,10 @@ public class WorkOrderDao extends AbstractDao<Integer, WorkOrder> {
         return name;
     }
 
-    public Date getDateResolved(WorkOrder w) {
+    public String getDateResolved(WorkOrder w) {
         if (w.getIsClosed() != null) {
             if (w.getIsClosed() == 1) {
-                return w.getClosedTime();
+                return DateFormatUtils.format(w.getClosedTime(), "yyyy-MM-dd HH:mm:SS");
             } else if (w.getCurrentStatus().toLowerCase().equals("completed") || w.getCurrentStatus().toLowerCase().equals("resolved")) {
                 if (w.getWorkOrderStatusId() == null) {
                     return null;
@@ -159,7 +158,7 @@ public class WorkOrderDao extends AbstractDao<Integer, WorkOrder> {
                 if (q.getResultList() != null) {
 
                     if (!q.getResultList().isEmpty()) {
-                        Date time = (Date) q.getResultList().get(0);
+                        String time = (String) q.getResultList().get(0);
                         return time;
                     } else {
                         return null;
@@ -410,12 +409,12 @@ public class WorkOrderDao extends AbstractDao<Integer, WorkOrder> {
         wo.setToken(RandomStringUtils.randomAlphanumeric(30));
         wo.setChannel("EMCC");
         wo.setDebtBalanceAmount(Double.valueOf(0));
-        
+
         WorkOrder w = save(wo);
         return w;
     }
 
-    public void addRemark(String emcc, String ticketId, String comment, String string,Double amount) {
+    public void addRemark(String emcc, String ticketId, String comment, String string, Double amount) {
         WorkOrderRemark wor = new WorkOrderRemark();
         wor.setComment(comment);
         wor.setChannel(emcc);
@@ -484,7 +483,7 @@ public class WorkOrderDao extends AbstractDao<Integer, WorkOrder> {
     }
 
     public List<WorkOrder> findNonMigratedWorkOrders() {
-        
+
         String sql = "select * from work_order where queue_type_id = (select id from queue_type "
                 + "where token=(select config_value from emcc_config where config_key="
                 + " 'metering_plan_queue_type')) and current_status not like 'COMPLETE%'";
@@ -589,8 +588,8 @@ public class WorkOrderDao extends AbstractDao<Integer, WorkOrder> {
         if (reportedBy != null) {
             sql += String.format("and reported_by ='%s'", reportedBy);
         }
-        
-        sql+=" and current_status not like '%OBSOLETE%";
+
+        sql += " and current_status not like '%OBSOLETE%";
 
         logger.info("Compiled SQL " + sql);
         List<WorkOrderDownloadModel> model = new ArrayList();
@@ -792,8 +791,8 @@ public class WorkOrderDao extends AbstractDao<Integer, WorkOrder> {
     }
 
     private String getInitials(Integer start) {
-     String sql = "select concat(substring(firstname, 1,1), substring(lastname, 1,1)) from users where id = "+ start; 
-       try {
+        String sql = "select concat(substring(firstname, 1,1), substring(lastname, 1,1)) from users where id = " + start;
+        try {
             String nit = (String) getEntityManager().createNativeQuery(sql).getSingleResult();
             return nit;
         } catch (NoResultException noe) {
@@ -813,15 +812,10 @@ public class WorkOrderDao extends AbstractDao<Integer, WorkOrder> {
     }
 
     private void updateStaffCode(Integer start, String staffCode) {
-       Users u = udao.findById(start);
-       u.setStaffCode(staffCode);
-       udao.edit(u);
+        Users u = udao.findById(start);
+        u.setStaffCode(staffCode);
+        udao.edit(u);
     }
-    
-    
-    
-    
-    
 
 }
 
