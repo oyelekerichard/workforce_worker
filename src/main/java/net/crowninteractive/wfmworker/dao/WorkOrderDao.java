@@ -7,22 +7,20 @@
 package net.crowninteractive.wfmworker.dao;
 
 //~--- non-JDK imports --------------------------------------------------------
+import com.google.common.base.Optional;
 import java.math.BigInteger;
 import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.Date;
-import net.crowninteractive.wfmworker.entity.WorkOrder;
-
-import org.springframework.stereotype.Component;
-
-//~--- JDK imports ------------------------------------------------------------
 import java.util.List;
 import java.util.Map;
 import java.util.logging.Logger;
 import javax.persistence.NoResultException;
 import javax.persistence.Query;
+import net.crowninteractive.wfmworker.entity.Engineer;
 import net.crowninteractive.wfmworker.entity.QueueType;
 import net.crowninteractive.wfmworker.entity.Users;
+import net.crowninteractive.wfmworker.entity.WorkOrder;
 import net.crowninteractive.wfmworker.entity.WorkOrderExtra;
 import net.crowninteractive.wfmworker.entity.WorkOrderMessage;
 import net.crowninteractive.wfmworker.entity.WorkOrderRemark;
@@ -33,6 +31,7 @@ import org.apache.commons.lang3.RandomStringUtils;
 import org.hibernate.Session;
 import org.apache.commons.lang3.time.DateFormatUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
 /**
@@ -58,8 +57,8 @@ public class WorkOrderDao extends AbstractDao<Integer, WorkOrder> {
                 .createNativeQuery("select max(ticket_id) from work_order").getSingleResult();
         return max.intValue() + 1;
     }
-    
-      public int lastTicket() {
+
+    public int lastTicket() {
         Integer max = (Integer) getEntityManager()
                 .createNativeQuery("select max(ticket_id) from work_order").getSingleResult();
         return max.intValue();
@@ -231,9 +230,10 @@ public class WorkOrderDao extends AbstractDao<Integer, WorkOrder> {
         wo.setToken(wot.getToken());
         wo.setSlot(wot.getSlot());
         wo.setDebtBalanceAmount(Double.valueOf(0));
-        wo.setIsClosed(Short.valueOf("0"));
-        wo.setIsAssigned(Short.valueOf("0"));
 
+//        wo.setCurrentBill(wot.getCurrentBill());
+//        wo.setLastPaymentAmount(wot.getLastPaymentAmount());
+//        wo.setLastPaymentDate(wot.getLastPaymentDate());
         WorkOrder w = save(wo);
         WorkOrderExtra woe = new WorkOrderExtra();
         woe.setConnectionType(wot.getConnectionType());
@@ -352,37 +352,40 @@ public class WorkOrderDao extends AbstractDao<Integer, WorkOrder> {
 
     }
 
-    public int createWorkOrder(QueueType qt,
-            String string,
-            String string0, 
-            String businessUnit, 
-            String summary,
-            String description,
-            String phone, 
-            String city, 
-            String address, 
-            String tarriff, 
-            String billingID,
-            String emcc, 
-            String string1, 
-            String string2, 
-            String reportedBy,
-            String customername, 
-            String amount) {
-        String sql = String.format("insert into work_order (ticket_id,token,owner_id,queue_id,"
-                        + "queue_type_id,summary,description,contact_number,reference_type,reference_type_data,"
-                        + "address_line_1,address_line_2,city,state,business_unit,customer_tariff,priority,"
-                        + "create_time,channel,update_time,reported_by,"
-                        + "customer_name,debt_balance_amount) "
-                        + " select max(ticket_id)+1,'%s',%d,%d,%d,'%s','%s','%s','%s','%s','%s','%s','%s','%s','%s',"
-                        + "'%s','%s',now(),'%s',now(),'%s','%s',%.2f from work_order ",RandomStringUtils.randomAlphanumeric(30),1,
-                        qt.getQueueId().getId(),qt.getId(),summary,description,phone,"Billing ID",billingID,address,address,
-                        city,"Lagos",businessUnit,tarriff,"Low","EMCC",reportedBy,customername,Double.valueOf(amount));
-       
-        Session session = this.getSession();
-        session.createSQLQuery(sql).executeUpdate();
-       
-        return lastTicket();
+    public int createWorkOrder(QueueType qt, String string, String string0, String businessUnit, String summary, String description, String phone, String city, String address, String tarriff, String billingID, String emcc, String string1, String string2, String reportedBy, String customername, String amount, String currentBill, String lastPaidAmount, Date lastPaymentDate) {
+        WorkOrder wo = new WorkOrder();
+        wo.setBusinessUnit(businessUnit);
+        wo.setAddressLine1(address);
+        wo.setAddressLine2(address);
+        wo.setQueueId(qt.getQueueId());
+        wo.setQueueTypeId(qt);
+        wo.setTicketId(ticketCount());
+        wo.setContactNumber(phone);
+        wo.setCustomerName(customername);
+        wo.setOwnerId(1);
+        wo.setDescription(description);
+        wo.setReportedBy(reportedBy);
+        wo.setCreateTime(new Date());
+        wo.setCurrentStatus("OPEN");
+        wo.setCustomerTariff(tarriff);
+        wo.setCity(city);
+        wo.setPriority("Low");
+        wo.setReferenceType("Billing ID");
+        wo.setReferenceTypeData(billingID);
+        wo.setState("Lagos");
+        wo.setSummary(summary);
+        wo.setToken(RandomStringUtils.randomAlphanumeric(30));
+        wo.setChannel("EMCC");
+        wo.setDebtBalanceAmount(Double.valueOf(amount));
+        wo.setIsAssigned(Short.valueOf("0"));
+        wo.setIsClosed(Short.valueOf("0"));
+//        wo.setCurrentBill(currentBill);
+//        wo.setLastPaymentAmount(Double.valueOf(lastPaidAmount));
+//        wo.setLastPaymentDate(lastPaymentDate);
+
+        WorkOrder w = save(wo);
+        return w.getTicketId();
+
     }
 
     public WorkOrder createWorkOrderV2(QueueType qt, String string, String string0, String businessUnit, String summary, String description, String phone, String city, String address, String tarriff, String billingID, String emcc, String string1, String string2, String reportedBy, String customername) {
@@ -509,7 +512,10 @@ public class WorkOrderDao extends AbstractDao<Integer, WorkOrder> {
                 "",
                 "",
                 worder.getReportedBy(),
-                worder.getCustomerName(), "0");
+                worder.getCustomerName(), "0",
+                worder.getCurrentBill(),
+                worder.getLastPaymentAmount(),
+                worder.getLastPaymentDate());
     }
 
     public WorkOrder createWorkOrder(WorkOrder wo) {
@@ -814,9 +820,38 @@ public class WorkOrderDao extends AbstractDao<Integer, WorkOrder> {
     }
 
     private void updateStaffCode(Integer start, String staffCode) {
+
         Users u = udao.findById(start);
         u.setStaffCode(staffCode);
         udao.edit(u);
+    }
+
+    public Integer createWorkOrder(QueueType qt, RequestObj r) {
+        WorkOrder.WorkOrderBuilder builder = new WorkOrder.WorkOrderBuilder();
+        builder.setAddressLine1(r.getAddress()).setBusinessUnit(r.getBusinessUnit()).setAmount(Double.valueOf(r.getAmount()))
+                .setCity(r.getCity()).setContactNumber(r.getPhone()).setCurrentBill(Double.valueOf(r.getCurrentBill()))
+                .setDescription(r.getDescription()).setDueDate(r.getDueDate())
+                .setLastPaymentAmount(Double.valueOf(r.getLastPaidAmount())).setLastPaymentDate(r.getLastPaymentDate())
+                .setPreviousOutstanding(r.getPreviousOutstanding())
+                .setPurpose(r.getPurpose()).setReportedBy(r.getReportedBy()).setSummary(r.getSummary()).setQueueType(qt)
+                .setCreateTime(new Date()).setCurrentStatus("OPEN").setPriority("Low").setReferenceType("Billing ID")
+                .setState("Lagos").setChannel("EMCC");
+
+        if (Optional.fromNullable(r.getStaffId()).isPresent()) {
+            builder.setEngineerId(new Engineer(r.getStaffId()));
+        }
+
+        if (Optional.fromNullable(r.getOrderId()).isPresent()) {
+            builder.setOrderId(r.getOrderId());
+        }
+
+        if (Optional.fromNullable(r.getOrderIdStatus()).isPresent()) {
+            builder.setOrderIdStatus(r.getOrderIdStatus());
+        }
+
+        WorkOrder build = builder.build();
+        return save(build).getTicketId();
+
     }
 
 }

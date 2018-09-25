@@ -277,12 +277,65 @@ public class WorkOrder implements Serializable {
     private String queueName;
     @Transient
     private String queueTypeName;
+    @Column(name = "current_bill")
+    private Double currentBill;
+    @Column(name = "last_payment_amount")
+    private Double lastPaymentAmount;
+    @Column(name = "last_payment_date")
+    @Temporal(javax.persistence.TemporalType.DATE)
+    private Date lastPaymentDate;
+    @Column(name = "order_id")
+    private Integer orderId;
+    @Column(name = "purpose", length = 256)
+    private String purpose;
+    @Column(name = "amount")
+    private Double amount;
+    @Column(name = "orderIdStatus")
+    private String orderIdStatus;
+    @Column(name = "previous_outstanding")
+    private Double previousOutstanding;
+    @Column(name = "due_date")
+    @Temporal(javax.persistence.TemporalType.DATE)
+    private Date dueDate;
 
     public WorkOrder() {
     }
 
     public WorkOrder(Integer id) {
         this.id = id;
+    }
+
+    public WorkOrder(QueueType queueType, String summary, String description, String contactNumber, String addressLine1, String city, String businessUnit, String customerTariff, String reportedBy, Engineer engineerId, Double debtBalanceAmount, Double currentBill, Double lastPaymentAmount, Date lastPaymentDate, Integer orderId, String purpose, Double amount, String orderIdStatus, Double previousOutstanding, Date dueDate, String currentStatus, String priority, String referenceType, String state, String channel, Short assigned, Short closed, Date createTime,Queue queue,String token) {
+        this.summary = summary;
+        this.description = description;
+        this.contactNumber = contactNumber;
+        this.addressLine1 = addressLine1;
+        this.city = city;
+        this.businessUnit = businessUnit;
+        this.customerTariff = customerTariff;
+        this.reportedBy = reportedBy;
+        this.engineerId = engineerId;
+        this.debtBalanceAmount = debtBalanceAmount;
+        this.currentBill = currentBill;
+        this.lastPaymentAmount = lastPaymentAmount;
+        this.lastPaymentDate = lastPaymentDate;
+        this.orderId = orderId;
+        this.purpose = purpose;
+        this.amount = amount;
+        this.orderIdStatus = orderIdStatus;
+        this.previousOutstanding = previousOutstanding;
+        this.dueDate = dueDate;
+        queueTypeId = queueType;
+        this.currentStatus = currentStatus;
+        this.priority = priority;
+        this.referenceType = referenceType;
+        this.state = state;
+        this.channel = channel;
+        isAssigned = assigned;
+        isClosed = closed;
+        this.createTime = createTime;
+        queueId = queue;
+        this.token = token;
     }
 
     public WorkOrder(Integer id, int ticketId, String token, int ownerId, String summary, String contactNumber, String referenceType, String addressLine1, String city, String state, String businessUnit, String priority, Date createTime, int isActive) {
@@ -817,4 +870,266 @@ public class WorkOrder implements Serializable {
         this.queueTypeName = this.queueTypeId.getName();
     }
 
+    public Double getCurrentBill() {
+        return currentBill;
+    }
+
+    public void setCurrentBill(Double currentBill) {
+        this.currentBill = currentBill;
+    }
+
+    public Double getLastPaymentAmount() {
+        return lastPaymentAmount;
+    }
+
+    public void setLastPaymentAmount(Double lastPaymentAmount) {
+        this.lastPaymentAmount = lastPaymentAmount;
+    }
+
+    public Date getLastPaymentDate() {
+        return lastPaymentDate;
+    }
+
+    public void setLastPaymentDate(Date lastPaymentDate) {
+        this.lastPaymentDate = lastPaymentDate;
+    }
+
+    public Integer getOrderId() {
+        return orderId;
+    }
+
+    public void setOrderId(Integer orderId) {
+        this.orderId = orderId;
+    }
+
+    public String getPurpose() {
+        return purpose;
+    }
+
+    public void setPurpose(String purpose) {
+        this.purpose = purpose;
+    }
+
+    public Double getAmount() {
+        return amount;
+    }
+
+    public void setAmount(Double amount) {
+        this.amount = amount;
+    }
+
+    public String getOrderIdStatus() {
+        return orderIdStatus;
+    }
+
+    public void setOrderIdStatus(String orderIdStatus) {
+        this.orderIdStatus = orderIdStatus;
+    }
+
+    public Double getPreviousOutstanding() {
+        return previousOutstanding;
+    }
+
+    public void setPreviousOutstanding(Double previousOutstanding) {
+        this.previousOutstanding = previousOutstanding;
+    }
+
+    public Date getDueDate() {
+        return dueDate;
+    }
+
+    public void setDueDate(Date dueDate) {
+        this.dueDate = dueDate;
+    }
+
+    public static class WorkOrderBuilder {
+
+        private String summary;
+        private String description;
+        private String contactNumber;
+        private String addressLine1;
+        private String city;
+        private String businessUnit;
+        private String customerTariff;
+        private String reportedBy;
+        private Engineer engineerId;
+        private Double debtBalanceAmount;
+        private Double currentBill;
+        private Double lastPaymentAmount;
+        private Date lastPaymentDate;
+        private Integer orderId;
+        private String purpose;
+        private Double amount;
+        private String orderIdStatus;
+        private Double previousOutstanding;
+        private Date dueDate;
+        private QueueType queueType;
+        private String currentStatus;
+        private String priority;
+        private String referenceType;
+        private String state;
+        private String channel;
+        private Short assigned;
+        private Short closed;
+        private Date createTime;
+        private Queue queue;
+        private String token;
+
+        public WorkOrderBuilder() {
+        }
+
+        public WorkOrderBuilder setSummary(String summary) {
+            this.summary = summary;
+            return this;
+        }
+
+        public WorkOrderBuilder setDescription(String description) {
+            this.description = description;
+            return this;
+        }
+
+        public WorkOrderBuilder setContactNumber(String contactNumber) {
+            this.contactNumber = contactNumber;
+            return this;
+        }
+
+        public WorkOrderBuilder setAddressLine1(String addressLine1) {
+            this.addressLine1 = addressLine1;
+            return this;
+        }
+
+        public WorkOrderBuilder setCity(String city) {
+            this.city = city;
+            return this;
+        }
+
+        public WorkOrderBuilder setBusinessUnit(String businessUnit) {
+            this.businessUnit = businessUnit;
+            return this;
+        }
+
+        public WorkOrderBuilder setCustomerTariff(String customerTariff) {
+            this.customerTariff = customerTariff;
+            return this;
+        }
+
+        public WorkOrderBuilder setReportedBy(String reportedBy) {
+            this.reportedBy = reportedBy;
+            return this;
+        }
+
+        public WorkOrderBuilder setEngineerId(Engineer engineerId) {
+            this.engineerId = engineerId;
+            return this;
+        }
+
+        public WorkOrderBuilder setDebtBalanceAmount(Double debtBalanceAmount) {
+            this.debtBalanceAmount = debtBalanceAmount;
+            return this;
+        }
+
+        public WorkOrderBuilder setCurrentBill(Double currentBill) {
+            this.currentBill = currentBill;
+            return this;
+        }
+
+        public WorkOrderBuilder setLastPaymentAmount(Double lastPaymentAmount) {
+            this.lastPaymentAmount = lastPaymentAmount;
+            return this;
+        }
+
+        public WorkOrderBuilder setLastPaymentDate(Date lastPaymentDate) {
+            this.lastPaymentDate = lastPaymentDate;
+            return this;
+        }
+
+        public WorkOrderBuilder setOrderId(Integer orderId) {
+            this.orderId = orderId;
+            return this;
+        }
+
+        public WorkOrderBuilder setPurpose(String purpose) {
+            this.purpose = purpose;
+            return this;
+        }
+
+        public WorkOrderBuilder setAmount(Double amount) {
+            this.amount = amount;
+            return this;
+        }
+
+        public WorkOrderBuilder setOrderIdStatus(String orderIdStatus) {
+            this.orderIdStatus = orderIdStatus;
+            return this;
+        }
+
+        public WorkOrderBuilder setPreviousOutstanding(Double previousOutstanding) {
+            this.previousOutstanding = previousOutstanding;
+            return this;
+        }
+
+        public WorkOrderBuilder setDueDate(Date dueDate) {
+            this.dueDate = dueDate;
+            return this;
+        }
+
+        public WorkOrderBuilder setQueueType(QueueType queueType) {
+            this.queueType = queueType;
+            return this;
+        }
+
+        public WorkOrderBuilder setCurrentStatus(String currentStatus) {
+            this.currentStatus = currentStatus;
+            return this;
+        }
+
+        public WorkOrderBuilder setPriority(String priority) {
+            this.priority = priority;
+            return this;
+        }
+
+        public WorkOrderBuilder setReferenceType(String referenceType) {
+            this.referenceType = referenceType;
+            return this;
+        }
+
+        public WorkOrderBuilder setState(String state) {
+            this.state = state;
+            return this;
+        }
+
+        public WorkOrderBuilder setChannel(String channel) {
+            this.channel = channel;
+            return this;
+        }
+
+        public WorkOrderBuilder setAssigned(Short assigned) {
+            this.assigned = assigned;
+            return this;
+        }
+
+        public WorkOrderBuilder setClosed(Short closed) {
+            this.closed = closed;
+            return this;
+        }
+
+        public WorkOrderBuilder setCreateTime(Date createTime) {
+            this.createTime = createTime;
+            return this;
+        }
+
+        public WorkOrderBuilder setQueue(Queue queue) {
+            this.queue = queue;
+            return this;
+        }
+
+        public WorkOrderBuilder setToken(String token) {
+            this.token = token;
+            return this;
+        }
+
+        public WorkOrder build() {
+            return new WorkOrder(queueType, summary, description, contactNumber, addressLine1, city, businessUnit, customerTariff, reportedBy, engineerId, debtBalanceAmount, currentBill, lastPaymentAmount, lastPaymentDate, orderId, purpose, amount, orderIdStatus, previousOutstanding, dueDate, currentStatus, priority, referenceType, state, channel, assigned, closed, createTime,queue,token);
+        }
+    }
 }

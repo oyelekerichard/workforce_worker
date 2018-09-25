@@ -14,8 +14,6 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Lob;
-import javax.persistence.NamedQueries;
-import javax.persistence.NamedQuery;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
@@ -188,6 +186,13 @@ public class WorkOrderTemp implements Serializable {
     @Basic(optional = false)
     @Column(name = "transformer")
     private String transformer;
+    @Column(name = "current_bill")
+    private String currentBill;
+    @Column(name = "last_payment_amount")
+    private Double lastPaymentAmount;
+    @Column(name = "last_payment_date")
+    @Temporal(javax.persistence.TemporalType.DATE)
+    private Date lastPaymentDate;
 
     public WorkOrderTemp() {
     }
@@ -756,9 +761,33 @@ public class WorkOrderTemp implements Serializable {
         return true;
     }
 
+    public String getCurrentBill() {
+        return currentBill;
+    }
+
+    public void setCurrentBill(String currentBill) {
+        this.currentBill = currentBill;
+    }
+
+    public Double getLastPaymentAmount() {
+        return lastPaymentAmount;
+    }
+
+    public void setLastPaymentAmount(Double lastPaymentAmount) {
+        this.lastPaymentAmount = lastPaymentAmount;
+    }
+
+    public Date getLastPaymentDate() {
+        return lastPaymentDate;
+    }
+
+    public void setLastPaymentDate(Date lastPaymentDate) {
+        this.lastPaymentDate = lastPaymentDate;
+    }
+
     @Override
     public String toString() {
         return "net.crowninteractive.wfmworker.entity.WorkOrderTemp_1[ id=" + id + " ]";
     }
-    
+
 }
