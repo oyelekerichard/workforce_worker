@@ -7,6 +7,7 @@
 package net.crowninteractive.wfmworker.dao;
 
 //~--- non-JDK imports --------------------------------------------------------
+import com.google.common.base.Optional;
 import java.math.BigInteger;
 import java.sql.Timestamp;
 import java.util.ArrayList;
@@ -16,6 +17,7 @@ import java.util.Map;
 import java.util.logging.Logger;
 import javax.persistence.NoResultException;
 import javax.persistence.Query;
+import net.crowninteractive.wfmworker.entity.Engineer;
 import net.crowninteractive.wfmworker.entity.QueueType;
 import net.crowninteractive.wfmworker.entity.Users;
 import net.crowninteractive.wfmworker.entity.WorkOrder;
@@ -220,9 +222,9 @@ public class WorkOrderDao extends AbstractDao<Integer, WorkOrder> {
         wo.setToken(wot.getToken());
         wo.setSlot(wot.getSlot());
         wo.setDebtBalanceAmount(Double.valueOf(0));
-        wo.setCurrentBill(wot.getCurrentBill());
-        wo.setLastPaymentAmount(wot.getLastPaymentAmount());
-        wo.setLastPaymentDate(wot.getLastPaymentDate());
+//        wo.setCurrentBill(wot.getCurrentBill());
+//        wo.setLastPaymentAmount(wot.getLastPaymentAmount());
+//        wo.setLastPaymentDate(wot.getLastPaymentDate());
 
         WorkOrder w = save(wo);
         WorkOrderExtra woe = new WorkOrderExtra();
@@ -369,9 +371,9 @@ public class WorkOrderDao extends AbstractDao<Integer, WorkOrder> {
         wo.setDebtBalanceAmount(Double.valueOf(amount));
         wo.setIsAssigned(Short.valueOf("0"));
         wo.setIsClosed(Short.valueOf("0"));
-        wo.setCurrentBill(currentBill);
-        wo.setLastPaymentAmount(Double.valueOf(lastPaidAmount));
-        wo.setLastPaymentDate(lastPaymentDate);
+//        wo.setCurrentBill(currentBill);
+//        wo.setLastPaymentAmount(Double.valueOf(lastPaidAmount));
+//        wo.setLastPaymentDate(lastPaymentDate);
 
         WorkOrder w = save(wo);
         return w.getTicketId();
@@ -812,6 +814,34 @@ public class WorkOrderDao extends AbstractDao<Integer, WorkOrder> {
         Users u = udao.findById(start);
         u.setStaffCode(staffCode);
         udao.edit(u);
+    }
+
+    public Integer createWorkOrder(QueueType qt, RequestObj r) {
+        WorkOrder.WorkOrderBuilder builder = new WorkOrder.WorkOrderBuilder();
+        builder.setAddressLine1(r.getAddress()).setBusinessUnit(r.getBusinessUnit()).setAmount(Double.valueOf(r.getAmount()))
+                .setCity(r.getCity()).setContactNumber(r.getPhone()).setCurrentBill(Double.valueOf(r.getCurrentBill()))
+                .setDescription(r.getDescription()).setDueDate(r.getDueDate())
+                .setLastPaymentAmount(Double.valueOf(r.getLastPaidAmount())).setLastPaymentDate(r.getLastPaymentDate())
+                .setPreviousOutstanding(r.getPreviousOutstanding())
+                .setPurpose(r.getPurpose()).setReportedBy(r.getReportedBy()).setSummary(r.getSummary()).setQueueType(qt)
+                .setCreateTime(new Date()).setCurrentStatus("OPEN").setPriority("Low").setReferenceType("Billing ID")
+                .setState("Lagos").setChannel("EMCC");
+
+        if (Optional.fromNullable(r.getStaffId()).isPresent()) {
+            builder.setEngineerId(new Engineer(r.getStaffId()));
+        }
+
+        if (Optional.fromNullable(r.getOrderId()).isPresent()) {
+            builder.setOrderId(r.getOrderId());
+        }
+
+        if (Optional.fromNullable(r.getOrderIdStatus()).isPresent()) {
+            builder.setOrderIdStatus(r.getOrderIdStatus());
+        }
+
+        WorkOrder build = builder.build();
+        return save(build).getTicketId();
+
     }
 
 }

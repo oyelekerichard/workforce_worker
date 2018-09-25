@@ -70,7 +70,7 @@ public class WorkOrderService {
                         return StandardResponse.ok(ticketId);
                     } else {
                         WorkOrder wor = wo.get(0);
-                        wdao.addRemark("Emcc", String.valueOf(wor.getTicketId()), description, "1",Double.valueOf(amount));
+                        wdao.addRemark("Emcc", String.valueOf(wor.getTicketId()), description, "1", Double.valueOf(amount));
                         ticketId = wor.getTicketId();
                         return StandardResponse.ok(ticketId);
                     }
@@ -163,7 +163,7 @@ public class WorkOrderService {
                         return w;
                     } else {
                         WorkOrder wor = wo.get(0);
-                        wdao.addRemark("Emcc", String.valueOf(wor.getTicketId()), description, "1",Double.valueOf(amount));
+                        wdao.addRemark("Emcc", String.valueOf(wor.getTicketId()), description, "1", Double.valueOf(amount));
                         ticketId = wor.getTicketId();
                         return wor;
                     }
@@ -194,6 +194,46 @@ public class WorkOrderService {
     public void generateStaffCode(Integer counter) {
         while (counter != null) {
             counter = wdao.hasNextRecord(counter);
+        }
+    }
+
+    public Awesome addToDisconnectionQueue(RequestObj r) {
+        try {
+
+            String customername = null;
+            if (r.getBillingId() != null) {
+                Awesome awe = getCustomerDetails(r.getBillingId(), "a");
+                if (awe.getResp() == 0) {
+                    Gson gson = new GsonBuilder().create();
+                    Map jsonMap = gson.fromJson(gson.toJson(awe.getObject()), Map.class);
+                    System.out.println(jsonMap);
+                    customername = (String) jsonMap.get("name");
+                }
+            }
+
+            //fetch queueTypeToken
+            QueueType qt = wdao.getEmccConfigDisconnectQueueTypeAndQueue();
+            if (qt != null) {
+                int ticketId = 0;
+                List<WorkOrder> wo = wdao.getLastWorkOrderinQueueType(r.getBillingId(), qt.getId());
+
+                if (wo.isEmpty()) {
+                    // ticketId = wdao.createWorkOrder(qt, "", "1", businessUnit, summary, description, phone, city, address, tarriff, billingID, "EMCC", "", "", reportedBy, customername, amount, currentBill, lastPaidAmount, lastPaymentDate);
+                    ticketId = wdao.createWorkOrder(qt, r);
+                    return StandardResponse.ok(ticketId);
+                } else {
+                    WorkOrder wor = wo.get(0);
+                    wdao.addRemark("Emcc", String.valueOf(wor.getTicketId()), r.getDescription(), "1", Double.valueOf(r.getAmount()));
+                    ticketId = wor.getTicketId();
+                    return StandardResponse.ok(ticketId);
+                }
+
+            } else {
+                return StandardResponse.disconnectionQueueTypeNotSet();
+            }
+        } catch (Exception ex) {
+            ex.printStackTrace();
+            return null;
         }
     }
 

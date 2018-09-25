@@ -56,6 +56,12 @@ public class RequestObj {
     private String currentBill;
     private String lastPaidAmount;
     private Date lastPaymentDate;
+    private Integer orderId;
+    private String purpose;
+    private String orderIdStatus;
+    private Double previousOutstanding;
+    private Date dueDate;
+    private Integer staffId;
 
     public String getAccountNumber() {
         return accountNumber;
@@ -391,6 +397,54 @@ public class RequestObj {
 
     public void setLastPaymentDate(Date lastPaymentDate) {
         this.lastPaymentDate = lastPaymentDate;
+    }
+
+    public Integer getOrderId() {
+        return orderId;
+    }
+
+    public void setOrderId(Integer orderId) {
+        this.orderId = orderId;
+    }
+
+    public String getPurpose() {
+        return purpose;
+    }
+
+    public void setPurpose(String purpose) {
+        this.purpose = purpose;
+    }
+
+    public String getOrderIdStatus() {
+        return orderIdStatus;
+    }
+
+    public void setOrderIdStatus(String orderIdStatus) {
+        this.orderIdStatus = orderIdStatus;
+    }
+
+    public Double getPreviousOutstanding() {
+        return previousOutstanding;
+    }
+
+    public void setPreviousOutstanding(Double previousOutstanding) {
+        this.previousOutstanding = previousOutstanding;
+    }
+
+    public Date getDueDate() {
+        return dueDate;
+    }
+
+    public void setDueDate(Date dueDate) {
+        this.dueDate = dueDate;
+    }
+
+    public Integer getStaffId() {
+        return staffId;
+    }
+
+    public void setStaffId(Integer staffId) {
+        this.staffId = staffId;
     }
 
     @Override
