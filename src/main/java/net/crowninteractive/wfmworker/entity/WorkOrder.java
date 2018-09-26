@@ -290,7 +290,7 @@ public class WorkOrder implements Serializable {
     private String purpose;
     @Column(name = "amount")
     private Double amount;
-    @Column(name = "orderIdStatus")
+    @Column(name = "order_id_status")
     private String orderIdStatus;
     @Column(name = "previous_outstanding")
     private Double previousOutstanding;

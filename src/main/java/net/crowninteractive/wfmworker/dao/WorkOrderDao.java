@@ -837,11 +837,12 @@ public class WorkOrderDao extends AbstractDao<Integer, WorkOrder> {
                 .setPurpose(r.getPurpose()).setReportedBy(r.getReportedBy()).setSummary(r.getSummary()).setQueueType(qt)
                 .setCreateTime(new Date()).setCurrentStatus("OPEN").setPriority("Low").setReferenceType("Billing ID")
            
-                .setState("Lagos").setChannel("EMCC").setEngineerId(new Engineer(r.getStaffId()))
+                .setState("Lagos").setChannel("EMCC")
                 .setQueue(qt.getQueueId()).setToken(RandomStringUtils.randomAlphanumeric(30)).setDebtBalanceAmount(0.0).setTicketId(ticketCount());
 
         if (Optional.fromNullable(r.getStaffId()).isPresent()) {
             builder.setEngineerId(new Engineer(r.getStaffId()));
+            builder.setAssigned(Short.valueOf("1"));
         }
 
         if (Optional.fromNullable(r.getOrderId()).isPresent()) {
