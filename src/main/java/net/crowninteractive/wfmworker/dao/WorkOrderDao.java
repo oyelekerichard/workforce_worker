@@ -18,6 +18,7 @@ import java.util.logging.Logger;
 import javax.persistence.NoResultException;
 import javax.persistence.Query;
 import net.crowninteractive.wfmworker.entity.Engineer;
+import net.crowninteractive.wfmworker.entity.Queue;
 import net.crowninteractive.wfmworker.entity.QueueType;
 import net.crowninteractive.wfmworker.entity.Users;
 import net.crowninteractive.wfmworker.entity.WorkOrder;
@@ -835,7 +836,9 @@ public class WorkOrderDao extends AbstractDao<Integer, WorkOrder> {
                 .setPreviousOutstanding(r.getPreviousOutstanding())
                 .setPurpose(r.getPurpose()).setReportedBy(r.getReportedBy()).setSummary(r.getSummary()).setQueueType(qt)
                 .setCreateTime(new Date()).setCurrentStatus("OPEN").setPriority("Low").setReferenceType("Billing ID")
-                .setState("Lagos").setChannel("EMCC");
+           
+                .setState("Lagos").setChannel("EMCC").setEngineerId(new Engineer(r.getStaffId()))
+                .setQueue(qt.getQueueId()).setToken(RandomStringUtils.randomAlphanumeric(30)).setDebtBalanceAmount(0.0).setTicketId(ticketCount());
 
         if (Optional.fromNullable(r.getStaffId()).isPresent()) {
             builder.setEngineerId(new Engineer(r.getStaffId()));
