@@ -47,6 +47,8 @@ public class WorkOrderDao extends AbstractDao<Integer, WorkOrder> {
     private WorkOrderExtraDao wdao;
     @Autowired
     private UsersDao udao;
+    @Autowired
+    private WorkOrderDaoV2 wdao2;
 
     public int ticketCount() {
         Integer max = (Integer) getEntityManager()
@@ -741,14 +743,14 @@ public class WorkOrderDao extends AbstractDao<Integer, WorkOrder> {
     }
 
     public Integer hasNextRecord(Integer start) {
-        start = getNextID(start);
-        if (start == null) {
+        Integer found = getNextID(start);
+        if (found == null) {
             return null;
         }
 
-        String abbr = getInitials(start);
+        String abbr = getInitials(found);
         String staffCode = getLastStaffCode(abbr);
-
+        
         String lastInSeries = staffCode == null ? "0" : staffCode.substring(2);
         int c = Integer.parseInt(lastInSeries);
 
@@ -759,13 +761,16 @@ public class WorkOrderDao extends AbstractDao<Integer, WorkOrder> {
         } else {
             staffCode = abbr.concat(String.valueOf(c + 1));
         }
-        updateStaffCode(start, staffCode.toUpperCase());
-        return start;
+        //staff code exists
+        System.out.println("GEnerated coe s "+staffCode);
+        
+        updateStaffCode(found, staffCode.toUpperCase());
+        return found;
     }
 
     private Integer getNextID(Integer start) {
         try {
-            Integer i = (Integer) getEntityManager().createNativeQuery("select id  from users where id > ? limit 1 ").
+            Integer i = (Integer) wdao2.getEm().createNativeQuery("select id  from users where id > ? limit 1 ").
                     setParameter(1, start).getSingleResult();
             return i;
         } catch (NoResultException e) {
@@ -774,9 +779,9 @@ public class WorkOrderDao extends AbstractDao<Integer, WorkOrder> {
     }
 
     private String getInitials(Integer start) {
-        String sql = "select concat(substring(trim(firstname), 1,1), substring(trim(lastname), 1,1)) from users where id = " + start;
+        String sql = "select concat(substring(firstname, 1,1), substring(lastname, 1,1)) from users where id = " + start;
         try {
-            String nit = (String) getEntityManager().createNativeQuery(sql).getSingleResult();
+            String nit = (String)wdao2.getEm().createNativeQuery(sql).getSingleResult();
             return nit;
         } catch (NoResultException noe) {
             return null;
@@ -784,10 +789,10 @@ public class WorkOrderDao extends AbstractDao<Integer, WorkOrder> {
     }
 
     private String getLastStaffCode(String abbr) {
-        abbr = "'".concat(abbr).concat("'");
-        String sql = "select staff_code from users where staff_code LIKE concat(" + abbr + ",'%') order by id desc limit 1";
+        abbr = "'".concat(abbr).concat("%'");
+        String sql = "select staff_code from users where staff_code LIKE "+abbr+" order by id desc limit 1";
         try {
-            String last = (String) getEntityManager().createNativeQuery(sql).getSingleResult();
+            String last = (String) wdao2.getEm().createNativeQuery(sql).getSingleResult();
             return last;
         } catch (NoResultException noe) {
             return null;
@@ -796,10 +801,10 @@ public class WorkOrderDao extends AbstractDao<Integer, WorkOrder> {
 
     private void updateStaffCode(Integer start, String staffCode) {
         String sql = "update users set staff_code = ? where id = ?";
-        getEntityManager().
+        wdao2.getEm().
                 createNativeQuery(sql).
                 setParameter(1, staffCode).
-                setParameter(2, start);
+                setParameter(2, start).executeUpdate();
     }
 
 }
