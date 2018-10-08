@@ -761,9 +761,7 @@ public class WorkOrderDao extends AbstractDao<Integer, WorkOrder> {
         } else {
             staffCode = abbr.concat(String.valueOf(c + 1));
         }
-        //staff code exists
-        System.out.println("GEnerated coe s "+staffCode);
-        
+       
         updateStaffCode(found, staffCode.toUpperCase());
         return found;
     }
