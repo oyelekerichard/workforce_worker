@@ -21,6 +21,7 @@ import java.util.Map;
 import java.util.logging.Logger;
 import javax.persistence.NoResultException;
 import javax.persistence.Query;
+import net.crowninteractive.wfmworker.entity.EnumerationWorkOrder;
 import net.crowninteractive.wfmworker.entity.QueueType;
 import net.crowninteractive.wfmworker.entity.Users;
 import net.crowninteractive.wfmworker.entity.WorkOrderExtra;
@@ -44,6 +45,8 @@ public class WorkOrderDao extends AbstractDao<Integer, WorkOrder> {
 
     @Autowired
     private WorkOrderTempDap temp;
+    @Autowired
+    private EnumerationWorkOrderDao ewod;
     @Autowired
     private WorkOrderRemarkDao wora;
     @Autowired
@@ -174,6 +177,14 @@ public class WorkOrderDao extends AbstractDao<Integer, WorkOrder> {
 
     }
 
+    public String get(int i, QueueType queueTypeId) {
+        String qry = "select name from queue_type where id=%d and owner_id=%d";
+        qry = String.format(qry, queueTypeId.getId(), i);
+        Query q = getEntityManager().createNativeQuery(qry);
+        return (String) q.getSingleResult();
+
+    }
+
     public WorkOrderTemp getEnumWorkOrderByToken(String token) {
         String qry = String.format("select * from work_order_temp where token = '%s'", token);
         Query q = getEntityManager().createNativeQuery(qry, WorkOrderTemp.class);
@@ -186,13 +197,24 @@ public class WorkOrderDao extends AbstractDao<Integer, WorkOrder> {
         return (QueueType) getEntityManager().createNativeQuery(sql, QueueType.class).getSingleResult();
     }
 
+    public EnumerationWorkOrder getEnumerationWorkOrder(String tempToken) {
+        String sql = String.format("select * from enumeration_work_order where work_order_temp_token=%d ", tempToken);
+        System.out.println(sql);
+        return (EnumerationWorkOrder) getEntityManager().createNativeQuery(sql, EnumerationWorkOrder.class).getSingleResult();
+    }
+
     public void approveEnumWorkOrder(WorkOrderTemp wot) {
         QueueType qt = getQueueTypeByID(wot.getQueueTypeId());
         int ticketId = this.createWorkOrder(wot, qt);
+        EnumerationWorkOrder enumerationWorkOrder = getEnumerationWorkOrder(wot.getToken());
+        //update work_order
         if (ticketId != 0) {
             wot.setTicketId(ticketId);
             wot.setCurrentStatus("OPEN");
             wot.setToken(wot.getToken());
+            enumerationWorkOrder.setWork_order_id(ticketId+"");
+            enumerationWorkOrder.setWork_order_temp_token("");
+            ewod.edit(enumerationWorkOrder);
             temp.delete(wot);
             logger.info("-----------deleting enumeration record -----------------" + wot.getId());
         }
@@ -775,8 +797,8 @@ public class WorkOrderDao extends AbstractDao<Integer, WorkOrder> {
     }
 
     private String getInitials(Integer start) {
-     String sql = "select concat(substring(firstname, 1,1), substring(lastname, 1,1)) from users where id = "+ start; 
-       try {
+        String sql = "select concat(substring(firstname, 1,1), substring(lastname, 1,1)) from users where id = " + start;
+        try {
             String nit = (String) getEntityManager().createNativeQuery(sql).getSingleResult();
             return nit;
         } catch (NoResultException noe) {
@@ -796,17 +818,12 @@ public class WorkOrderDao extends AbstractDao<Integer, WorkOrder> {
     }
 
     private void updateStaffCode(Integer start, String staffCode) {
-         String sql = "update users set staff_code = ? where id = ?";
-         getEntityManager().
-                 createNativeQuery(sql).
-                 setParameter(1, staffCode).
-                 setParameter(2, start);
+        String sql = "update users set staff_code = ? where id = ?";
+        getEntityManager().
+                createNativeQuery(sql).
+                setParameter(1, staffCode).
+                setParameter(2, start);
     }
-    
-    
-    
-    
-    
 
 }
 
