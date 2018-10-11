@@ -19,6 +19,7 @@ import javax.persistence.NoResultException;
 import javax.persistence.Query;
 import net.crowninteractive.wfmworker.entity.Engineer;
 import net.crowninteractive.wfmworker.entity.Queue;
+import net.crowninteractive.wfmworker.entity.EnumerationWorkOrder;
 import net.crowninteractive.wfmworker.entity.QueueType;
 import net.crowninteractive.wfmworker.entity.Users;
 import net.crowninteractive.wfmworker.entity.WorkOrder;
@@ -46,6 +47,8 @@ public class WorkOrderDao extends AbstractDao<Integer, WorkOrder> {
 
     @Autowired
     private WorkOrderTempDap temp;
+    @Autowired
+    private EnumerationWorkOrderDao ewod;
     @Autowired
     private WorkOrderRemarkDao wora;
     @Autowired
@@ -182,6 +185,14 @@ public class WorkOrderDao extends AbstractDao<Integer, WorkOrder> {
 
     }
 
+    public String get(int i, QueueType queueTypeId) {
+        String qry = "select name from queue_type where id=%d and owner_id=%d";
+        qry = String.format(qry, queueTypeId.getId(), i);
+        Query q = getEntityManager().createNativeQuery(qry);
+        return (String) q.getSingleResult();
+
+    }
+
     public WorkOrderTemp getEnumWorkOrderByToken(String token) {
         String qry = String.format("select * from work_order_temp where token = '%s'", token);
         Query q = getEntityManager().createNativeQuery(qry, WorkOrderTemp.class);
@@ -194,13 +205,24 @@ public class WorkOrderDao extends AbstractDao<Integer, WorkOrder> {
         return (QueueType) getEntityManager().createNativeQuery(sql, QueueType.class).getSingleResult();
     }
 
+    public EnumerationWorkOrder getEnumerationWorkOrder(String tempToken) {
+        String sql = String.format("select * from enumeration_work_order where work_order_temp_token=%d ", tempToken);
+        System.out.println(sql);
+        return (EnumerationWorkOrder) getEntityManager().createNativeQuery(sql, EnumerationWorkOrder.class).getSingleResult();
+    }
+
     public void approveEnumWorkOrder(WorkOrderTemp wot) {
         QueueType qt = getQueueTypeByID(wot.getQueueTypeId());
         int ticketId = this.createWorkOrder(wot, qt);
+        EnumerationWorkOrder enumerationWorkOrder = getEnumerationWorkOrder(wot.getToken());
+        //update work_order
         if (ticketId != 0) {
             wot.setTicketId(ticketId);
             wot.setCurrentStatus("OPEN");
             wot.setToken(wot.getToken());
+            enumerationWorkOrder.setWork_order_id(ticketId + "");
+            enumerationWorkOrder.setWork_order_temp_token("");
+            ewod.edit(enumerationWorkOrder);
             temp.delete(wot);
             logger.info("-----------deleting enumeration record -----------------" + wot.getId());
         }
@@ -820,13 +842,6 @@ public class WorkOrderDao extends AbstractDao<Integer, WorkOrder> {
         }
     }
 
-    private void updateStaffCode(Integer start, String staffCode) {
-
-        Users u = udao.findById(start);
-        u.setStaffCode(staffCode);
-        udao.edit(u);
-    }
-
     public Integer createWorkOrder(QueueType qt, RequestObj r) {
         WorkOrder.WorkOrderBuilder builder = new WorkOrder.WorkOrderBuilder();
         builder.setAddressLine1(r.getAddress()).setBusinessUnit(r.getBusinessUnit()).setAmount(Double.valueOf(r.getAmount()))
@@ -836,7 +851,6 @@ public class WorkOrderDao extends AbstractDao<Integer, WorkOrder> {
                 .setPreviousOutstanding(r.getPreviousOutstanding())
                 .setPurpose(r.getPurpose()).setReportedBy(r.getReportedBy()).setSummary(r.getSummary()).setQueueType(qt)
                 .setCreateTime(new Date()).setCurrentStatus("OPEN").setPriority("Low").setReferenceType("Billing ID")
-           
                 .setState("Lagos").setChannel("EMCC")
                 .setQueue(qt.getQueueId()).setToken(RandomStringUtils.randomAlphanumeric(30)).setDebtBalanceAmount(0.0).setTicketId(ticketCount());
 
@@ -855,6 +869,15 @@ public class WorkOrderDao extends AbstractDao<Integer, WorkOrder> {
 
         WorkOrder build = builder.build();
         return save(build).getTicketId();
+
+    }
+
+    private void updateStaffCode(Integer start, String staffCode) {
+        String sql = "update users set staff_code = ? where id = ?";
+        getEntityManager().
+                createNativeQuery(sql).
+                setParameter(1, staffCode).
+                setParameter(2, start);
 
     }
 
