@@ -855,7 +855,7 @@ public class WorkOrderDao extends AbstractDao<Integer, WorkOrder> {
                 .setQueue(qt.getQueueId()).setToken(RandomStringUtils.randomAlphanumeric(30)).setDebtBalanceAmount(0.0).setTicketId(ticketCount());
 
         if (Optional.fromNullable(r.getStaffId()).isPresent()) {
-            builder.setEngineerId(new Engineer(r.getStaffId()));
+            builder.setStaffId(String.valueOf(r.getStaffId()));
             builder.setAssigned(Short.valueOf("1"));
         }
 
