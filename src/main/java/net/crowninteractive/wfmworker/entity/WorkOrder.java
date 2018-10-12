@@ -1139,5 +1139,12 @@ public class WorkOrder implements Serializable {
             return new WorkOrder(queueType, summary, description, contactNumber, addressLine1, city, businessUnit, customerTariff, reportedBy, engineerId, debtBalanceAmount, currentBill, lastPaymentAmount, lastPaymentDate, orderId, purpose, amount, orderIdStatus, previousOutstanding, dueDate, currentStatus, priority, referenceType, state, channel, assigned, closed, createTime, queue, token,ticketId);
         }
 
+        @Override
+        public String toString() {
+            return "WorkOrderBuilder{" + "summary=" + summary + ", description=" + description + ", contactNumber=" + contactNumber + ", addressLine1=" + addressLine1 + ", city=" + city + ", businessUnit=" + businessUnit + ", customerTariff=" + customerTariff + ", reportedBy=" + reportedBy + ", engineerId=" + engineerId + ", debtBalanceAmount=" + debtBalanceAmount + ", currentBill=" + currentBill + ", lastPaymentAmount=" + lastPaymentAmount + ", lastPaymentDate=" + lastPaymentDate + ", orderId=" + orderId + ", purpose=" + purpose + ", amount=" + amount + ", orderIdStatus=" + orderIdStatus + ", previousOutstanding=" + previousOutstanding + ", dueDate=" + dueDate + ", queueType=" + queueType + ", currentStatus=" + currentStatus + ", priority=" + priority + ", referenceType=" + referenceType + ", state=" + state + ", channel=" + channel + ", assigned=" + assigned + ", closed=" + closed + ", createTime=" + createTime + ", queue=" + queue + ", token=" + token + ", ticketId=" + ticketId + '}';
+        }
+        
+        
+
     }
 }
