@@ -855,7 +855,8 @@ public class WorkOrderDao extends AbstractDao<Integer, WorkOrder> {
                 .setQueue(qt.getQueueId()).setToken(RandomStringUtils.randomAlphanumeric(30)).setDebtBalanceAmount(0.0).setTicketId(ticketCount());
 
         if (Optional.fromNullable(r.getStaffId()).isPresent()) {
-            builder.setStaffId(String.valueOf(r.getStaffId()));
+            Integer id = getEngineerIdByStaffId(r.getStaffId());
+            builder.setEngineerId(new Engineer(id));
             builder.setAssigned(Short.valueOf("1"));
         }
 
@@ -879,6 +880,13 @@ public class WorkOrderDao extends AbstractDao<Integer, WorkOrder> {
                 setParameter(1, staffCode).
                 setParameter(2, start);
 
+    }
+
+    public Integer getEngineerIdByStaffId(Integer staffId) {
+        String query = "select id from engineer where user_id in (select id from users where staff_id = ?) ";
+        List<Integer> engineerId = getEntityManager().createNativeQuery(query).setParameter(1,
+                staffId).getResultList();
+        return engineerId.isEmpty() ? null : engineerId.get(0);
     }
 
 }

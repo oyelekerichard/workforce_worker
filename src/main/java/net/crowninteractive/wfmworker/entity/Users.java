@@ -275,6 +275,8 @@ public class Users implements Serializable {
     private List<WorkOrderStatus> workOrderStatusList1;
     @Column(name = "staff_code")
     public String staffCode;
+    @Column(name = "staff_id")
+    public String staffId;
 
     public Users() {
     }
@@ -1004,6 +1006,14 @@ public class Users implements Serializable {
 
     public void setStaffCode(String staffCode) {
         this.staffCode = staffCode;
+    }
+
+    public String getStaffId() {
+        return staffId;
+    }
+
+    public void setStaffId(String staffId) {
+        this.staffId = staffId;
     }
     
     

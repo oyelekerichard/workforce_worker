@@ -297,8 +297,6 @@ public class WorkOrder implements Serializable {
     @Column(name = "due_date")
     @Temporal(javax.persistence.TemporalType.DATE)
     private Date dueDate;
-    @Column(name = "staff_id")
-    private String staffId;
 
     public WorkOrder() {
     }
@@ -307,7 +305,7 @@ public class WorkOrder implements Serializable {
         this.id = id;
     }
 
-    public WorkOrder(QueueType queueType, String summary, String description, String contactNumber, String addressLine1, String city, String businessUnit, String customerTariff, String reportedBy,Double debtBalanceAmount, Double currentBill, Double lastPaymentAmount, Date lastPaymentDate, Integer orderId, String purpose, Double amount, String orderIdStatus, Double previousOutstanding, Date dueDate, String currentStatus, String priority, String referenceType, String state, String channel, Short assigned, Short closed, Date createTime, Queue queue, String token,Integer ticketId,String staffId) {
+    public WorkOrder(QueueType queueType, String summary, String description, String contactNumber, String addressLine1, String city, String businessUnit, String customerTariff, String reportedBy, Engineer engineerId, Double debtBalanceAmount, Double currentBill, Double lastPaymentAmount, Date lastPaymentDate, Integer orderId, String purpose, Double amount, String orderIdStatus, Double previousOutstanding, Date dueDate, String currentStatus, String priority, String referenceType, String state, String channel, Short assigned, Short closed, Date createTime, Queue queue, String token,Integer ticketId) {
         this.summary = summary;
         this.description = description;
         this.contactNumber = contactNumber;
@@ -339,7 +337,6 @@ public class WorkOrder implements Serializable {
         queueId = queue;
         this.token = token;
         this.ticketId = ticketId;
-        this.staffId = staffId;
     }
 
     public WorkOrder(Integer id, int ticketId, String token, int ownerId, String summary, String contactNumber, String referenceType, String addressLine1, String city, String state, String businessUnit, String priority, Date createTime, int isActive) {
@@ -771,15 +768,6 @@ public class WorkOrder implements Serializable {
         this.workOrderAttachmentsList = workOrderAttachmentsList;
     }
 
-    public String getStaffId() {
-        return staffId;
-    }
-
-    public void setStaffId(String staffId) {
-        this.staffId = staffId;
-    }
-   
-
     @XmlTransient
     public List<WorkOrderRemark> getWorkOrderRemarkList() {
         return workOrderRemarkList;
@@ -965,7 +953,7 @@ public class WorkOrder implements Serializable {
         private String businessUnit;
         private String customerTariff;
         private String reportedBy;
-        private String staffId;
+        private Engineer engineerId;
         private Double debtBalanceAmount;
         private Double currentBill;
         private Double lastPaymentAmount;
@@ -1032,8 +1020,8 @@ public class WorkOrder implements Serializable {
             return this;
         }
 
-        public WorkOrderBuilder setStaffId(String staffId) {
-            this.staffId = staffId;
+        public WorkOrderBuilder setEngineerId(Engineer engineerId) {
+            this.engineerId = engineerId;
             return this;
         }
 
@@ -1148,12 +1136,8 @@ public class WorkOrder implements Serializable {
         }
 
         public WorkOrder build() {
-            return new WorkOrder(queueType, summary, description, contactNumber, addressLine1, city, businessUnit, customerTariff, reportedBy, debtBalanceAmount, currentBill, lastPaymentAmount, lastPaymentDate, orderId, purpose, amount, orderIdStatus, previousOutstanding, dueDate, currentStatus, priority, referenceType, state, channel, assigned, closed, createTime, queue, token,ticketId,staffId);
+            return new WorkOrder(queueType, summary, description, contactNumber, addressLine1, city, businessUnit, customerTariff, reportedBy, engineerId, debtBalanceAmount, currentBill, lastPaymentAmount, lastPaymentDate, orderId, purpose, amount, orderIdStatus, previousOutstanding, dueDate, currentStatus, priority, referenceType, state, channel, assigned, closed, createTime, queue, token,ticketId);
         }
-
-     
-        
-        
 
     }
 }

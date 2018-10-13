@@ -84,6 +84,17 @@ public class UsersDao extends AbstractDao<Integer, Users> {
             return null;
         }
     }
+
+    public Users findByStaffId(Integer staffId) {
+        String query = String.format("select * from users where staff_id=?1 ");
+        List<Users> users = getEntityManager().createNativeQuery(query, Users.class).setParameter(1,
+                staffId).getResultList();
+        if ((users != null) && !users.isEmpty()) {
+            return users.get(0);
+        } else {
+            return null;
+        }
+    }
 }
 
 
