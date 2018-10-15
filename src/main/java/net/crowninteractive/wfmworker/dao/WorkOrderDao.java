@@ -856,8 +856,10 @@ public class WorkOrderDao extends AbstractDao<Integer, WorkOrder> {
 
         if (Optional.fromNullable(r.getStaffId()).isPresent()) {
             Integer id = getEngineerIdByStaffId(r.getStaffId());
-            builder.setEngineerId(new Engineer(id));
-            builder.setAssigned(Short.valueOf("1"));
+            if (id != null) {
+                builder.setEngineerId(new Engineer(id));
+                builder.setAssigned(Short.valueOf("1"));
+            }
         }
 
         if (Optional.fromNullable(r.getOrderId()).isPresent()) {
