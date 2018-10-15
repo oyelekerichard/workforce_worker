@@ -206,7 +206,7 @@ public class WorkOrderDao extends AbstractDao<Integer, WorkOrder> {
     }
 
     public EnumerationWorkOrder getEnumerationWorkOrder(String tempToken) {
-        String sql = String.format("select * from enumeration_work_order where work_order_temp_token=%d ", tempToken);
+        String sql = String.format("select * from enumeration_work_order where work_order_temp_token='%s'", tempToken);
         System.out.println(sql);
         return (EnumerationWorkOrder) getEntityManager().createNativeQuery(sql, EnumerationWorkOrder.class).getSingleResult();
     }
