@@ -226,6 +226,7 @@ public class WorkOrderDao extends AbstractDao<Integer, WorkOrder> {
             w.setEnumerationWorkOrder(enumerationWorkOrder);
             enumerationWorkOrder.setWork_order_temp_token("");
             ewod.edit(enumerationWorkOrder);
+            edit(w);
             temp.delete(wot);
             logger.info("-----------deleting enumeration record -----------------" + wot.getId());
         }
