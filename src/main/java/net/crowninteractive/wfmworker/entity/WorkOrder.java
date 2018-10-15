@@ -305,7 +305,7 @@ public class WorkOrder implements Serializable {
         this.id = id;
     }
 
-    public WorkOrder(QueueType queueType, String summary, String description, String contactNumber, String addressLine1, String city, String businessUnit, String customerTariff, String reportedBy, Engineer engineerId, Double debtBalanceAmount, Double currentBill, Double lastPaymentAmount, Date lastPaymentDate, Integer orderId, String purpose, Double amount, String orderIdStatus, Double previousOutstanding, Date dueDate, String currentStatus, String priority, String referenceType, String state, String channel, Short assigned, Short closed, Date createTime, Queue queue, String token,Integer ticketId) {
+    public WorkOrder(QueueType queueType, String summary, String description, String contactNumber, String addressLine1, String city, String businessUnit, String customerTariff, String reportedBy, Engineer engineerId, Double debtBalanceAmount, Double currentBill, Double lastPaymentAmount, Date lastPaymentDate, Integer orderId, String purpose, Double amount, String orderIdStatus, Double previousOutstanding, Date dueDate, String currentStatus, String priority, String referenceType, String state, String channel, Short assigned, Short closed, Date createTime, Queue queue, String token,Integer ticketId,Integer ownerId) {
         this.summary = summary;
         this.description = description;
         this.contactNumber = contactNumber;
@@ -337,6 +337,7 @@ public class WorkOrder implements Serializable {
         queueId = queue;
         this.token = token;
         this.ticketId = ticketId;
+        this.ownerId = ownerId;
     }
 
     public WorkOrder(Integer id, int ticketId, String token, int ownerId, String summary, String contactNumber, String referenceType, String addressLine1, String city, String state, String businessUnit, String priority, Date createTime, int isActive) {
@@ -976,6 +977,7 @@ public class WorkOrder implements Serializable {
         private Queue queue;
         private String token;
         private Integer ticketId;
+        private Integer ownerId;
 
         public WorkOrderBuilder() {
         }
@@ -1134,9 +1136,15 @@ public class WorkOrder implements Serializable {
             this.ticketId = ticketId;
             return this;
         }
+        
+        public WorkOrderBuilder setOwnerId(Integer ownerId) {
+            this.ownerId = ownerId;
+            return this;
+        }
+        
 
         public WorkOrder build() {
-            return new WorkOrder(queueType, summary, description, contactNumber, addressLine1, city, businessUnit, customerTariff, reportedBy, engineerId, debtBalanceAmount, currentBill, lastPaymentAmount, lastPaymentDate, orderId, purpose, amount, orderIdStatus, previousOutstanding, dueDate, currentStatus, priority, referenceType, state, channel, assigned, closed, createTime, queue, token,ticketId);
+            return new WorkOrder(queueType, summary, description, contactNumber, addressLine1, city, businessUnit, customerTariff, reportedBy, engineerId, debtBalanceAmount, currentBill, lastPaymentAmount, lastPaymentDate, orderId, purpose, amount, orderIdStatus, previousOutstanding, dueDate, currentStatus, priority, referenceType, state, channel, assigned, closed, createTime, queue, token,ticketId,ownerId);
         }
 
     }

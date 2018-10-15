@@ -859,6 +859,7 @@ public class WorkOrderDao extends AbstractDao<Integer, WorkOrder> {
             if (id != null) {
                 builder.setEngineerId(new Engineer(id));
                 builder.setAssigned(Short.valueOf("1"));
+                
             }
         }
 
@@ -869,7 +870,7 @@ public class WorkOrderDao extends AbstractDao<Integer, WorkOrder> {
         if (Optional.fromNullable(r.getOrderIdStatus()).isPresent()) {
             builder.setOrderIdStatus(r.getOrderIdStatus());
         }
-
+        builder.setOwnerId(1);
         WorkOrder build = builder.build();
         return save(build).getTicketId();
 
