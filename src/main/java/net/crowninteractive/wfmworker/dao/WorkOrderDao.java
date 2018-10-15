@@ -220,7 +220,7 @@ public class WorkOrderDao extends AbstractDao<Integer, WorkOrder> {
             wot.setTicketId(ticketId);
             wot.setCurrentStatus("OPEN");
             wot.setToken(wot.getToken());
-            enumerationWorkOrder.setWork_order_id(ticketId + "");
+            enumerationWorkOrder.setWorkOrder(findByTicketId(ticketId));
             enumerationWorkOrder.setWork_order_temp_token("");
             ewod.edit(enumerationWorkOrder);
             temp.delete(wot);
