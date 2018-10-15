@@ -148,8 +148,6 @@ public class EnumerationWorkOrder {
     private String old_tariff;
     @Column(name = "work_order_temp_token")
     private String work_order_temp_token;
-    @Column(name = "work_order_id")
-    private String work_order_id;
     @Column(name = "is_migrated")
     private int is_migrated;
     @OneToOne
@@ -630,13 +628,6 @@ public class EnumerationWorkOrder {
         this.work_order_temp_token = work_order_temp_token;
     }
 
-    public String getWork_order_id() {
-        return work_order_id;
-    }
-
-    public void setWork_order_id(String work_order_id) {
-        this.work_order_id = work_order_id;
-    }
 
     public int getIs_migrated() {
         return is_migrated;
