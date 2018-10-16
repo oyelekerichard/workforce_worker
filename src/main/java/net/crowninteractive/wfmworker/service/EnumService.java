@@ -103,12 +103,13 @@ public class EnumService {
             if (tokens.getTokens() == null || tokens.getTokens().length == 0) {
                 return String.format("Tokens must not be empty");
             } else {
-
+                System.out.println("token found");
                 Integer success = 0, failure = 0, approved = 0;
                 for (String token : tokens.getTokens()) {
                     WorkOrderTemp workOrderTemp = wdao.getEnumWorkOrderByToken(token);
 
                     if (workOrderTemp != null) {
+                            System.out.println("workOrderTemp is not empty");
                         if (workOrderTemp.getTicketId() == null) {
                             String customername = null;
                             String type = "a";
@@ -124,10 +125,12 @@ public class EnumService {
                             wdao.approveEnumWorkOrder(workOrderTemp);
                             success++;
                         } else {
+                            System.out.println("workOrderTemp.getTicketId() != null");
                             approved++;
                         }
 
                     } else {
+                        System.out.println("workOrderTemp is empty");
                         failure++;
                     }
 

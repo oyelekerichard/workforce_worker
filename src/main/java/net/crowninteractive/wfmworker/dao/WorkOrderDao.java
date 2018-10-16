@@ -192,27 +192,28 @@ public class WorkOrderDao extends AbstractDao<Integer, WorkOrder> {
     }
 
     public QueueType getQueueTypeByID(int queueTypeId) {
-        String sql = String.format("select * from queue_type where id=%d ", queueTypeId);
+        String sql = String.format("select * from queue_type where id='%s' ", queueTypeId);
         System.out.println(sql);
         return (QueueType) getEntityManager().createNativeQuery(sql, QueueType.class).getSingleResult();
     }
 
     public EnumerationWorkOrder getEnumerationWorkOrder(String tempToken) {
-        String sql = String.format("select * from enumeration_work_order where work_order_temp_token=%d ", tempToken);
+        String sql = String.format("select * from enumeration_work_order where work_order_temp_token='%s' ", tempToken);
         System.out.println(sql);
         return (EnumerationWorkOrder) getEntityManager().createNativeQuery(sql, EnumerationWorkOrder.class).getSingleResult();
     }
 
     public void approveEnumWorkOrder(WorkOrderTemp wot) {
         QueueType qt = getQueueTypeByID(wot.getQueueTypeId());
-        int ticketId = this.createWorkOrder(wot, qt);
         EnumerationWorkOrder enumerationWorkOrder = getEnumerationWorkOrder(wot.getToken());
+        int ticketId = this.createWorkOrder(wot, qt);
+        
         //update work_order
         if (ticketId != 0) {
             wot.setTicketId(ticketId);
             wot.setCurrentStatus("OPEN");
             wot.setToken(wot.getToken());
-            enumerationWorkOrder.setWork_order_id(ticketId+"");
+            enumerationWorkOrder.setWork_order_id(ticketId + "");
             enumerationWorkOrder.setWork_order_temp_token("");
             ewod.edit(enumerationWorkOrder);
             temp.delete(wot);
