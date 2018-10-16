@@ -315,7 +315,20 @@ public class WorkOrder implements Serializable {
         this.id = id;
     }
 
-    public WorkOrder(QueueType queueType, String summary, String description, String contactNumber, String addressLine1, String city, String businessUnit, String customerTariff, String reportedBy, Engineer engineerId, Double debtBalanceAmount, Double currentBill, Double lastPaymentAmount, Date lastPaymentDate, Integer orderId, String purpose, Double amount, String orderIdStatus, Double previousOutstanding, Date dueDate, String currentStatus, String priority, String referenceType, String state, String channel, Short assigned, Short closed, Date createTime, Queue queue, String token,Integer ticketId,Integer ownerId) {
+    public WorkOrder(QueueType queueType, String summary, 
+            String description, String contactNumber, String addressLine1,
+            String city, String businessUnit, String customerTariff, 
+            String reportedBy, Engineer engineerId, 
+            Double debtBalanceAmount, Double currentBill, 
+            Double lastPaymentAmount, Date lastPaymentDate, 
+            Integer orderId, String purpose, Double amount, 
+            String orderIdStatus, Double previousOutstanding, 
+            Date dueDate, String currentStatus, String priority,
+            String referenceType, String state, String channel,
+            Short assigned, Short closed, Date createTime,
+            Queue queue, String token,Integer ticketId,
+            Integer ownerId,Date workDate,Date dateAssigned,Users createdBy) {
+        
         this.summary = summary;
         this.description = description;
         this.contactNumber = contactNumber;
@@ -348,6 +361,9 @@ public class WorkOrder implements Serializable {
         this.token = token;
         this.ticketId = ticketId;
         this.ownerId = ownerId;
+        this.workDate = workDate;
+        this.dateAssigned = dateAssigned;
+        this.createdBy = createdBy;
     }
 
     public WorkOrder(Integer id, int ticketId, String token, int ownerId, String summary, String contactNumber, String referenceType, String addressLine1, String city, String state, String businessUnit, String priority, Date createTime, int isActive) {
@@ -988,6 +1004,9 @@ public class WorkOrder implements Serializable {
         private String token;
         private Integer ticketId;
         private Integer ownerId;
+        private Date workDate;
+        private Date dateAssigned;
+        private Users createdBy;
 
         public WorkOrderBuilder() {
         }
@@ -1152,9 +1171,31 @@ public class WorkOrder implements Serializable {
             return this;
         }
         
+         public WorkOrderBuilder setWorkDate(Date workDate) {
+            this.workDate = workDate;
+            return this;
+        }
+         
+           public WorkOrderBuilder setDateAssigned(Date dateAssigned) {
+            this.dateAssigned = dateAssigned;
+            return this;
+        }
+                public WorkOrderBuilder setCreatedBy(Users createdBy) {
+            this.createdBy = createdBy;
+            return this;
+        }
+        
 
         public WorkOrder build() {
-            return new WorkOrder(queueType, summary, description, contactNumber, addressLine1, city, businessUnit, customerTariff, reportedBy, engineerId, debtBalanceAmount, currentBill, lastPaymentAmount, lastPaymentDate, orderId, purpose, amount, orderIdStatus, previousOutstanding, dueDate, currentStatus, priority, referenceType, state, channel, assigned, closed, createTime, queue, token,ticketId,ownerId);
+            return new WorkOrder(queueType, summary, description, 
+                    contactNumber, addressLine1, city, 
+                    businessUnit, customerTariff, reportedBy, 
+                    engineerId, debtBalanceAmount, currentBill, 
+                    lastPaymentAmount, lastPaymentDate, orderId,
+                    purpose, amount, orderIdStatus, previousOutstanding, 
+                    dueDate, currentStatus, priority, referenceType,
+                    state, channel, assigned, closed, createTime, queue,
+                    token,ticketId,ownerId,workDate,dateAssigned,createdBy);
         }
 
     }
