@@ -327,7 +327,8 @@ public class WorkOrder implements Serializable {
             String referenceType, String state, String channel,
             Short assigned, Short closed, Date createTime,
             Queue queue, String token, Integer ticketId,
-            Integer ownerId, Date workDate, Date dateAssigned, Users createdBy, String name, String billingId, String tariff) {
+            Integer ownerId, Date workDate, Date dateAssigned, 
+            Users createdBy, String name, String billingId, String tariff) {
 
         this.summary = summary;
         this.description = description;
