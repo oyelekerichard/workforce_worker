@@ -13,6 +13,7 @@ import net.crowninteractive.wfmworker.entity.Dashboard;
 import net.crowninteractive.wfmworker.entity.WorkOrder;
 import net.crowninteractive.wfmworker.exception.WfmWorkerException;
 import net.crowninteractive.wfmworker.misc.StandardResponse;
+import net.crowninteractive.wfmworker.misc.WorkOrderEnumerationBody;
 import net.crowninteractive.wfmworker.service.Awesome;
 import net.crowninteractive.wfmworker.service.EnumService;
 import net.crowninteractive.wfmworker.service.Token;
@@ -124,6 +125,18 @@ public class EnumController {
         try {
             WorkOrder workorder = service.getWorkOrder(ticketId);
             return new ResponseEntity<WorkOrder>(workorder, HttpStatus.OK);
+        } catch (Exception e) {
+            e.printStackTrace();
+            return new ResponseEntity<String>(e.getMessage(), HttpStatus.BAD_REQUEST);
+        }
+    }
+
+    @RequestMapping(method = RequestMethod.GET, value = "/getByTicketIdEnum/{ticketId}")
+    public ResponseEntity getWorkOrderEnum(@PathVariable("ticketId") Integer ticketId
+    ) {
+        try {
+            WorkOrderEnumerationBody workorder = service.getWorkOrderEnum(ticketId);
+            return new ResponseEntity<WorkOrderEnumerationBody>(workorder, HttpStatus.OK);
         } catch (Exception e) {
             e.printStackTrace();
             return new ResponseEntity<String>(e.getMessage(), HttpStatus.BAD_REQUEST);

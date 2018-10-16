@@ -30,6 +30,7 @@ import net.crowninteractive.wfmworker.entity.WorkOrderRemark;
 import net.crowninteractive.wfmworker.entity.WorkOrderTemp;
 import net.crowninteractive.wfmworker.exception.WfmWorkerException;
 import net.crowninteractive.wfmworker.misc.WorkOrderDownloadModel;
+import net.crowninteractive.wfmworker.misc.WorkOrderEnumerationBody;
 import org.apache.commons.lang3.RandomStringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.transaction.annotation.Transactional;
@@ -543,6 +544,23 @@ public class WorkOrderDao extends AbstractDao<Integer, WorkOrder> {
             }
         }
         return new WorkOrder();
+    }
+
+    public WorkOrderEnumerationBody findByTicketIdEnum(Integer ticketId) {
+        List<WorkOrder> resultList = getEntityManager().
+                createNativeQuery("select * from work_order where ticket_id = ? ", WorkOrder.class).
+                setParameter(1, ticketId)
+                .getResultList();
+        List<EnumerationWorkOrder> ewos = getEntityManager().
+                createNativeQuery("select * from enumeration_work_order where work_order_id = ? ", EnumerationWorkOrder.class).
+                setParameter(1, ticketId)
+                .getResultList();
+        if (resultList != null && ewos !=null) {
+            if (resultList.size() > 0 && ewos.size() >0) {
+                return new WorkOrderEnumerationBody(resultList.get(0), ewos.get(0));
+            }
+        }
+        return new WorkOrderEnumerationBody();
     }
 
     public List<WorkOrderDownloadModel> getWorkOrders(String district, String from, String to, String queue, String queueType, String priority, String status, String billingId, String ticketId, String reportedBy) {

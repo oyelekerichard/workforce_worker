@@ -21,6 +21,7 @@ import net.crowninteractive.wfmworker.entity.WorkOrder;
 import net.crowninteractive.wfmworker.entity.WorkOrderMessage;
 import net.crowninteractive.wfmworker.exception.WfmWorkerException;
 import net.crowninteractive.wfmworker.misc.StandardResponse;
+import net.crowninteractive.wfmworker.misc.WorkOrderEnumerationBody;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.jms.core.JmsTemplate;
@@ -188,6 +189,10 @@ public class WorkOrderService {
 
     public WorkOrder getWorkOrder(Integer ticketId) {
        return  wdao.findByQueueTypeId(ticketId);
+    }
+
+    public WorkOrderEnumerationBody getWorkOrderEnum(Integer ticketId) {
+       return  wdao.findByTicketIdEnum(ticketId);
     }
 
     public void generateStaffCode(Integer counter) {
