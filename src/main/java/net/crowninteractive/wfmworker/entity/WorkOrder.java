@@ -328,7 +328,7 @@ public class WorkOrder implements Serializable {
             Short assigned, Short closed, Date createTime,
             Queue queue, String token, Integer ticketId,
             Integer ownerId, Date workDate, Date dateAssigned, 
-            Users createdBy, String name, String billingId, String tariff) {
+            Users createdBy, String name, String billingId, String tariff,int active) {
 
         this.summary = summary;
         this.description = description;
@@ -368,6 +368,7 @@ public class WorkOrder implements Serializable {
         this.customerName = name;
         this.referenceTypeData = billingId;
         this.customerTariff = tariff;
+        this.isActive = active;
     }
 
     public WorkOrder(Integer id, int ticketId, String token, int ownerId, String summary, String contactNumber, String referenceType, String addressLine1, String city, String state, String businessUnit, String priority, Date createTime, int isActive) {
@@ -1014,6 +1015,7 @@ public class WorkOrder implements Serializable {
         private String name;
         private String billingId;
         private String tariff;
+        private int active;
 
         public WorkOrderBuilder() {
         }
@@ -1207,6 +1209,11 @@ public class WorkOrder implements Serializable {
             this.tariff = tariff;
             return this;
         }
+        
+         public WorkOrderBuilder setActive(int active) {
+            this.active = active;
+            return this;
+        }
 
         public WorkOrder build() {
             return new WorkOrder(queueType, summary, description,
@@ -1218,7 +1225,7 @@ public class WorkOrder implements Serializable {
                     dueDate, currentStatus, priority, referenceType,
                     state, channel, assigned, closed, createTime, queue,
                     token, ticketId, ownerId, workDate, dateAssigned,
-                    createdBy, name, billingId, tariff);
+                    createdBy, name, billingId, tariff,active);
         }
 
     }

@@ -852,7 +852,7 @@ public class WorkOrderDao extends AbstractDao<Integer, WorkOrder> {
                 .setCity(r.getCity()).setContactNumber(r.getPhone()).setCurrentBill(Double.valueOf(r.getCurrentBill()))
                 .setDescription(r.getDescription()).setDueDate(r.getDueDate())
                 .setLastPaymentAmount(Double.valueOf(r.getLastPaidAmount())).setLastPaymentDate(r.getLastPaymentDate())
-                .setPreviousOutstanding(r.getPreviousOutstanding())
+                .setPreviousOutstanding(r.getPreviousOutstanding()).setClosed(Short.valueOf("0")).setActive(1)
                 .setPurpose(r.getPurpose()).setReportedBy(r.getReportedBy()).setSummary(r.getSummary()).setQueueType(qt)
                 .setCreateTime(new Date()).setCurrentStatus("OPEN").setPriority("Low").setReferenceType("Billing ID")
                 .setState("Lagos").setChannel("EMCC").setTariff(r.getTariff()).setBillingId(r.getBillingId()).setName(r.getName())
