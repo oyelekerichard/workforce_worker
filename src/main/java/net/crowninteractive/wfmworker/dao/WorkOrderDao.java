@@ -863,7 +863,6 @@ public class WorkOrderDao extends AbstractDao<Integer, WorkOrder> {
             if (id != null) {
                 builder.setEngineerId(new Engineer(id));
                 builder.setAssigned(Short.valueOf("1"));
-                builder.setCreatedBy(new Users(1));
                 builder.setDateAssigned(new Date());
                 builder.setWorkDate(new Date());
                 
