@@ -68,6 +68,7 @@ public class ReportReceiver {
 
     }
 
+    @Deprecated
     private void processWrite(String from, String to, String email) throws FileNotFoundException, IOException, EmailException {
         FileInputStream file = new FileInputStream(new File("/var/files/wfm/nerctemplate.xlsx"));
 

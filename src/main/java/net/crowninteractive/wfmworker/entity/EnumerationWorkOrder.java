@@ -11,6 +11,8 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.OneToOne;
 import javax.persistence.Table;
 import javax.xml.bind.annotation.XmlRootElement;
 
@@ -150,14 +152,19 @@ public class EnumerationWorkOrder {
     private String work_order_id;
     @Column(name = "is_migrated")
     private int is_migrated;
+    @OneToOne
+    @JoinColumn(name = "work_order_id")
+    private WorkOrder workOrder;
 
-    public int getId() {
-        return id;
+    public WorkOrder getWorkOrder() {
+        return workOrder;
     }
 
-    public void setId(int id) {
-        this.id = id;
+    public void setWorkOrder(WorkOrder workOrder) {
+        this.workOrder = workOrder;
     }
+
+   
 
     public String getConnection_type() {
         return connection_type;

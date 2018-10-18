@@ -5,13 +5,14 @@
  */
 package net.crowninteractive.wfmworker.entity;
 
+import java.util.Date;
 
 /**
  *
  * @author johnson3yo
  */
 public class WorkOrderMessage {
-    
+
     private int id;
     private int ticketId;
     private int ownerId;
@@ -42,13 +43,12 @@ public class WorkOrderMessage {
     private String customerCategory;
     private String accountType;
     private attachment file;
-    
-    
-    
+    private String currentBill;
+    private String lastPaymentAmount;
+    private Date lastPaymentDate;
+
     public WorkOrderMessage() {
     }
-    
-    
 
     public int getId() {
         return id;
@@ -185,7 +185,7 @@ public class WorkOrderMessage {
     public void setStatus(String status) {
         this.status = status;
     }
-    
+
     public int getCreatedBy() {
         return createdBy;
     }
@@ -281,8 +281,8 @@ public class WorkOrderMessage {
     public void setAccountType(String accountType) {
         this.accountType = accountType;
     }
-    
-      public class attachment {
+
+    public class attachment {
 
         private String base64String;
         private String filename;
@@ -320,7 +320,29 @@ public class WorkOrderMessage {
     public void setFile(attachment file) {
         this.file = file;
     }
-    
-    
-    
+
+    public String getCurrentBill() {
+        return currentBill;
+    }
+
+    public void setCurrentBill(String currentBill) {
+        this.currentBill = currentBill;
+    }
+
+    public String getLastPaymentAmount() {
+        return lastPaymentAmount;
+    }
+
+    public void setLastPaymentAmount(String lastPaymentAmount) {
+        this.lastPaymentAmount = lastPaymentAmount;
+    }
+
+    public Date getLastPaymentDate() {
+        return lastPaymentDate;
+    }
+
+    public void setLastPaymentDate(Date lastPaymentDate) {
+        this.lastPaymentDate = lastPaymentDate;
+    }
+
 }

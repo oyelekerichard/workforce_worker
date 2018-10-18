@@ -7,6 +7,7 @@ package net.crowninteractive.wfmworker.service;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -43,7 +44,7 @@ public class WorkOrderService {
     @Value(value = "${dev.disconnection.complete.out}")
     private String disconnectionQueue;
 
-    public Awesome addToDisconnectionQueue(String amount, String billingID, String businessUnit, String tarriff, String city, String address, String phone, String summary, String description, String reportedBy) {
+    public Awesome addToDisconnectionQueue(String amount, String billingID, String businessUnit, String tarriff, String city, String address, String phone, String summary, String description, String reportedBy, String currentBill, String lastPaidAmount, Date lastPaymentDate) {
 
         try {
 
@@ -66,17 +67,17 @@ public class WorkOrderService {
                 if (wo != null) {
 
                     if (wo.size() == 0) {
-                        ticketId = wdao.createWorkOrder(qt, "", "1", businessUnit, summary, description, phone, city, address, tarriff, billingID, "EMCC", "", "", reportedBy, customername,amount);
+                        ticketId = wdao.createWorkOrder(qt, "", "1", businessUnit, summary, description, phone, city, address, tarriff, billingID, "EMCC", "", "", reportedBy, customername, amount, currentBill, lastPaidAmount, lastPaymentDate);
                         return StandardResponse.ok(ticketId);
                     } else {
                         WorkOrder wor = wo.get(0);
-                        wdao.addRemark("Emcc", String.valueOf(wor.getTicketId()), description, "1");
+                        wdao.addRemark("Emcc", String.valueOf(wor.getTicketId()), description, "1", Double.valueOf(amount));
                         ticketId = wor.getTicketId();
                         return StandardResponse.ok(ticketId);
                     }
 
                 } else {
-                    int tid = wdao.createWorkOrder(qt, "", "1", businessUnit, summary, description, phone, city, address, tarriff, billingID, "EMCC", "", "", reportedBy, customername,amount);
+                    int tid = wdao.createWorkOrder(qt, "", "1", businessUnit, summary, description, phone, city, address, tarriff, billingID, "EMCC", "", "", reportedBy, customername, amount, currentBill, lastPaidAmount, lastPaymentDate);
                     return StandardResponse.ok(tid);
 
                 }
@@ -163,7 +164,7 @@ public class WorkOrderService {
                         return w;
                     } else {
                         WorkOrder wor = wo.get(0);
-                        wdao.addRemark("Emcc", String.valueOf(wor.getTicketId()), description, "1");
+                        wdao.addRemark("Emcc", String.valueOf(wor.getTicketId()), description, "1", Double.valueOf(amount));
                         ticketId = wor.getTicketId();
                         return wor;
                     }
@@ -183,12 +184,12 @@ public class WorkOrderService {
     }
 
     public List<WorkOrder> getWorkOrders(Integer queueId, Integer pageNo) {
-        int count = 100;    
-        return wdao.findByQueueId(queueId,(pageNo-1)*count,count);
+        int count = 100;
+        return wdao.findByQueueId(queueId, (pageNo - 1) * count, count);
     }
 
     public WorkOrder getWorkOrder(Integer ticketId) {
-       return  wdao.findByQueueTypeId(ticketId);
+        return wdao.findByQueueTypeId(ticketId);
     }
 
     public WorkOrderEnumerationBody getWorkOrderEnum(Integer ticketId) {
@@ -196,10 +197,49 @@ public class WorkOrderService {
     }
 
     public void generateStaffCode(Integer counter) {
-          while (counter != null) {
+        while (counter != null) {
             counter = wdao.hasNextRecord(counter);
         }
     }
 
-    
+    public Awesome addToDisconnectionQueue(RequestObj r) {
+        try {
+
+            String customername = null;
+            if (r.getBillingId() != null) {
+                Awesome awe = getCustomerDetails(r.getBillingId(), "a");
+                if (awe.getResp() == 0) {
+                    Gson gson = new GsonBuilder().create();
+                    Map jsonMap = gson.fromJson(gson.toJson(awe.getObject()), Map.class);
+                    System.out.println(jsonMap);
+                    customername = (String) jsonMap.get("name");
+                }
+            }
+
+            //fetch queueTypeToken
+            QueueType qt = wdao.getEmccConfigDisconnectQueueTypeAndQueue();
+            if (qt != null) {
+                int ticketId = 0;
+                List<WorkOrder> wo = wdao.getLastWorkOrderinQueueType(r.getBillingId(), qt.getId());
+
+                if (wo.isEmpty()) {
+                    // ticketId = wdao.createWorkOrder(qt, "", "1", businessUnit, summary, description, phone, city, address, tarriff, billingID, "EMCC", "", "", reportedBy, customername, amount, currentBill, lastPaidAmount, lastPaymentDate);
+                    ticketId = wdao.createWorkOrder(qt, r);
+                    return StandardResponse.ok(ticketId);
+                } else {
+                    WorkOrder wor = wo.get(0);
+                    wdao.addRemark("Emcc", String.valueOf(wor.getTicketId()), r.getDescription(), "1", Double.valueOf(r.getAmount()));
+                    ticketId = wor.getTicketId();
+                    return StandardResponse.ok(ticketId);
+                }
+
+            } else {
+                return StandardResponse.disconnectionQueueTypeNotSet();
+            }
+        } catch (Exception ex) {
+            ex.printStackTrace();
+            return null;
+        }
+    }
+
 }
