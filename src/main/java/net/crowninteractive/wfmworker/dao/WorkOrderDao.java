@@ -516,9 +516,8 @@ public class WorkOrderDao extends AbstractDao<Integer, WorkOrder> {
 
     public List<WorkOrder> findNonMigratedWorkOrders() {
 
-        String sql = "select * from work_order where queue_type_id = (select id from queue_type "
-                + "where token=(select config_value from emcc_config where config_key="
-                + " 'metering_plan_queue_type')) and current_status not like 'COMPLETE%'";
+        String sql = "select * from work_order where queue_type_id = (select config_value from config where "
+                + "config_key= 'metering_plan_queue_type') and current_status not like 'COMPLETE%'";
         return getEntityManager().createNativeQuery(sql, WorkOrder.class).getResultList();
     }
 
