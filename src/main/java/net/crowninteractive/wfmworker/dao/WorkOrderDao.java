@@ -868,13 +868,7 @@ public class WorkOrderDao extends AbstractDao<Integer, WorkOrder> {
             }
         }
 
-        if (Optional.fromNullable(r.getOrderId()).isPresent()) {
-            builder.setOrderId(r.getOrderId());
-        }
-
-        if (Optional.fromNullable(r.getOrderIdStatus()).isPresent()) {
-            builder.setOrderIdStatus(r.getOrderIdStatus());
-        }
+      
         builder.setOwnerId(1);
         WorkOrder build = builder.build();
         return save(build).getTicketId();

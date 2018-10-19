@@ -284,15 +284,11 @@ public class WorkOrder implements Serializable {
     @Column(name = "last_payment_date")
     @Temporal(javax.persistence.TemporalType.DATE)
     private Date lastPaymentDate;
-    @Column(name = "order_id")
-    private Integer orderId;
     @Column(name = "purpose", length = 256)
     private String purpose;
     @Column(name = "amount")
     private Double amount;
-    @Column(name = "order_id_status")
-    private String orderIdStatus;
-    @Column(name = "previous_outstanding")
+      @Column(name = "previous_outstanding")
     private Double previousOutstanding;
     @Column(name = "due_date")
     @Temporal(javax.persistence.TemporalType.DATE)
@@ -321,8 +317,8 @@ public class WorkOrder implements Serializable {
             String reportedBy, Engineer engineerId,
             Double debtBalanceAmount, Double currentBill,
             Double lastPaymentAmount, Date lastPaymentDate,
-            Integer orderId, String purpose, Double amount,
-            String orderIdStatus, Double previousOutstanding,
+            String purpose, Double amount,
+             Double previousOutstanding,
             Date dueDate, String currentStatus, String priority,
             String referenceType, String state, String channel,
             Short assigned, Short closed, Date createTime,
@@ -343,10 +339,8 @@ public class WorkOrder implements Serializable {
         this.currentBill = currentBill;
         this.lastPaymentAmount = lastPaymentAmount;
         this.lastPaymentDate = lastPaymentDate;
-        this.orderId = orderId;
         this.purpose = purpose;
         this.amount = amount;
-        this.orderIdStatus = orderIdStatus;
         this.previousOutstanding = previousOutstanding;
         this.dueDate = dueDate;
         queueTypeId = queueType;
@@ -927,14 +921,6 @@ public class WorkOrder implements Serializable {
         this.lastPaymentDate = lastPaymentDate;
     }
 
-    public Integer getOrderId() {
-        return orderId;
-    }
-
-    public void setOrderId(Integer orderId) {
-        this.orderId = orderId;
-    }
-
     public String getPurpose() {
         return purpose;
     }
@@ -949,14 +935,6 @@ public class WorkOrder implements Serializable {
 
     public void setAmount(Double amount) {
         this.amount = amount;
-    }
-
-    public String getOrderIdStatus() {
-        return orderIdStatus;
-    }
-
-    public void setOrderIdStatus(String orderIdStatus) {
-        this.orderIdStatus = orderIdStatus;
     }
 
     public Double getPreviousOutstanding() {
@@ -990,10 +968,8 @@ public class WorkOrder implements Serializable {
         private Double currentBill;
         private Double lastPaymentAmount;
         private Date lastPaymentDate;
-        private Integer orderId;
         private String purpose;
         private Double amount;
-        private String orderIdStatus;
         private Double previousOutstanding;
         private Date dueDate;
         private QueueType queueType;
@@ -1084,12 +1060,7 @@ public class WorkOrder implements Serializable {
             this.lastPaymentDate = lastPaymentDate;
             return this;
         }
-
-        public WorkOrderBuilder setOrderId(Integer orderId) {
-            this.orderId = orderId;
-            return this;
-        }
-
+    
         public WorkOrderBuilder setPurpose(String purpose) {
             this.purpose = purpose;
             return this;
@@ -1097,11 +1068,6 @@ public class WorkOrder implements Serializable {
 
         public WorkOrderBuilder setAmount(Double amount) {
             this.amount = amount;
-            return this;
-        }
-
-        public WorkOrderBuilder setOrderIdStatus(String orderIdStatus) {
-            this.orderIdStatus = orderIdStatus;
             return this;
         }
 
@@ -1220,8 +1186,8 @@ public class WorkOrder implements Serializable {
                     contactNumber, addressLine1, city,
                     businessUnit, customerTariff, reportedBy,
                     engineerId, debtBalanceAmount, currentBill,
-                    lastPaymentAmount, lastPaymentDate, orderId,
-                    purpose, amount, orderIdStatus, previousOutstanding,
+                    lastPaymentAmount, lastPaymentDate,
+                    purpose, amount, previousOutstanding,
                     dueDate, currentStatus, priority, referenceType,
                     state, channel, assigned, closed, createTime, queue,
                     token, ticketId, ownerId, workDate, dateAssigned,
