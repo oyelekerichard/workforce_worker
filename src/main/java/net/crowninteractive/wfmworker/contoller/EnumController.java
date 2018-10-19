@@ -8,13 +8,18 @@ package net.crowninteractive.wfmworker.contoller;
 import java.util.Map;
 import java.util.logging.Logger;
 import net.crowninteractive.wfmworker.entity.Dashboard;
+import net.crowninteractive.wfmworker.entity.WorkOrder;
+import net.crowninteractive.wfmworker.exception.WfmWorkerException;
 import net.crowninteractive.wfmworker.misc.StandardResponse;
+import net.crowninteractive.wfmworker.misc.WorkOrderEnumerationBody;
 import net.crowninteractive.wfmworker.service.Awesome;
 import net.crowninteractive.wfmworker.service.EnumService;
 import net.crowninteractive.wfmworker.service.Token;
+import net.crowninteractive.wfmworker.service.WorkOrderService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -33,6 +38,9 @@ public class EnumController {
 
     @Autowired
     private EnumService enumService;
+    
+    @Autowired
+    private WorkOrderService service;
 
     @RequestMapping(method = RequestMethod.GET, value = "test")
     public ResponseEntity testEndpoint() {
@@ -109,4 +117,28 @@ public class EnumController {
         return awe;
     }
 
+    @RequestMapping(method = RequestMethod.GET, value = "/getByTicketId/{ticketId}")
+    public ResponseEntity getWorkOrder(@PathVariable("ticketId") Integer ticketId
+    ) {
+        try {
+            WorkOrder workorder = service.getWorkOrder(ticketId);
+            return new ResponseEntity<WorkOrder>(workorder, HttpStatus.OK);
+        } catch (Exception e) {
+            e.printStackTrace();
+            return new ResponseEntity<String>(e.getMessage(), HttpStatus.BAD_REQUEST);
+        }
+    }
+
+    @RequestMapping(method = RequestMethod.GET, value = "/getByTicketIdEnum/{ticketId}")
+    public ResponseEntity getWorkOrderEnum(@PathVariable("ticketId") Integer ticketId
+    ) {
+        try {
+            WorkOrderEnumerationBody workorder = service.getWorkOrderEnum(ticketId);
+            return new ResponseEntity<WorkOrderEnumerationBody>(workorder, HttpStatus.OK);
+        } catch (Exception e) {
+            e.printStackTrace();
+            return new ResponseEntity<String>(e.getMessage(), HttpStatus.BAD_REQUEST);
+        }
+    }
+    
 }

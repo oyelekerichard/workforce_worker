@@ -148,8 +148,14 @@ public class EnumerationWorkOrder {
     private String old_tariff;
     @Column(name = "work_order_temp_token")
     private String work_order_temp_token;
+    @Column(name = "work_order_id")
+    private String work_order_id;
     @Column(name = "is_migrated")
     private int is_migrated;
+    @Column(name = "transformer_rating")
+    private String transformer_rating;
+    @Column(name = "transformer_type")
+    private String transformer_type;
     @OneToOne
     @JoinColumn(name = "work_order_id")
     private WorkOrder workOrder;
@@ -628,6 +634,13 @@ public class EnumerationWorkOrder {
         this.work_order_temp_token = work_order_temp_token;
     }
 
+    public String getWork_order_id() {
+        return work_order_id;
+    }
+
+    public void setWork_order_id(String work_order_id) {
+        this.work_order_id = work_order_id;
+    }
 
     public int getIs_migrated() {
         return is_migrated;
@@ -635,6 +648,22 @@ public class EnumerationWorkOrder {
 
     public void setIs_migrated(int is_migrated) {
         this.is_migrated = is_migrated;
+    }
+
+    public String getTransformer_rating() {
+        return transformer_rating;
+    }
+
+    public void setTransformer_rating(String transformer_rating) {
+        this.transformer_rating = transformer_rating;
+    }
+
+    public String getTransformer_type() {
+        return transformer_type;
+    }
+
+    public void setTransformer_type(String transformer_type) {
+        this.transformer_type = transformer_type;
     }
 
 }
