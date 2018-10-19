@@ -156,20 +156,7 @@ public class EnumerationWorkOrder {
     private String transformer_rating;
     @Column(name = "transformer_type")
     private String transformer_type;
-    @OneToOne
-    @JoinColumn(name = "work_order_id")
-    private WorkOrder workOrder;
-
-    public WorkOrder getWorkOrder() {
-        return workOrder;
-    }
-
-    public void setWorkOrder(WorkOrder workOrder) {
-        this.workOrder = workOrder;
-    }
-
-   
-
+  
     public String getConnection_type() {
         return connection_type;
     }

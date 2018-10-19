@@ -293,16 +293,8 @@ public class WorkOrder implements Serializable {
     @Column(name = "due_date")
     @Temporal(javax.persistence.TemporalType.DATE)
     private Date dueDate;
-    @OneToOne(mappedBy = "workOrder")
-    private EnumerationWorkOrder enumerationWorkOrder;
-
-    public EnumerationWorkOrder getEnumerationWorkOrder() {
-        return enumerationWorkOrder;
-    }
-
-    public void setEnumerationWorkOrder(EnumerationWorkOrder enumerationWorkOrder) {
-        this.enumerationWorkOrder = enumerationWorkOrder;
-    }
+  
+  
 
     public WorkOrder() {
     }
