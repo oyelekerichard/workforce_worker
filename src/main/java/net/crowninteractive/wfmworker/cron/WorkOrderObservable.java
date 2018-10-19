@@ -44,7 +44,9 @@ public class WorkOrderObservable extends TimerTask{
                                 woob.update(new Gson().
                                         toJson(new UpdateMessage(dim.getReferenceTypeData(), dim.getCurrentStatus())));
                                 this.current.put(current.getTicketId(), dim);
-                            } else if (dim.getCurrentStatus().startsWith("MIGRA")) {
+                            } else if (dim.getCurrentStatus().equals("METER_COMMISIONED")) {
+                                 woob.update(new Gson().
+                                        toJson(new UpdateMessage(dim.getReferenceTypeData(), dim.getCurrentStatus())));
                                 this.current.remove(dim.getTicketId());
                             }
                         } else {

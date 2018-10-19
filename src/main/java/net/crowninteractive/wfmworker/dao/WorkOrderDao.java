@@ -18,7 +18,6 @@ import java.util.logging.Logger;
 import javax.persistence.NoResultException;
 import javax.persistence.Query;
 import net.crowninteractive.wfmworker.entity.Engineer;
-import net.crowninteractive.wfmworker.entity.Queue;
 import net.crowninteractive.wfmworker.entity.EnumerationWorkOrder;
 import net.crowninteractive.wfmworker.entity.QueueType;
 import net.crowninteractive.wfmworker.entity.Users;
@@ -30,7 +29,6 @@ import net.crowninteractive.wfmworker.entity.WorkOrderTemp;
 import net.crowninteractive.wfmworker.exception.WfmWorkerException;
 import net.crowninteractive.wfmworker.misc.WorkOrderDownloadModel;
 import org.apache.commons.lang3.RandomStringUtils;
-import org.hibernate.Session;
 import org.apache.commons.lang3.time.DateFormatUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -516,10 +514,14 @@ public class WorkOrderDao extends AbstractDao<Integer, WorkOrder> {
 
     public List<WorkOrder> findNonMigratedWorkOrders() {
 
-        String sql = "select * from work_order where queue_type_id = (select config_value from config where "
-                + "config_key= 'metering_plan_queue_type') and current_status not like 'COMPLETE%'";
+        String sql = " select count(*) from work_order where queue_type_id in ((select config_value from config where "
+                + "config_key= 'metering_plan_queue_type'),"
+                + "(select config_value from config where config_key= 'installation_queue_type')) "
+                + "and current_status not like 'INSTALLATION_COMPLETED'";
         return getEntityManager().createNativeQuery(sql, WorkOrder.class).getResultList();
     }
+    
+    
 
     public int createWorkOrder(WorkOrderMessage worder) {
         QueueType qt = getQueueTypeByID(worder.getQueueTypeId());
