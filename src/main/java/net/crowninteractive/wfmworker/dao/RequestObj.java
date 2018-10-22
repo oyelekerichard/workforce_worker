@@ -6,6 +6,7 @@
 package net.crowninteractive.wfmworker.dao;
 
 import java.util.Arrays;
+import java.util.Date;
 
 /**
  *
@@ -49,11 +50,18 @@ public class RequestObj {
     private String chargeTypeToken;
     private String frequency;
     private String[] tokens;
-    private String[]setup;
+    private String[] setup;
     private String name;
     private String district;
-  
-    
+    private String currentBill;
+    private String lastPaidAmount;
+    private Date lastPaymentDate;
+    private Integer orderId;
+    private String purpose;
+    private String orderIdStatus;
+    private Double previousOutstanding;
+    private Date dueDate;
+    private Integer staffId;
 
     public String getAccountNumber() {
         return accountNumber;
@@ -366,50 +374,83 @@ public class RequestObj {
     public void setAcctRecId(String acctRecId) {
         this.acctRecId = acctRecId;
     }
-    
-    
-    
-    
+
+    public String getCurrentBill() {
+        return currentBill;
+    }
+
+    public void setCurrentBill(String currentBill) {
+        this.currentBill = currentBill;
+    }
+
+    public String getLastPaidAmount() {
+        return lastPaidAmount;
+    }
+
+    public void setLastPaidAmount(String lastPaidAmount) {
+        this.lastPaidAmount = lastPaidAmount;
+    }
+
+    public Date getLastPaymentDate() {
+        return lastPaymentDate;
+    }
+
+    public void setLastPaymentDate(Date lastPaymentDate) {
+        this.lastPaymentDate = lastPaymentDate;
+    }
+
+    public Integer getOrderId() {
+        return orderId;
+    }
+
+    public void setOrderId(Integer orderId) {
+        this.orderId = orderId;
+    }
+
+    public String getPurpose() {
+        return purpose;
+    }
+
+    public void setPurpose(String purpose) {
+        this.purpose = purpose;
+    }
+
+    public String getOrderIdStatus() {
+        return orderIdStatus;
+    }
+
+    public void setOrderIdStatus(String orderIdStatus) {
+        this.orderIdStatus = orderIdStatus;
+    }
+
+    public Double getPreviousOutstanding() {
+        return previousOutstanding;
+    }
+
+    public void setPreviousOutstanding(Double previousOutstanding) {
+        this.previousOutstanding = previousOutstanding;
+    }
+
+    public Date getDueDate() {
+        return dueDate;
+    }
+
+    public void setDueDate(Date dueDate) {
+        this.dueDate = dueDate;
+    }
+
+    public Integer getStaffId() {
+        return staffId;
+    }
+
+    public void setStaffId(Integer staffId) {
+        this.staffId = staffId;
+    }
 
     @Override
     public String toString() {
-        return "RequestObj{" +
-                "acctRecId='" + acctRecId + '\'' +
-                "ticketId='" + ticketId + '\'' +
-                ", amount='" + amount + '\'' +
-                ", reference='" + reference + '\'' +
-                ", start='" + start + '\'' +
-                ", count='" + count + '\'' +
-                ", startdate='" + startdate + '\'' +
-                ", enddate='" + enddate + '\'' +
-                ", oldPassword='" + oldPassword + '\'' +
-                ", newPassword='" + newPassword + '\'' +
-                ", roles='" + roles + '\'' +
-                ", loginurl='" + loginurl + '\'' +
-                ", stateId='" + stateId + '\'' +
-                ", email='" + email + '\'' +
-                ", password='" + password + '\'' +
-                ", firstname='" + firstname + '\'' +
-                ", lastname='" + lastname + '\'' +
-                ", phone='" + phone + '\'' +
-                ", address='" + address + '\'' +
-                ", state='" + state + '\'' +
-                ", image='" + image + '\'' +
-                ", thumbnail='" + thumbnail + '\'' +
-                ", token='" + token + '\'' +
-                ", cityToken='" + cityToken + '\'' +
-                ", billingId='" + billingId + '\'' +
-                ", city='" + city + '\'' +
-                ", reportedBy='" + reportedBy + '\'' +
-                ", businessUnit='" + businessUnit + '\'' +
-                ", tariff='" + tariff + '\'' +
-                ", summary='" + summary + '\'' +
-                ", description='" + description + '\'' +
-                ", customerName='" + customerName + '\'' +
-                ", accountNumber='" + accountNumber + '\'' +
-                ", chargeTypeToken='" + chargeTypeToken + '\'' +
-                ", frequency='" + frequency + '\'' +
-                ", tokens=" + Arrays.toString(tokens) +
-                '}';
+        return "RequestObj{" + "acctRecId=" + acctRecId + ", ticketId=" + ticketId + ", amount=" + amount + ", reference=" + reference + ", start=" + start + ", count=" + count + ", startdate=" + startdate + ", enddate=" + enddate + ", oldPassword=" + oldPassword + ", newPassword=" + newPassword + ", roles=" + roles + ", loginurl=" + loginurl + ", stateId=" + stateId + ", email=" + email + ", password=" + password + ", firstname=" + firstname + ", lastname=" + lastname + ", phone=" + phone + ", address=" + address + ", state=" + state + ", image=" + image + ", thumbnail=" + thumbnail + ", token=" + token + ", cityToken=" + cityToken + ", billingId=" + billingId + ", city=" + city + ", reportedBy=" + reportedBy + ", businessUnit=" + businessUnit + ", tariff=" + tariff + ", summary=" + summary + ", description=" + description + ", customerName=" + customerName + ", accountNumber=" + accountNumber + ", chargeTypeToken=" + chargeTypeToken + ", frequency=" + frequency + ", tokens=" + tokens + ", setup=" + setup + ", name=" + name + ", district=" + district + ", currentBill=" + currentBill + ", lastPaidAmount=" + lastPaidAmount + ", lastPaymentDate=" + lastPaymentDate + ", orderId=" + orderId + ", purpose=" + purpose + ", orderIdStatus=" + orderIdStatus + ", previousOutstanding=" + previousOutstanding + ", dueDate=" + dueDate + ", staffId=" + staffId + '}';
     }
+
+   
 }

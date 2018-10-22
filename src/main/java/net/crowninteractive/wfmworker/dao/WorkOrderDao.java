@@ -7,6 +7,7 @@
 package net.crowninteractive.wfmworker.dao;
 
 //~--- non-JDK imports --------------------------------------------------------
+import com.google.common.base.Optional;
 import java.math.BigInteger;
 import java.sql.Timestamp;
 import java.util.ArrayList;
@@ -16,6 +17,8 @@ import java.util.Map;
 import java.util.logging.Logger;
 import javax.persistence.NoResultException;
 import javax.persistence.Query;
+import net.crowninteractive.wfmworker.entity.Engineer;
+import net.crowninteractive.wfmworker.entity.EnumerationWorkOrder;
 import net.crowninteractive.wfmworker.entity.QueueType;
 import net.crowninteractive.wfmworker.entity.Users;
 import net.crowninteractive.wfmworker.entity.WorkOrder;
@@ -25,7 +28,9 @@ import net.crowninteractive.wfmworker.entity.WorkOrderRemark;
 import net.crowninteractive.wfmworker.entity.WorkOrderTemp;
 import net.crowninteractive.wfmworker.exception.WfmWorkerException;
 import net.crowninteractive.wfmworker.misc.WorkOrderDownloadModel;
+import net.crowninteractive.wfmworker.misc.WorkOrderEnumerationBody;
 import org.apache.commons.lang3.RandomStringUtils;
+import org.apache.commons.lang3.time.DateFormatUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
@@ -42,6 +47,8 @@ public class WorkOrderDao extends AbstractDao<Integer, WorkOrder> {
     @Autowired
     private WorkOrderTempDap temp;
     @Autowired
+    private EnumerationWorkOrderDao ewod;
+    @Autowired
     private WorkOrderRemarkDao wora;
     @Autowired
     private WorkOrderExtraDao wdao;
@@ -54,6 +61,12 @@ public class WorkOrderDao extends AbstractDao<Integer, WorkOrder> {
         Integer max = (Integer) getEntityManager()
                 .createNativeQuery("select max(ticket_id) from work_order").getSingleResult();
         return max.intValue() + 1;
+    }
+
+    public int lastTicket() {
+        Integer max = (Integer) getEntityManager()
+                .createNativeQuery("select max(ticket_id) from work_order").getSingleResult();
+        return max.intValue();
     }
 
     public WorkOrder findById(int id) {
@@ -135,10 +148,10 @@ public class WorkOrderDao extends AbstractDao<Integer, WorkOrder> {
         return name;
     }
 
-    public Date getDateResolved(WorkOrder w) {
+    public String getDateResolved(WorkOrder w) {
         if (w.getIsClosed() != null) {
             if (w.getIsClosed() == 1) {
-                return w.getClosedTime();
+                return DateFormatUtils.format(w.getClosedTime(), "yyyy-MM-dd HH:mm:SS");
             } else if (w.getCurrentStatus().toLowerCase().equals("completed") || w.getCurrentStatus().toLowerCase().equals("resolved")) {
                 if (w.getWorkOrderStatusId() == null) {
                     return null;
@@ -149,7 +162,7 @@ public class WorkOrderDao extends AbstractDao<Integer, WorkOrder> {
                 if (q.getResultList() != null) {
 
                     if (!q.getResultList().isEmpty()) {
-                        Date time = (Date) q.getResultList().get(0);
+                        String time = (String) q.getResultList().get(0);
                         return time;
                     } else {
                         return null;
@@ -173,6 +186,14 @@ public class WorkOrderDao extends AbstractDao<Integer, WorkOrder> {
 
     }
 
+    public String get(int i, QueueType queueTypeId) {
+        String qry = "select name from queue_type where id=%d and owner_id=%d";
+        qry = String.format(qry, queueTypeId.getId(), i);
+        Query q = getEntityManager().createNativeQuery(qry);
+        return (String) q.getSingleResult();
+
+    }
+
     public WorkOrderTemp getEnumWorkOrderByToken(String token) {
         String qry = String.format("select * from work_order_temp where token = '%s'", token);
         Query q = getEntityManager().createNativeQuery(qry, WorkOrderTemp.class);
@@ -180,18 +201,30 @@ public class WorkOrderDao extends AbstractDao<Integer, WorkOrder> {
     }
 
     public QueueType getQueueTypeByID(int queueTypeId) {
-        String sql = String.format("select * from queue_type where id=%d ", queueTypeId);
+        String sql = String.format("select * from queue_type where id='%s' ", queueTypeId);
         System.out.println(sql);
         return (QueueType) getEntityManager().createNativeQuery(sql, QueueType.class).getSingleResult();
     }
 
+    public EnumerationWorkOrder getEnumerationWorkOrder(String tempToken) {
+        String sql = String.format("select * from enumeration_work_order where work_order_temp_token='%s' ", tempToken);
+        System.out.println(sql);
+        return (EnumerationWorkOrder) getEntityManager().createNativeQuery(sql, EnumerationWorkOrder.class).getSingleResult();
+    }
+
     public void approveEnumWorkOrder(WorkOrderTemp wot) {
         QueueType qt = getQueueTypeByID(wot.getQueueTypeId());
+        EnumerationWorkOrder enumerationWorkOrder = getEnumerationWorkOrder(wot.getToken());
         int ticketId = this.createWorkOrder(wot, qt);
+        
+        //update work_order
         if (ticketId != 0) {
             wot.setTicketId(ticketId);
             wot.setCurrentStatus("OPEN");
             wot.setToken(wot.getToken());
+            enumerationWorkOrder.setWork_order_id(ticketId + "");
+            enumerationWorkOrder.setWork_order_temp_token(wot.getToken());
+            ewod.edit(enumerationWorkOrder);
             temp.delete(wot);
             logger.info("-----------deleting enumeration record -----------------" + wot.getId());
         }
@@ -225,6 +258,9 @@ public class WorkOrderDao extends AbstractDao<Integer, WorkOrder> {
         wo.setIsAssigned(Short.valueOf("0"));
         wo.setIsClosed(Short.valueOf("0"));
 
+//        wo.setCurrentBill(wot.getCurrentBill());
+//        wo.setLastPaymentAmount(wot.getLastPaymentAmount());
+//        wo.setLastPaymentDate(wot.getLastPaymentDate());
         WorkOrder w = save(wo);
         WorkOrderExtra woe = new WorkOrderExtra();
         woe.setConnectionType(wot.getConnectionType());
@@ -343,7 +379,7 @@ public class WorkOrderDao extends AbstractDao<Integer, WorkOrder> {
 
     }
 
-    public int createWorkOrder(QueueType qt, String string, String string0, String businessUnit, String summary, String description, String phone, String city, String address, String tarriff, String billingID, String emcc, String string1, String string2, String reportedBy, String customername, String amount) {
+    public int createWorkOrder(QueueType qt, String string, String string0, String businessUnit, String summary, String description, String phone, String city, String address, String tarriff, String billingID, String emcc, String string1, String string2, String reportedBy, String customername, String amount, String currentBill, String lastPaidAmount, Date lastPaymentDate) {
         WorkOrder wo = new WorkOrder();
         wo.setBusinessUnit(businessUnit);
         wo.setAddressLine1(address);
@@ -370,9 +406,13 @@ public class WorkOrderDao extends AbstractDao<Integer, WorkOrder> {
         wo.setDebtBalanceAmount(Double.valueOf(amount));
         wo.setIsAssigned(Short.valueOf("0"));
         wo.setIsClosed(Short.valueOf("0"));
+//        wo.setCurrentBill(currentBill);
+//        wo.setLastPaymentAmount(Double.valueOf(lastPaidAmount));
+//        wo.setLastPaymentDate(lastPaymentDate);
 
         WorkOrder w = save(wo);
         return w.getTicketId();
+
     }
 
     public WorkOrder createWorkOrderV2(QueueType qt, String string, String string0, String businessUnit, String summary, String description, String phone, String city, String address, String tarriff, String billingID, String emcc, String string1, String string2, String reportedBy, String customername) {
@@ -395,6 +435,7 @@ public class WorkOrderDao extends AbstractDao<Integer, WorkOrder> {
         wo.setPriority("Low");
         wo.setReferenceType("Billing ID");
         wo.setReferenceTypeData(billingID);
+        wo.setIsAssigned(Short.valueOf("0"));
         wo.setState("Lagos");
         wo.setSummary(summary);
         wo.setToken(RandomStringUtils.randomAlphanumeric(30));
@@ -405,7 +446,7 @@ public class WorkOrderDao extends AbstractDao<Integer, WorkOrder> {
         return w;
     }
 
-    public void addRemark(String emcc, String ticketId, String comment, String string) {
+    public void addRemark(String emcc, String ticketId, String comment, String string, Double amount) {
         WorkOrderRemark wor = new WorkOrderRemark();
         wor.setComment(comment);
         wor.setChannel(emcc);
@@ -416,6 +457,7 @@ public class WorkOrderDao extends AbstractDao<Integer, WorkOrder> {
         wor.setCreateTime(new Date());
         wor.setCreatedBy(findUserById(1));
         wor.setCreatedByName(findUserById(1).getFirstname());
+        wor.setAmount(amount);
         wora.save(wor);
     }
 
@@ -473,9 +515,15 @@ public class WorkOrderDao extends AbstractDao<Integer, WorkOrder> {
     }
 
     public List<WorkOrder> findNonMigratedWorkOrders() {
-        String sql = "select * from work_order where queue_type_id = 359 and current_status not like 'COMPLETE%'";
+
+        String sql = " select * from work_order where queue_type_id in ((select config_value from config where "
+                + "config_key= 'metering_plan_queue_type'),"
+                + "(select config_value from config where config_key= 'installation_queue_type')) "
+                + "and current_status not like 'INSTALLATION_COMPLETED'";
         return getEntityManager().createNativeQuery(sql, WorkOrder.class).getResultList();
     }
+    
+    
 
     public int createWorkOrder(WorkOrderMessage worder) {
         QueueType qt = getQueueTypeByID(worder.getQueueTypeId());
@@ -494,7 +542,10 @@ public class WorkOrderDao extends AbstractDao<Integer, WorkOrder> {
                 "",
                 "",
                 worder.getReportedBy(),
-                worder.getCustomerName(), "0");
+                worder.getCustomerName(), "0",
+                worder.getCurrentBill(),
+                worder.getLastPaymentAmount(),
+                worder.getLastPaymentDate());
     }
 
     public WorkOrder createWorkOrder(WorkOrder wo) {
@@ -521,6 +572,23 @@ public class WorkOrderDao extends AbstractDao<Integer, WorkOrder> {
             }
         }
         return new WorkOrder();
+    }
+
+    public WorkOrderEnumerationBody findByTicketIdEnum(Integer ticketId) {
+        List<WorkOrder> resultList = getEntityManager().
+                createNativeQuery("select * from work_order where ticket_id = ? ", WorkOrder.class).
+                setParameter(1, ticketId)
+                .getResultList();
+        List<EnumerationWorkOrder> ewos = getEntityManager().
+                createNativeQuery("select * from enumeration_work_order where work_order_id = ? ", EnumerationWorkOrder.class).
+                setParameter(1, ticketId)
+                .getResultList();
+        if (resultList != null && ewos !=null) {
+            if (resultList.size() > 0 && ewos.size() >0) {
+                return new WorkOrderEnumerationBody(resultList.get(0), ewos.get(0));
+            }
+        }
+        return new WorkOrderEnumerationBody();
     }
 
     public List<WorkOrderDownloadModel> getWorkOrders(String district, String from, String to, String queue, String queueType, String priority, String status, String billingId, String ticketId, String reportedBy) {
@@ -575,6 +643,8 @@ public class WorkOrderDao extends AbstractDao<Integer, WorkOrder> {
         if (reportedBy != null) {
             sql += String.format("and reported_by ='%s'", reportedBy);
         }
+
+        sql += " and current_status not like '%OBSOLETE%";
 
         logger.info("Compiled SQL " + sql);
         List<WorkOrderDownloadModel> model = new ArrayList();
@@ -780,6 +850,7 @@ public class WorkOrderDao extends AbstractDao<Integer, WorkOrder> {
         String sql = "select concat(substring(firstname, 1,1), substring(lastname, 1,1)) from users where id = " + start;
         try {
             String nit = (String)wdao2.getEm().createNativeQuery(sql).getSingleResult();
+
             return nit;
         } catch (NoResultException noe) {
             return null;
@@ -797,12 +868,52 @@ public class WorkOrderDao extends AbstractDao<Integer, WorkOrder> {
         }
     }
 
+    public Integer createWorkOrder(QueueType qt, RequestObj r) {
+        WorkOrder.WorkOrderBuilder builder = new WorkOrder.WorkOrderBuilder();
+        builder.setAddressLine1(r.getAddress()).setBusinessUnit(r.getBusinessUnit()).setAmount(Double.valueOf(r.getAmount()))
+                .setCity(r.getCity()).setContactNumber(r.getPhone()).setCurrentBill(Double.valueOf(r.getCurrentBill()))
+                .setDescription(r.getDescription()).setDueDate(r.getDueDate())
+                .setLastPaymentAmount(Double.valueOf(r.getLastPaidAmount())).setLastPaymentDate(r.getLastPaymentDate())
+                .setPreviousOutstanding(r.getPreviousOutstanding()).setClosed(Short.valueOf("0")).setActive(1)
+                .setPurpose(r.getPurpose()).setReportedBy(r.getReportedBy()).setSummary(r.getSummary()).setQueueType(qt)
+                .setCreateTime(new Date()).setCurrentStatus("OPEN").setPriority("Low").setReferenceType("Billing ID")
+                .setState("Lagos").setChannel("EMCC").setTariff(r.getTariff()).setBillingId(r.getBillingId()).setName(r.getName())
+                .setQueue(qt.getQueueId()).setToken(RandomStringUtils.randomAlphanumeric(30)).setDebtBalanceAmount(0.0).setTicketId(ticketCount());
+
+        if (Optional.fromNullable(r.getStaffId()).isPresent()) {
+            Integer id = getEngineerIdByStaffId(r.getStaffId());
+            if (id != null) {
+                builder.setEngineerId(new Engineer(id));
+                builder.setAssigned(Short.valueOf("1"));
+                builder.setDateAssigned(new Date());
+                builder.setWorkDate(new Date());
+                
+            }
+        }
+
+      
+        builder.setOwnerId(1);
+        WorkOrder build = builder.build();
+        return save(build).getTicketId();
+
+    }
+
     private void updateStaffCode(Integer start, String staffCode) {
         String sql = "update users set staff_code = ? where id = ?";
         wdao2.getEm().
                 createNativeQuery(sql).
                 setParameter(1, staffCode).
                 setParameter(2, start).executeUpdate();
+
+
+    }
+
+    public Integer getEngineerIdByStaffId(Integer staffId) {
+        String query = "select id from engineer where user_id in (select id from users where staff_id = ?) ";
+        List<Integer> engineerId = getEntityManager().createNativeQuery(query).setParameter(1,
+                staffId).getResultList();
+        return engineerId.isEmpty() ? null : engineerId.get(0);
+
     }
 
 }
