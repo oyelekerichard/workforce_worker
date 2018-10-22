@@ -512,10 +512,7 @@ public class WorkOrderDao extends AbstractDao<Integer, WorkOrder> {
 
     public List<WorkOrder> findNonMigratedWorkOrders() {
 
-        String sql = " select * from work_order where queue_type_id in ((select config_value from config where "
-                + "config_key= 'metering_plan_queue_type'),"
-                + "(select config_value from config where config_key= 'installation_queue_type')) "
-                + "and current_status not like 'INSTALLATION_COMPLETED'";
+        String sql = " select * from work_order where queue_type_id in ((select config_value from config where config_key= 'metering_plan_queue_type'),(select config_value from config where config_key= 'installation_queue_type')) and current_status not like 'INSTALLATION_COMPLETED'";
         return getEntityManager().createNativeQuery(sql, WorkOrder.class).getResultList();
     }
     
