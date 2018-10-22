@@ -5,11 +5,6 @@
  */
 package net.crowninteractive.wfmworker.dao;
 
-import java.util.Date;
-//import net.crowninteractive.wfmworker.entity.Engineer;
-import net.crowninteractive.wfmworker.entity.Queue;
-import net.crowninteractive.wfmworker.entity.QueueType;
-import net.crowninteractive.wfmworker.entity.WorkOrder;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;

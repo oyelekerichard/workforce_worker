@@ -5,12 +5,9 @@
  */
 package net.crowninteractive.wfmworker.contoller;
 
-import static com.sun.corba.se.spi.presentation.rmi.StubAdapter.request;
 import java.util.Map;
-import java.util.logging.Level;
 import java.util.logging.Logger;
 import net.crowninteractive.wfmworker.entity.Dashboard;
-import net.crowninteractive.wfmworker.exception.WfmWorkerException;
 import net.crowninteractive.wfmworker.misc.StandardResponse;
 import net.crowninteractive.wfmworker.service.Awesome;
 import net.crowninteractive.wfmworker.service.EnumService;
@@ -18,7 +15,6 @@ import net.crowninteractive.wfmworker.service.Token;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
