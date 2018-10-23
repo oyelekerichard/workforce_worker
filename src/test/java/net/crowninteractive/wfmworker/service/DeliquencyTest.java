@@ -7,7 +7,6 @@ package net.crowninteractive.wfmworker.service;
 
 import java.util.Date;
 import net.crowninteractive.wfmworker.dao.WorkOrderDao;
-import net.crowninteractive.wfmworker.entity.Engineer;
 import net.crowninteractive.wfmworker.entity.Queue;
 import net.crowninteractive.wfmworker.entity.QueueType;
 import net.crowninteractive.wfmworker.entity.WorkOrder;
@@ -38,7 +37,7 @@ public class DeliquencyTest {
                 .setPreviousOutstanding(Double.valueOf("1000")).setToken("64646").setDebtBalanceAmount(0.0)
                 .setPurpose("Bill Payment").setReportedBy("Admin").setSummary("Payment before disconnection").setQueueType(new QueueType(1))
                 .setCreateTime(new Date()).setCurrentStatus("OPEN").setPriority("Low").setReferenceType("Billing ID").setQueue(new Queue(1))
-                .setState("Lagos").setChannel("EMCC").setEngineerId(new Engineer(16)).setTicketId(-934);
+                .setState("Lagos").setChannel("EMCC").setTicketId(-934);
 
         WorkOrder build = builder.build();
         wdao.save(build);
