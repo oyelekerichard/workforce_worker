@@ -870,10 +870,10 @@ public class WorkOrderDao extends AbstractDao<Integer, WorkOrder> {
 
     public Integer createWorkOrder(QueueType qt, RequestObj r) {
         WorkOrder.WorkOrderBuilder builder = new WorkOrder.WorkOrderBuilder();
-        builder.setAddressLine1(r.getAddress()).setBusinessUnit(r.getBusinessUnit()).setAmount(Double.valueOf(r.getAmount()))
-                .setCity(r.getCity()).setContactNumber(r.getPhone()).setCurrentBill(Double.valueOf(r.getCurrentBill()))
+        builder.setAddressLine1(r.getAddress()).setBusinessUnit(r.getBusinessUnit()).setAmount(r.getAmount()==null? Double.valueOf(0.00):Double.valueOf(r.getAmount()))
+                .setCity(r.getCity()).setContactNumber(r.getPhone()).setCurrentBill(r.getCurrentBill()== null? Double.valueOf(0.00):Double.valueOf(r.getCurrentBill()))
                 .setDescription(r.getDescription()).setDueDate(r.getDueDate())
-                .setLastPaymentAmount(Double.valueOf(r.getLastPaidAmount())).setLastPaymentDate(r.getLastPaymentDate())
+                .setLastPaymentAmount(r.getLastPaidAmount()== null ? Double.valueOf(0.00):Double.valueOf(r.getLastPaidAmount())).setLastPaymentDate(r.getLastPaymentDate())
                 .setPreviousOutstanding(r.getPreviousOutstanding()).setClosed(Short.valueOf("0")).setActive(1)
                 .setPurpose(r.getPurpose()).setReportedBy(r.getReportedBy()).setSummary(r.getSummary()).setQueueType(qt)
                 .setCreateTime(new Date()).setCurrentStatus("OPEN").setPriority("Low").setReferenceType("Billing ID")
