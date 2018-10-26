@@ -150,7 +150,7 @@ public class ReportReceiver {
     }
 
     public void processWriteV2(String from, String to, String email) throws FileNotFoundException, IOException, EmailException, WfmWorkerException {
-
+        System.out.println("-------------------------About to process report ---------");
         String commaSeparated = usersDao.findByEmail(email).getDistricts();
 
         String queueTypeId = usersDao.getQueueTypeIds(email);
