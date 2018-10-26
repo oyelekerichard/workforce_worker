@@ -157,7 +157,7 @@ public class WorkOrderDao extends AbstractDao<Integer, WorkOrder> {
                     return null;
                 }
                 Query q = getEntityManager().createNativeQuery(
-                        String.format("select create_time from work_order_update  where work_order_id=%d and "
+                        String.format("select DATE_FORMAT(create_time, '%m/%d/%Y %H:%i') from work_order_update  where work_order_id=%d and "
                                 + "work_order_status_id=%d order by id desc limit 1", w.getId(), w.getWorkOrderStatusId().getId()));
                 if (q.getResultList() != null) {
 
