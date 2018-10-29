@@ -62,12 +62,12 @@ public class SendApprovalEmails extends TimerTask {
                     String url = Config.getInstance().wfmFrontendUrl();
                     String items = getItems(requests.get(workorderId));
                     for (String recipient : recipients) {
-                        String content = String.format(template,workOrder.getSummary(), workOrder.getDescription(), items,url).replaceFirst("(%%)","%");
+                      //  String content = String.format(template,workOrder.getSummary(), workOrder.getDescription(), items,url).replaceFirst("(%%)","%");
 
                         System.out.println("SendApprovalEmails to " + recipient);
-                        emailSender.sendNoReplyEmail(
-                                "INVENTORY APPROVAL FOR WORK ORDER #" + workOrder.getTicketId(), recipient,
-                                content);
+//                        emailSender.sendNoReplyEmail(
+//                                "INVENTORY APPROVAL FOR WORK ORDER #" + workOrder.getTicketId(), recipient,
+//                                content);
                         System.out.println("SendApprovalEmails sent to " + recipient);
                     }
                     updateAll(requests.get(workorderId));
