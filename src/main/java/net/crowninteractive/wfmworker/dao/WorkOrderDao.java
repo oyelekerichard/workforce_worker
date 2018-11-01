@@ -30,6 +30,7 @@ import net.crowninteractive.wfmworker.exception.WfmWorkerException;
 import net.crowninteractive.wfmworker.misc.WorkOrderDownloadModel;
 import net.crowninteractive.wfmworker.misc.WorkOrderEnumerationBody;
 import org.apache.commons.lang3.RandomStringUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.time.DateFormatUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -214,7 +215,7 @@ public class WorkOrderDao extends AbstractDao<Integer, WorkOrder> {
         QueueType qt = getQueueTypeByID(wot.getQueueTypeId());
         EnumerationWorkOrder enumerationWorkOrder = getEnumerationWorkOrder(wot.getToken());
         int ticketId = this.createWorkOrder(wot, qt);
-        
+
         //update work_order
         if (ticketId != 0) {
             wot.setTicketId(ticketId);
@@ -515,8 +516,6 @@ public class WorkOrderDao extends AbstractDao<Integer, WorkOrder> {
         String sql = " select * from work_order where queue_type_id in ((select config_value from config where config_key= 'metering_plan_queue_type'),(select config_value from config where config_key= 'installation_queue_type')) and current_status not like 'INSTALLATION_COMPLETED'";
         return getEntityManager().createNativeQuery(sql, WorkOrder.class).getResultList();
     }
-    
-    
 
     public int createWorkOrder(WorkOrderMessage worder) {
         QueueType qt = getQueueTypeByID(worder.getQueueTypeId());
@@ -576,8 +575,8 @@ public class WorkOrderDao extends AbstractDao<Integer, WorkOrder> {
                 createNativeQuery("select * from enumeration_work_order where work_order_id = ? ", EnumerationWorkOrder.class).
                 setParameter(1, ticketId)
                 .getResultList();
-        if (resultList != null && ewos !=null) {
-            if (resultList.size() > 0 && ewos.size() >0) {
+        if (resultList != null && ewos != null) {
+            if (resultList.size() > 0 && ewos.size() > 0) {
                 return new WorkOrderEnumerationBody(resultList.get(0), ewos.get(0));
             }
         }
@@ -871,18 +870,16 @@ public class WorkOrderDao extends AbstractDao<Integer, WorkOrder> {
                 .setState("Lagos").setChannel("EMCC").setTariff(r.getTariff()).setBillingId(r.getBillingId()).setName(r.getName())
                 .setQueue(qt.getQueueId()).setToken(RandomStringUtils.randomAlphanumeric(30)).setDebtBalanceAmount(0.0).setTicketId(ticketCount());
 
-        if (Optional.fromNullable(r.getStaffId()).isPresent()) {
-            Integer id = getEngineerIdByStaffId(r.getStaffId());
-            if (id != null) {
-                builder.setEngineerId(new Engineer(id));
-                builder.setAssigned(Short.valueOf("1"));
-                builder.setDateAssigned(new Date());
-                builder.setWorkDate(new Date());
-                
-            }
+        Integer found = Optional.fromNullable(r.getStaffId()).isPresent() ? getEngineerIdByStaffId(r.getStaffId()) : getEngineerIdByBook(r.getAccountNumber(), qt.getId());
+
+        if (found != null) {
+            builder.setEngineerId(new Engineer(found));
+            builder.setAssigned(Short.valueOf("1"));
+            builder.setDateAssigned(new Date());
+            builder.setWorkDate(new Date());
+
         }
 
-      
         builder.setOwnerId(1);
         WorkOrder build = builder.build();
         return save(build).getTicketId();
@@ -903,6 +900,24 @@ public class WorkOrderDao extends AbstractDao<Integer, WorkOrder> {
         List<Integer> engineerId = getEntityManager().createNativeQuery(query).setParameter(1,
                 staffId).getResultList();
         return engineerId.isEmpty() ? null : engineerId.get(0);
+    }
+
+    public Integer getEngineerIdByBook(String an, Integer queueTypeId) {
+        String query = "select id from engineer where book_number like ? limit 1";
+        List<Integer> engineerId = getEntityManager().createNativeQuery(query).setParameter(1,
+                "%" + StringUtils.substring(an, 0, 6) + "%").getResultList();
+        if (engineerId.isEmpty()) {
+            System.out.println("------no engineer within book number --------");
+            return null;
+        }
+        String query2 = "select * from queue_type where id = ? and auto_assign_resource_to_book = ?";
+        List<QueueType> qts = getEntityManager().createNativeQuery(query2, QueueType.class).setParameter(1,
+                queueTypeId).setParameter(2, 1).getResultList();
+        if (qts.isEmpty()) {
+            System.out.println("-----------queue  type not enabled for auto assign to resouce ");
+            return null;
+        }
+        return engineerId.get(0);
     }
 
 }
