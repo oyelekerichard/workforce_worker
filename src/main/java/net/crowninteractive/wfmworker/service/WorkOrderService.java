@@ -221,9 +221,13 @@ public class WorkOrderService {
                     wdao.addRemark("Emcc", String.valueOf(wor.getTicketId()), r.getDescription(), "1", Double.valueOf(r.getAmount()));
 
                     Integer found = Optional.fromNullable(r.getStaffId()).isPresent() ? wdao.getEngineerIdByStaffId(r.getStaffId()) : wdao.getEngineerIdByBook(r.getAccountNumber(), qt.getId());
+                    if (found != null) {
+                        wor.setEngineerId(new Engineer(found));
+                        wor.setIsAssigned(Short.valueOf("1"));
+                        wor.setDateAssigned(new Date());
+                        wdao.edit(wor);
+                    }
 
-                    wor.setEngineerId(new Engineer(found));
-                    wdao.edit(wor);
                     ticketId = wor.getTicketId();
                 }
                 return StandardResponse.ok(ticketId);
