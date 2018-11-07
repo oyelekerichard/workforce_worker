@@ -210,31 +210,37 @@ public class WorkOrderService {
             //fetch queueTypeToken
             QueueType qt = wdao.getEmccConfigDisconnectQueueTypeAndQueue();
             if (qt != null) {
-                int ticketId = 0;
-                List<WorkOrder> wo = wdao.getLastWorkOrderinQueueType(r.getBillingId(), qt.getId());
-
-                if (wo.isEmpty()) {
-                    ticketId = wdao.createWorkOrder(qt, r);
-                    return StandardResponse.ok(ticketId);
-                } else {
-                    WorkOrder wor = wo.get(0);
-                    wdao.addRemark("Emcc", String.valueOf(wor.getTicketId()), r.getDescription(), "1", Double.valueOf(r.getAmount()));
-
-                    Integer found = Optional.fromNullable(r.getStaffId()).isPresent() ? wdao.getEngineerIdByStaffId(r.getStaffId()) : wdao.getEngineerIdByBook(r.getAccountNumber(), qt.getId());
-                    if (found != null) {
-                        wor.setEngineerId(new Engineer(found));
-                        wor.setIsAssigned(Short.valueOf("1"));
-                        wor.setDateAssigned(new Date());
-                        wdao.edit(wor);
-                    }
-
-                    ticketId = wor.getTicketId();
-                }
-                return StandardResponse.ok(ticketId);
-
-            } else {
                 return StandardResponse.disconnectionQueueTypeNotSet();
             }
+
+            int ticketId = 0;
+            List<WorkOrder> wo = wdao.getLastWorkOrderinQueueType(r.getBillingId(), qt.getId());
+
+            if (wo.isEmpty()) {
+                ticketId = wdao.createWorkOrder(qt, r);
+                return StandardResponse.ok(ticketId);
+            }
+            WorkOrder wor = wo.get(0);
+            wdao.addRemark("Emcc", String.valueOf(wor.getTicketId()), r.getDescription(), "1", Double.valueOf(r.getAmount()));
+
+            Integer found = Optional.fromNullable(r.getStaffId()).isPresent() ? wdao.getEngineerIdByStaffId(r.getStaffId()) : wdao.getEngineerIdByBook(r.getAccountNumber(), qt.getId());
+            if (found != null) {
+                wor.setEngineerId(new Engineer(found));
+                wor.setIsAssigned(Short.valueOf("1"));
+                wor.setDateAssigned(new Date());
+                wor.setLastPaymentAmount(Double.valueOf(r.getLastPaidAmount()== null ? "0:00" : r.getLastPaidAmount()));
+                wor.setLastPaymentDate(r.getLastPaymentDate());
+                wor.setCurrentBill(Double.valueOf(r.getCurrentBill() ==  null? "0.00" : r.getCurrentBill()));
+                wor.setPreviousOutstanding(r.getPreviousOutstanding());
+                wor.setDueDate(r.getDueDate());
+                wor.setAmount(Double.valueOf(r.getAmount() == null ? "0.00": r.getAmount()));
+                wdao.edit(wor);
+            }
+
+            ticketId = wor.getTicketId();
+
+            return StandardResponse.ok(ticketId);
+
         } catch (Exception ex) {
             ex.printStackTrace();
             return null;
