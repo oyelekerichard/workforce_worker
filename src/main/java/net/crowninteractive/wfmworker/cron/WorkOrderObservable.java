@@ -36,31 +36,33 @@ public class WorkOrderObservable extends TimerTask {
         try {
             List<WorkOrder> nonMigrated = dao.findNonMigratedWorkOrders();
             long count = nonMigrated.stream().count();
-            System.out.println(">>>>>>>>> count >>>>found >>>>>" + count);
 
-            if (!nonMigrated.isEmpty()) {
-                nonMigrated.forEach(dim -> {
-                    if (current.containsKey(dim.getTicketId())) {
-                        WorkOrder current = this.current.get(dim.getTicketId());
-                        if (!current.getCurrentStatus().equals(dim.getCurrentStatus())) {
-                            System.out.println(">>>>>>>>>>>Sending message update >>>");
-                            UpdateMessage um = new UpdateMessage(dim.getReferenceTypeData(), dim.getCurrentStatus());
-                            System.out.println(">>>>>>>>>>>>>>>>>>>>" + um);
-                            woob.update(new Gson().
-                                    toJson(um));
-                            this.current.put(current.getTicketId(), dim);
-                        } else if (dim.getCurrentStatus().equals("METER_COMMISIONED")) {
-                            UpdateMessage um = new UpdateMessage(dim.getReferenceTypeData(), dim.getCurrentStatus());
-                            woob.update(new Gson().
-                                    toJson(um));
-                            System.out.println(">>>>>>>>>>>remove message update >>>");
-                            this.current.remove(dim.getTicketId());
-                            System.out.println(">>>>>>>removing um " + um);
+            System.out.println(">>>>>>>>> count >>>>found >>>>>"+count);
+            if (nonMigrated != null) {
+                if (nonMigrated.size() > 0) {
+                    nonMigrated.forEach(dim -> {
+                        if (current.containsKey(dim.getTicketId())) {
+                            WorkOrder current = this.current.get(dim.getTicketId());
+                            if (!current.getCurrentStatus().equals(dim.getCurrentStatus())) {
+                                System.out.println(">>>>>>>>>>>Sending message update >>>");
+                                UpdateMessage um = new UpdateMessage(dim.getReferenceTypeData(), dim.getCurrentStatus());
+                                System.out.println(">>>>>>>>>>>>>>>>>>>>" + um);
+                                woob.update(new Gson().
+                                        toJson(um));
+                                this.current.put(current.getTicketId(), dim);
+                            } else if (dim.getCurrentStatus().equals("METER_COMMISIONED")) {
+                                UpdateMessage um = new UpdateMessage(dim.getReferenceTypeData(), dim.getCurrentStatus());
+                                woob.update(new Gson().
+                                        toJson(um));
+                                System.out.println(">>>>>>>>>>>remove message update >>>");
+                                this.current.remove(dim.getTicketId());
+                                System.out.println(">>>>>>>removing um " + um);
+                            }
+                        } else {
+                            current.put(dim.getTicketId(), dim);
                         }
-                    } else {
-                        current.put(dim.getTicketId(), dim);
-                    }
-                });
+                    });
+                }
             }
 
         } catch (Exception e) {
