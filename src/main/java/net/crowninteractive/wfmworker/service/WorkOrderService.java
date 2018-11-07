@@ -209,7 +209,7 @@ public class WorkOrderService {
 
             //fetch queueTypeToken
             QueueType qt = wdao.getEmccConfigDisconnectQueueTypeAndQueue();
-            if (qt != null) {
+            if (qt == null) {
                 return StandardResponse.disconnectionQueueTypeNotSet();
             }
 
