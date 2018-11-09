@@ -907,6 +907,7 @@ public class WorkOrderDao extends AbstractDao<Integer, WorkOrder> {
         String query = "select id from engineer where book_number like ? limit 1";
         List<Integer> engineerId = getEntityManager().createNativeQuery(query).setParameter(1,
                 "%" + StringUtils.substring(an, 0, 6) + "%").getResultList();
+        System.out.println(">>>>>>>>>>>>>ENgineer  book >>>>>>"+ StringUtils.substring(an, 0, 6));
         if (engineerId.isEmpty()) {
             System.out.println("------no engineer within book number --------");
             return null;
