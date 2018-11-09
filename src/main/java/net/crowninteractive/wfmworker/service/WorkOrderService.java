@@ -223,7 +223,7 @@ public class WorkOrderService {
             WorkOrder wor = wo.get(0);
             wdao.addRemark("Emcc", String.valueOf(wor.getTicketId()), r.getDescription(), "1", Double.valueOf(r.getAmount()));
 
-            Integer found = r.getStaffId()> 0 ? wdao.getEngineerIdByStaffId(r.getStaffId()) : wdao.getEngineerIdByBook(r.getAccountNumber(), qt.getId());
+            Integer found = Optional.fromNullable(r.getStaffId()).isPresent() ? wdao.getEngineerIdByStaffId(r.getStaffId()) : wdao.getEngineerIdByBook(r.getAccountNumber(), qt.getId());
             if (found != null) {
                 wor.setEngineerId(new Engineer(found));
                 wor.setIsAssigned(Short.valueOf("1"));

@@ -61,7 +61,7 @@ public class RequestObj {
     private String orderIdStatus;
     private Double previousOutstanding;
     private Date dueDate;
-    private Integer staffId;
+    private String staffId;
 
     public String getAccountNumber() {
         return accountNumber;
@@ -439,11 +439,11 @@ public class RequestObj {
         this.dueDate = dueDate;
     }
 
-    public Integer getStaffId() {
+    public String getStaffId() {
         return staffId;
     }
 
-    public void setStaffId(Integer staffId) {
+    public void setStaffId(String staffId) {
         this.staffId = staffId;
     }
 

@@ -896,10 +896,10 @@ public class WorkOrderDao extends AbstractDao<Integer, WorkOrder> {
 
     }
 
-    public Integer getEngineerIdByStaffId(Integer staffId) {
+    public Integer getEngineerIdByStaffId(String staffId) {
         String query = "select id from engineer where user_id in (select id from users where staff_id = ?) ";
         List<Integer> engineerId = getEntityManager().createNativeQuery(query).setParameter(1,
-                staffId).getResultList();
+                Integer.parseInt(staffId)).getResultList();
         return engineerId.isEmpty() ? null : engineerId.get(0);
     }
 
