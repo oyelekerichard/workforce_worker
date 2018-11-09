@@ -150,14 +150,15 @@ public class WorkOrderDao extends AbstractDao<Integer, WorkOrder> {
     public String getDateResolved(WorkOrder w) {
         if (w.getIsClosed() != null) {
             if (w.getIsClosed() == 1) {
-                return DateFormatUtils.format(w.getClosedTime(), "yyyy-MM-dd HH:mm:SS");
+                return w.getClosedTime() == null ? null : DateFormatUtils.format(w.getClosedTime(), "yyyy-MM-dd HH:mm:SS");
             } else if (w.getCurrentStatus().toLowerCase().equals("completed") || w.getCurrentStatus().toLowerCase().equals("resolved")) {
                 if (w.getWorkOrderStatusId() == null) {
                     return null;
                 }
-                Query q = getEntityManager().createNativeQuery(
-                        String.format("select create_time from work_order_update  where work_order_id=%d and "
-                                + "work_order_status_id=%d order by id desc limit 1", w.getId(), w.getWorkOrderStatusId().getId()));
+                Query q = getEntityManager().createNativeQuery("select DATE_FORMAT(create_time, '%Y-%m-%d %H:%i:%s') from work_order_update  where work_order_id=?1 and "
+                        + "work_order_status_id=?2 order by id desc limit 1").
+                        setParameter(1, w.getId()).
+                        setParameter(2, w.getWorkOrderStatusId().getId());
                 if (q.getResultList() != null) {
 
                     if (!q.getResultList().isEmpty()) {
@@ -176,7 +177,7 @@ public class WorkOrderDao extends AbstractDao<Integer, WorkOrder> {
         }
         return null;
     }
-
+    
     public String getQueueTypeName(int i, QueueType queueTypeId) {
         String qry = "select name from queue_type where id=%d and owner_id=%d";
         qry = String.format(qry, queueTypeId.getId(), i);
