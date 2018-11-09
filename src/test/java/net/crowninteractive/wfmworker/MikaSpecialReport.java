@@ -12,6 +12,8 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import net.crowninteractive.wfmworker.dao.AbstractDao;
 import net.crowninteractive.wfmworker.dao.UsersDao;
 import net.crowninteractive.wfmworker.dao.WorkOrderDao;
@@ -29,6 +31,7 @@ import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.ss.util.CellRangeAddress;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
+import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ContextConfiguration;
@@ -44,15 +47,26 @@ public class MikaSpecialReport {
 
     @Autowired
     private WorkOrderDao wdao;
-    
+
     @Autowired
     private UsersDao usersDao;
-    
-    @Autowired
-    private AbstractDao adao;
-    
+
+  
+
     @Autowired
     private SendEmail emm;
+
+    @Test
+    public void testMika()  {
+        Runnable runnable = () -> {
+            try {
+                processWriteV2("2016-01-01", "2018-10-31", "mika.alanko@crowninteractive.com");
+            } catch (IOException | EmailException | WfmWorkerException ex) {
+                Logger.getLogger(MikaSpecialReport.class.getName()).log(Level.SEVERE, null, ex);
+            }
+        };
+        runnable.run();
+    }
 
     public void processWriteV2(String from, String to, String email) throws FileNotFoundException, IOException, EmailException, WfmWorkerException {
 
@@ -82,7 +96,6 @@ public class MikaSpecialReport {
         for (int i = 0; i < districts.size(); i++) {
 
             List<WorkOrder> lwListt = wdao.getWorkOrderByParamsV2(districts.get(i), from, to, queueTypeId, tariffs);
-            
 
             Sheet sheet = workbook.createSheet(districts.get(i));
 
