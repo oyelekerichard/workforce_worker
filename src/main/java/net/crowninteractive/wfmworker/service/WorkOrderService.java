@@ -234,6 +234,8 @@ public class WorkOrderService {
                 wor.setPreviousOutstanding(r.getPreviousOutstanding());
                 wor.setDueDate(r.getDueDate());
                 wor.setAmount(Double.valueOf(r.getAmount() == null ? "0.00": r.getAmount()));
+                wor.setDescription(r.getDescription());
+                
                 wdao.edit(wor);
             }
 
