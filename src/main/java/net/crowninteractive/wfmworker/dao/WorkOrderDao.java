@@ -912,6 +912,17 @@ public class WorkOrderDao extends AbstractDao<Integer, WorkOrder> {
         return engineerId.isEmpty() ? null : engineerId.get(0);
 
     }
+    
+    public List<WorkOrder> getWorkOrderByParamsV2(String district, String from, String to, String queueTypeIds, String tariffs) {
+        String qry = "select * from work_order where business_unit='%s' and date(create_time) >= date('%s') and date(create_time) <= date('%s') "
+                + "and queue_type_id in (" + queueTypeIds + ")";
+        if (tariffs.length() > 0) {
+            qry.concat(" and customer_tariff in (" + tariffs + ")");
+        }
+        Query q = getEntityManager().createNativeQuery(String.format(qry, district, from, to), WorkOrder.class);
+        return q.getResultList();
+    }
+
 
 }
 
