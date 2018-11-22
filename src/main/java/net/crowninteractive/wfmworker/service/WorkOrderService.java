@@ -206,7 +206,7 @@ public class WorkOrderService {
 
     public Awesome addToDisconnectionQueue(RequestObj r) {
         try {
-
+            System.out.println(">>>>>>>>>adding to disconnection queue ???>>>>>>>..");
             //fetch queueTypeToken
             QueueType qt = wdao.getEmccConfigDisconnectQueueTypeAndQueue();
             if (qt == null) {

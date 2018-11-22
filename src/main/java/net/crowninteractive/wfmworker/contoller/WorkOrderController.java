@@ -40,6 +40,7 @@ public class WorkOrderController extends Extension {
 
     @RequestMapping(method = RequestMethod.POST, value = "emcc_disconnect")
     public String addToDisconnectQueue(@RequestBody RequestObj obj, @Context HttpServletRequest request) {
+        System.out.println(">>>>>>>>>>>>>>>Ending Method >>>>>>>>>>>>");
         Awesome awe;
         try {
             System.out.println(obj);
