@@ -222,25 +222,31 @@ public class WorkOrderService {
             }
             WorkOrder wor = wo.get(0);
             wdao.addRemark("Emcc", String.valueOf(wor.getTicketId()), r.getDescription(), "1", Double.valueOf(r.getAmount()));
-            
+
+            System.out.println(">>>>>Updated Loggs >>>>>>>>>>..");
             System.out.println(">>>>>>in Service method >>>>>>>>>>>");
-            System.out.println(">>>>>>..Acount number in service "+r.getBillingId());
-            
-            Integer found = Optional.fromNullable(r.getStaffId()).isPresent() ? wdao.getEngineerIdByStaffId(r.getStaffId()) : wdao.getEngineerIdByBook(r.getBillingId(), qt.getId());
-            
+            System.out.println(">>>>>>..Acount number in service " + r.getBillingId());
+
+            Integer found = null;
+            if (Optional.fromNullable(r.getStaffId()).isPresent()) {
+                found = wdao.getEngineerIdByStaffId(r.getStaffId());
+            } else {
+                found = wdao.getEngineerIdByBook(r.getBillingId(), qt.getId());
+            }
+
             if (found != null) {
-                System.out.println(">>>>>>>>>>>updating the work order >>>>>>>>>>> to assign to  "+r.getBillingId());
+                System.out.println(">>>>>>>>>>>updating the work order >>>>>>>>>>> to assign to  " + r.getBillingId());
                 wor.setEngineerId(new Engineer(found));
                 wor.setIsAssigned(Short.valueOf("1"));
                 wor.setDateAssigned(new Date());
-                wor.setLastPaymentAmount(Double.valueOf(r.getLastPaidAmount()== null ? "0:00" : r.getLastPaidAmount()));
+                wor.setLastPaymentAmount(Double.valueOf(r.getLastPaidAmount() == null ? "0:00" : r.getLastPaidAmount()));
                 wor.setLastPaymentDate(r.getLastPaymentDate());
-                wor.setCurrentBill(Double.valueOf(r.getCurrentBill() ==  null? "0.00" : r.getCurrentBill()));
+                wor.setCurrentBill(Double.valueOf(r.getCurrentBill() == null ? "0.00" : r.getCurrentBill()));
                 wor.setPreviousOutstanding(r.getPreviousOutstanding());
                 wor.setDueDate(r.getDueDate());
-                wor.setAmount(Double.valueOf(r.getAmount() == null ? "0.00": r.getAmount()));
+                wor.setAmount(Double.valueOf(r.getAmount() == null ? "0.00" : r.getAmount()));
                 wor.setDescription(r.getDescription());
-                
+
                 wdao.edit(wor);
             }
 
