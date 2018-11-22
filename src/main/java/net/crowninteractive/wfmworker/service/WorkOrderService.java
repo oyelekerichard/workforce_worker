@@ -222,9 +222,14 @@ public class WorkOrderService {
             }
             WorkOrder wor = wo.get(0);
             wdao.addRemark("Emcc", String.valueOf(wor.getTicketId()), r.getDescription(), "1", Double.valueOf(r.getAmount()));
-
+            
+            System.out.println(">>>>>>in Service method >>>>>>>>>>>");
+            System.out.println(">>>>>>..Acount number in service "+r.getBillingId());
+            
             Integer found = Optional.fromNullable(r.getStaffId()).isPresent() ? wdao.getEngineerIdByStaffId(r.getStaffId()) : wdao.getEngineerIdByBook(r.getBillingId(), qt.getId());
+            
             if (found != null) {
+                System.out.println(">>>>>>>>>>>updating the work order >>>>>>>>>>> to assign to  "+r.getBillingId());
                 wor.setEngineerId(new Engineer(found));
                 wor.setIsAssigned(Short.valueOf("1"));
                 wor.setDateAssigned(new Date());

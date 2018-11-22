@@ -897,6 +897,7 @@ public class WorkOrderDao extends AbstractDao<Integer, WorkOrder> {
     }
 
     public Integer getEngineerIdByStaffId(String staffId) {
+        System.out.println(">>>>>>>>>getting engineer by staff id >>>>>>>>>."+staffId);
         String query = "select id from engineer where user_id in (select id from users where staff_id = ?) ";
         List<Integer> engineerId = getEntityManager().createNativeQuery(query).setParameter(1,
                 Integer.parseInt(staffId)).getResultList();
@@ -904,6 +905,7 @@ public class WorkOrderDao extends AbstractDao<Integer, WorkOrder> {
     }
 
     public Integer getEngineerIdByBook(String an, Integer queueTypeId) {
+        System.out.println(">>>>>>>>getting engineer by  acconutnumber "+an);
         String query = "select id from engineer where book_number like ? limit 1";
         List<Integer> engineerId = getEntityManager().createNativeQuery(query).setParameter(1,
                 "%" + StringUtils.substring(an, 0, 6) + "%").getResultList();
