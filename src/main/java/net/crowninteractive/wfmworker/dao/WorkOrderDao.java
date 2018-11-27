@@ -907,8 +907,7 @@ public class WorkOrderDao extends AbstractDao<Integer, WorkOrder> {
         String query = "select id from engineer where book_number like ? limit 1";
         List<Integer> engineerId = getEntityManager().createNativeQuery(query).setParameter(1,
                 "%" + StringUtils.substring(an, 0, 6) + "%").getResultList();
-        System.out.println(">>>>>>>Billing ID "+an);
-        System.out.println(">>>>>>>>>>>>>ENgineer  book >>>>>>"+ StringUtils.substring(an, 0, 6));
+
         if (engineerId.isEmpty()) {
             System.out.println("------no engineer within book number --------");
             return null;
@@ -917,7 +916,6 @@ public class WorkOrderDao extends AbstractDao<Integer, WorkOrder> {
         List<QueueType> qts = getEntityManager().createNativeQuery(query2, QueueType.class).setParameter(1,
                 queueTypeId).setParameter(2, 1).getResultList();
         if (qts.isEmpty()) {
-            System.out.println("-----------queue  type not enabled for auto assign to resouce ");
             return null;
         }
         return engineerId.get(0);
