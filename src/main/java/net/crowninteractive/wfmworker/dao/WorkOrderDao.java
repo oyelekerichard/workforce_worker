@@ -147,7 +147,7 @@ public class WorkOrderDao extends AbstractDao<Integer, WorkOrder> {
         return name;
     }
 
-   public String getDateResolved(WorkOrder w) {
+    public String getDateResolved(WorkOrder w) {
         if (w.getIsClosed() != null) {
             if (w.getIsClosed() == 1) {
                 return w.getClosedTime() == null ? null : DateFormatUtils.format(w.getClosedTime(), "yyyy-MM-dd HH:mm:SS");
@@ -897,7 +897,6 @@ public class WorkOrderDao extends AbstractDao<Integer, WorkOrder> {
     }
 
     public Integer getEngineerIdByStaffId(String staffId) {
-        System.out.println(">>>>>>>>>getting engineer by staff id >>>>>>>>>."+staffId);
         String query = "select id from engineer where user_id in (select id from users where staff_id = ?) ";
         List<Integer> engineerId = getEntityManager().createNativeQuery(query).setParameter(1,
                 Integer.parseInt(staffId)).getResultList();
@@ -905,11 +904,9 @@ public class WorkOrderDao extends AbstractDao<Integer, WorkOrder> {
     }
 
     public Integer getEngineerIdByBook(String an, Integer queueTypeId) {
-        System.out.println(">>>>>>>>getting engineer by  acconutnumber "+an);
         String query = "select id from engineer where book_number like ? limit 1";
         List<Integer> engineerId = getEntityManager().createNativeQuery(query).setParameter(1,
                 "%" + StringUtils.substring(an, 0, 6) + "%").getResultList();
-        System.out.println(">>>>>>>>>>>>>ENgineer  book >>>>>>"+ StringUtils.substring(an, 0, 6));
         if (engineerId.isEmpty()) {
             System.out.println("------no engineer within book number --------");
             return null;
@@ -918,7 +915,6 @@ public class WorkOrderDao extends AbstractDao<Integer, WorkOrder> {
         List<QueueType> qts = getEntityManager().createNativeQuery(query2, QueueType.class).setParameter(1,
                 queueTypeId).setParameter(2, 1).getResultList();
         if (qts.isEmpty()) {
-            System.out.println("-----------queue  type not enabled for auto assign to resouce ");
             return null;
         }
         return engineerId.get(0);

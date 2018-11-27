@@ -206,8 +206,7 @@ public class WorkOrderService {
 
     public Awesome addToDisconnectionQueue(RequestObj r) {
         try {
-            System.out.println(">>>>>>>>>adding to disconnection queue ???>>>>>>>..");
-            //fetch queueTypeToken
+           //fetch queueTypeToken
             QueueType qt = wdao.getEmccConfigDisconnectQueueTypeAndQueue();
             if (qt == null) {
                 return StandardResponse.disconnectionQueueTypeNotSet();
@@ -223,19 +222,16 @@ public class WorkOrderService {
             WorkOrder wor = wo.get(0);
             wdao.addRemark("Emcc", String.valueOf(wor.getTicketId()), r.getDescription(), "1", Double.valueOf(r.getAmount()));
 
-            System.out.println(">>>>>Updated Loggs >>>>>>>>>>..");
-            System.out.println(">>>>>>in Service method >>>>>>>>>>>");
-            System.out.println(">>>>>>..Acount number in service " + r.getBillingId());
-
             Integer found = null;
             if (Optional.fromNullable(r.getStaffId()).isPresent()) {
                 found = wdao.getEngineerIdByStaffId(r.getStaffId());
-            } else {
-                found = wdao.getEngineerIdByBook(r.getBillingId(), qt.getId());
             }
+//            else {
+//                found = wdao.getEngineerIdByBook(r.getBillingId(), qt.getId());
+//            }
 
             if (found != null) {
-                System.out.println(">>>>>>>>>>>updating the work order >>>>>>>>>>> to assign to  " + r.getBillingId());
+              
                 wor.setEngineerId(new Engineer(found));
                 wor.setIsAssigned(Short.valueOf("1"));
                 wor.setDateAssigned(new Date());
@@ -244,6 +240,7 @@ public class WorkOrderService {
                 wor.setCurrentBill(Double.valueOf(r.getCurrentBill() == null ? "0.00" : r.getCurrentBill()));
                 wor.setPreviousOutstanding(r.getPreviousOutstanding());
                 wor.setDueDate(r.getDueDate());
+                wor.setUpdateTime(new Date());
                 wor.setAmount(Double.valueOf(r.getAmount() == null ? "0.00" : r.getAmount()));
                 wor.setDescription(r.getDescription());
 
