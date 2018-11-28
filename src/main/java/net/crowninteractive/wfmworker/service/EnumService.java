@@ -20,6 +20,7 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.logging.Logger;
 import javax.annotation.PostConstruct;
 import net.crowninteractive.wfmworker.dao.BarChartWidget_1;
@@ -31,6 +32,7 @@ import net.crowninteractive.wfmworker.entity.WorkOrderTemp;
 import net.crowninteractive.wfmworker.exception.WfmWorkerException;
 import net.crowninteractive.wfmworker.misc.Config;
 import net.crowninteractive.wfmworker.misc.ExcludeForExcel;
+import net.crowninteractive.wfmworker.misc.StandardResponse;
 import net.crowninteractive.wfmworker.misc.WorkOrderDownloadModel;
 import org.apache.commons.mail.EmailAttachment;
 import org.apache.commons.mail.EmailException;
@@ -398,6 +400,30 @@ public class EnumService {
             L.info("Errors in validating to {} and from {}");
         }
         return new Awesome(0, "Successful");
+    }
+    
+    public Awesome getRequestsList(String district, String from, String to, Integer page,
+            String queue, String queueType, String priority, String status, String billingid,
+            String reportedBy) {
+        try {
+
+            Entry<Integer, List<WorkOrderTemp>> workOrders;
+            List<String> err = validateEnumWorkOrder(to, from);
+            if (err.isEmpty()) {
+                workOrders = wdao.getRequestsList(district, from, to, page, queue, queueType, priority, status, billingid, reportedBy);
+            } else {
+                return StandardResponse.validationErrors("Invalid Date Format");
+            }
+
+            if (workOrders.getValue() != null && !workOrders.getValue().isEmpty()) {
+                return StandardResponse.ok(workOrders);
+            } else {
+                return StandardResponse.noRecords();
+            }
+        } catch (Exception ex) {
+            ex.printStackTrace();
+            return null;
+        }
     }
     
 

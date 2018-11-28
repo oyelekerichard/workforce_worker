@@ -7,6 +7,8 @@ package net.crowninteractive.wfmworker.contoller;
 
 import java.util.Map;
 import java.util.logging.Logger;
+import javax.ws.rs.DefaultValue;
+import javax.ws.rs.QueryParam;
 import net.crowninteractive.wfmworker.entity.Dashboard;
 import net.crowninteractive.wfmworker.entity.WorkOrder;
 import net.crowninteractive.wfmworker.exception.WfmWorkerException;
@@ -68,6 +70,30 @@ public class EnumController {
 
         return new ResponseEntity<String>("enum work order update successful ", HttpStatus.OK);
     }
+    
+    @RequestMapping(method = RequestMethod.GET, value = "enumeration_requests")
+    public Awesome getEnumerationRequests(
+            @RequestParam(defaultValue = "1", value = "page") Integer page,
+            @RequestParam(defaultValue = "business_unit", value = "district", required = false) String district,
+            @RequestParam(defaultValue = "create_time", value = "from", required = false) String from,
+            @RequestParam(defaultValue = "create_time", value = "to", required = false) String to,
+            @RequestParam(value = "queue", required = false) String queue,
+            @RequestParam(value = "queueType", required = false) String queueType,
+            @RequestParam(value = "priority", required = false) String priority,
+            @RequestParam(value = "status", required = false) String status,
+            @RequestParam(value = "billingId", required = false) String billingId,
+            @RequestParam(value = "reportedBy", required = false) String reportedBy) {
+        Awesome awe;
+        try {
+            awe = enumService.getRequestsList(district, from, to, page, queue, queueType, priority,
+                    status, billingId,reportedBy);
+
+        } catch (Exception ex) {
+            ex.printStackTrace();
+            awe = StandardResponse.systemError();
+        }
+        return awe;
+}
 
     @RequestMapping(method = RequestMethod.GET, value = "download_workorder")
     public Awesome downloadWorkOrder(@RequestParam("email") String emailAddress,
