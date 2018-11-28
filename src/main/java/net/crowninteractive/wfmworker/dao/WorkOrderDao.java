@@ -807,7 +807,8 @@ public class WorkOrderDao extends AbstractDao<Integer, WorkOrder> {
     }
 
     public Map.Entry<Integer, List<WorkOrderTemp>> getRequestsList(String district, String from, String to, Integer page, String queue, String queueType, String priority, String status, String billingId,String reportedBy) {
-
+        page = (page - 1) * 1000;
+        
         String sql = "SELECT `id`,customer_tariff,ticket_id,"
                 + "(select name from queue where id=wt.queue_id) as queue_id,"
                 + "(select name from queue_type where id=wt.queue_type_id) "
@@ -863,13 +864,15 @@ public class WorkOrderDao extends AbstractDao<Integer, WorkOrder> {
         if (reportedBy != null) {
             sql += String.format("and reported_by ='%s'", reportedBy);
         }
-
-        logger.info("Compiled SQL " + sql);
+        
+        final String sql2 = sql + " limit 1000 offset " + page;
+        
+        logger.info("Compiled SQL " + sql2);
         List<WorkOrderTemp> model = new ArrayList();
         //initialize count
         Integer val = null;
         List<Object[][]> list = getEntityManager().
-                createNativeQuery(sql).getResultList();
+                createNativeQuery(sql2).getResultList();
         for (Object[] e : list) {
             WorkOrderTemp m = new WorkOrderTemp();
             m.setId((Integer) e[0]);
