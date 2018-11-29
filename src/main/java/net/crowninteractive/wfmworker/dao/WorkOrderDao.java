@@ -816,7 +816,7 @@ public class WorkOrderDao extends AbstractDao<Integer, WorkOrder> {
                 + "as queue_type_id, `summary`, `description`, `contact_number`,"
                 + " `reference_type`, `reference_type_data`, `address_line_1`, "
                 + "`city`, `state`, `business_unit`, `priority`, `create_time`,"
-                + " `channel`, `is_active`, `current_status`, `reported_by`,  `customer_name` "
+                + " `channel`, `is_active`, `current_status`, `reported_by`,  `customer_name`, "
                 + "`disco`, `sub_disco`, `injection_substation`, "
                 + "`injection_substation_name`, `power_transformer`, `power_transformer_name`, "
                 + "`feeder`, `feeder_name`, `ht_pole`, `high_tension_physical_id`, `distribution_substation`, "
@@ -965,6 +965,33 @@ public class WorkOrderDao extends AbstractDao<Integer, WorkOrder> {
         BigInteger enum2 = (BigInteger) getEntityManager().createNativeQuery(sql2).getSingleResult();
 
         return new Object[]{enum1, enum2};
+    }
+    
+    public EnumerationRequestModel getEnumRequestByToken(String token) {
+        
+       final String sql = String.format("select `id`,`customer_tariff`,`ticket_id`, "
+                + "`token`, `owner_id`,(select name from queue where id=wt.queue_id) as queue_id,"
+                + "(select name from queue_type where id=wt.queue_type_id) as queue_type_id, "
+                + "`closed_by`, `summary`, `description`, `contact_number`, `reference_type`, "
+                + "`reference_type_data`, `address_line_1`, `city`, `state`, `business_unit`, "
+                + "`priority`, `create_time`, `closed_time`, `channel`, `is_active`, `is_closed`, "
+                + "`current_status`, `reported_by`, `customer_name`,`disco`, `sub_disco`, `injection_substation`, "
+                + "`injection_substation_name`, `power_transformer`, `power_transformer_name`, `feeder`,`feeder_name`, "
+                + "`ht_pole`, `high_tension_physical_id`, `distribution_substation`, `distribution_substation_name`,`upriser`, `service_pole`, "
+                + "`service_wire`, `nerc_id`,`connection_type`,`transformer` from work_order_temp wt  "
+                + "where token= '%s' ", token);
+      
+        
+        logger.info("Compiled SQL " + sql);
+        
+        try {
+            return (EnumerationRequestModel) getEntityManager().
+                    createNativeQuery(sql).getSingleResult();
+        } catch (NoResultException ex) {
+             ex.printStackTrace();
+            return null;
+        }
+       
     }
 
     public Integer hasNextRecord(Integer start) {

@@ -113,7 +113,19 @@ public class EnumController {
             awe = StandardResponse.systemError();
         }
         return awe;
-}
+    }
+    
+    @RequestMapping(method = RequestMethod.GET, value = "enumeration_requests/{token}")
+    public Awesome getEnumerationRequestByToken(@PathVariable("token") String token) {
+        Awesome awe;
+        try {
+            awe = enumService.getEnumRequestByToken(token);
+
+        } catch (Exception ex) {
+            awe = StandardResponse.errorDuringProcessing();
+        }
+        return awe;
+    }
 
     @RequestMapping(method = RequestMethod.GET, value = "download_workorder")
     public Awesome downloadWorkOrder(@RequestParam("email") String emailAddress,
