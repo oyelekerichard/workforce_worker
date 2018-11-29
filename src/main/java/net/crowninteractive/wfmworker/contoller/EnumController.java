@@ -5,6 +5,7 @@
  */
 package net.crowninteractive.wfmworker.contoller;
 
+import java.util.HashMap;
 import java.util.Map;
 import java.util.logging.Logger;
 import javax.ws.rs.DefaultValue;
@@ -53,6 +54,25 @@ public class EnumController {
     public ResponseEntity approveEnumWorkOrders(@RequestBody Token tokens) {
         String message = enumService.approveWorkOrders(tokens);
         return new ResponseEntity<Awesome>(new Awesome(0, message), HttpStatus.OK);
+    }
+    
+
+    @RequestMapping(method = RequestMethod.GET, value = "report/filter")
+    public Awesome enumerationReport(
+            @RequestParam(value = "businessDistrict", required = false) String businessDistrict,
+            @RequestParam(value = "fromDate", required = false) String fromDate,
+            @RequestParam(value = "toDate", required = false) String toDate) {
+        Map map = null;
+        try {
+            Object[] count = enumService.enumerationReport(businessDistrict, fromDate, toDate);
+            map = new HashMap<String, Long>();
+            map.put("workOrderCount", count[0]);
+            map.put("requestCount", count[1]);
+            return new Awesome(0, "successful", map);
+        } catch (Exception e) {
+            return new Awesome(400, e.getMessage());
+        }
+
     }
 
     @RequestMapping(method = RequestMethod.GET, value = "enumerationDashboard")

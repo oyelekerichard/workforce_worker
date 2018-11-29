@@ -930,6 +930,42 @@ public class WorkOrderDao extends AbstractDao<Integer, WorkOrder> {
         
         return new DefaultMapEntry<>(val, model);
     }
+    
+    public Object[] getEnumerationReport(String district, String fromDate, String toDate) {
+        
+        String sql1 = " select count(*) from work_order w join enumeration_work_order e on w.id = e.work_order_id  "
+                + "where w.queue_id = (select id from queue where name like 'Enumeration') and w.current_status != 'Obsolete'";
+        String sql2 = "select count(*) from work_order_temp ";
+        boolean isFirst = true;
+
+        if (district != null) {
+
+            sql1 = sql1.concat(String.format(" and business_unit = '%s'", district));
+
+            if (isFirst) {
+                sql2 = sql2.concat(String.format(" where business_unit = '%s'", district));
+            } else {
+                sql2 = sql2.concat(String.format(" and business_unit = '%s'", district));
+            }
+            isFirst = false;
+        }
+        if (fromDate != null && toDate != null) {
+            sql1 = sql1.concat(String.format(" and create_time between '%s' and '%s' ", fromDate, toDate));
+
+            if (isFirst) {
+                sql2 = sql2.concat(String.format(" where create_time between '%s' and '%s' ", fromDate, toDate));
+            } else {
+                sql2 = sql2.concat(String.format(" and create_time between '%s' and '%s' ", fromDate, toDate));
+            }
+            isFirst = false;
+        }
+        
+        // get count
+        BigInteger enum1 = (BigInteger) getEntityManager().createNativeQuery(sql1).getSingleResult(); 
+        BigInteger enum2 = (BigInteger) getEntityManager().createNativeQuery(sql2).getSingleResult();
+
+        return new Object[]{enum1, enum2};
+    }
 
     public Integer hasNextRecord(Integer start) {
         start = getNextID(start);

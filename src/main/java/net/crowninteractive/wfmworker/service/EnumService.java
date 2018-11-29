@@ -427,7 +427,10 @@ public class EnumService {
         }
     }
     
-
+    public Object[] enumerationReport(String district, String from, String to) {
+        return wdao.getEnumerationReport(district, from, to);            
+    }
+    
 }
 
 enum fileType{
