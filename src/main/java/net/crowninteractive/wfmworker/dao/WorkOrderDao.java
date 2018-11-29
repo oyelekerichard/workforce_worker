@@ -462,6 +462,20 @@ public class WorkOrderDao extends AbstractDao<Integer, WorkOrder> {
         wora.save(wor);
     }
 
+    public void addRemarkV2(String emcc, String ticketId, String comment) {
+        WorkOrderRemark wor = new WorkOrderRemark();
+        wor.setComment(comment);
+        wor.setToken(RandomStringUtils.randomAlphanumeric(30));
+        wor.setOwnerId(1);
+        wor.setChannel("Emcc");
+        wor.setCreateTime(new Date());
+        wor.setCreatedBy(new Users(1));
+        WorkOrder w = findByTicketId(Integer.parseInt(ticketId));
+        wor.setWorkOrderId(w);
+        w.getWorkOrderRemarkList().add(wor);
+         wora.save(wor);
+    }
+
     public List<WorkOrder> getLastWorkOrderinQueueType(String billingId, Integer queueTypeId) {
 
         String sql = String.format("select * from work_order where reference_type_data = '%s'  and (current_status != '%s' or is_closed = %d) and queue_type_id = %d order by id desc limit 1", billingId,
@@ -912,7 +926,7 @@ public class WorkOrderDao extends AbstractDao<Integer, WorkOrder> {
         return engineerId.isEmpty() ? null : engineerId.get(0);
 
     }
-    
+
     public List<WorkOrder> getWorkOrderByParamsV2(String district, String from, String to, String queueTypeIds, String tariffs) {
         String qry = "select * from work_order where business_unit='%s' and date(create_time) >= date('%s') and date(create_time) <= date('%s') "
                 + "and queue_type_id in (" + queueTypeIds + ")";
@@ -922,7 +936,6 @@ public class WorkOrderDao extends AbstractDao<Integer, WorkOrder> {
         Query q = getEntityManager().createNativeQuery(String.format(qry, district, from, to), WorkOrder.class);
         return q.getResultList();
     }
-
 
 }
 
