@@ -27,6 +27,7 @@ import net.crowninteractive.wfmworker.entity.WorkOrderMessage;
 import net.crowninteractive.wfmworker.entity.WorkOrderRemark;
 import net.crowninteractive.wfmworker.entity.WorkOrderTemp;
 import net.crowninteractive.wfmworker.exception.WfmWorkerException;
+import net.crowninteractive.wfmworker.misc.EnumerationRequestModel;
 import net.crowninteractive.wfmworker.misc.WorkOrderDownloadModel;
 import net.crowninteractive.wfmworker.misc.WorkOrderEnumerationBody;
 import org.apache.commons.collections4.keyvalue.DefaultMapEntry;
@@ -806,7 +807,7 @@ public class WorkOrderDao extends AbstractDao<Integer, WorkOrder> {
         return model;
     }
 
-    public Map.Entry<Integer, List<WorkOrderTemp>> getRequestsList(String district, String from, String to, Integer page, String queue, String queueType, String priority, String status, String billingId,String reportedBy) {
+    public Map.Entry<BigInteger, List<EnumerationRequestModel>> getRequestsList(String district, String from, String to, Integer page, String queue, String queueType, String priority, String status, String billingId,String reportedBy) {
         page = (page - 1) * 1000;
         
         String sql = "SELECT `id`,customer_tariff,ticket_id,"
@@ -820,7 +821,7 @@ public class WorkOrderDao extends AbstractDao<Integer, WorkOrder> {
                 + "`injection_substation_name`, `power_transformer`, `power_transformer_name`, "
                 + "`feeder`, `feeder_name`, `ht_pole`, `high_tension_physical_id`, `distribution_substation`, "
                 + "`distribution_substation_name`, `upriser`, `service_pole`, `service_wire`, "
-                + "`nerc_id`, `connection_type`, `transformer`, `created_by` "
+                + "`nerc_id`, `connection_type`, `transformer`, `created_by`, `token` "
                 + "FROM `work_order_temp` wt where business_unit like {unit} "
                 + "and cast(create_time as date) >= cast({from} as date) "
                 + "and cast(create_time as date) <= cast({to} as date )";
@@ -868,18 +869,21 @@ public class WorkOrderDao extends AbstractDao<Integer, WorkOrder> {
         final String sql2 = sql + " limit 1000 offset " + page;
         
         logger.info("Compiled SQL " + sql2);
-        List<WorkOrderTemp> model = new ArrayList();
+        List<EnumerationRequestModel> model = new ArrayList();
         //initialize count
-        Integer val = null;
+        BigInteger val = null;
         List<Object[][]> list = getEntityManager().
                 createNativeQuery(sql2).getResultList();
         for (Object[] e : list) {
-            WorkOrderTemp m = new WorkOrderTemp();
+            
+            logger.info("Requests " + e[1]);
+            
+            EnumerationRequestModel m = new EnumerationRequestModel();
             m.setId((Integer) e[0]);
             m.setCustomerTariff((String) e[1]);
             m.setTicketId((Integer) e[2]);
-            m.setQueueId((Integer) e[3]);
-            m.setQueueTypeId((Integer) e[4]);
+            m.setQueueId((String) e[3]);
+            m.setQueueTypeId((String) e[4]);
             m.setSummary((String) e[5]);
             m.setDescription((String) e[6]);
             m.setContactNumber((String) e[7]);
@@ -914,11 +918,13 @@ public class WorkOrderDao extends AbstractDao<Integer, WorkOrder> {
             m.setConnectionType((String) e[36]);
             m.setTransformer((String) e[37]);
             m.setCreatedBy((Integer) e[38]);
+            m.setToken((String) e[39]);
 
             model.add(m);
+            
             // get count
             Query query = getEntityManager().createNativeQuery(String.format("select count(*) from (%s) as new", sql));  
-            val = (Integer) query.getSingleResult(); 
+            val = (BigInteger) query.getSingleResult();
             
         }
         
