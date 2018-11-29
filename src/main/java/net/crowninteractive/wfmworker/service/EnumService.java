@@ -31,6 +31,7 @@ import net.crowninteractive.wfmworker.entity.LowerWidget;
 import net.crowninteractive.wfmworker.entity.WorkOrderTemp;
 import net.crowninteractive.wfmworker.exception.WfmWorkerException;
 import net.crowninteractive.wfmworker.misc.Config;
+import net.crowninteractive.wfmworker.misc.EnumerationRequestModel;
 import net.crowninteractive.wfmworker.misc.ExcludeForExcel;
 import net.crowninteractive.wfmworker.misc.StandardResponse;
 import net.crowninteractive.wfmworker.misc.WorkOrderDownloadModel;
@@ -407,7 +408,7 @@ public class EnumService {
             String reportedBy) {
         try {
 
-            Entry<Integer, List<WorkOrderTemp>> workOrders;
+            Entry<BigInteger, List<EnumerationRequestModel>> workOrders;
             List<String> err = validateEnumWorkOrder(to, from);
             if (err.isEmpty()) {
                 workOrders = wdao.getRequestsList(district, from, to, page, queue, queueType, priority, status, billingid, reportedBy);
