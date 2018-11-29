@@ -5,6 +5,7 @@
  */
 package net.crowninteractive.wfmworker.contoller;
 
+import java.util.HashMap;
 import java.util.Map;
 import java.util.logging.Logger;
 import javax.ws.rs.DefaultValue;
@@ -54,6 +55,25 @@ public class EnumController {
         String message = enumService.approveWorkOrders(tokens);
         return new ResponseEntity<Awesome>(new Awesome(0, message), HttpStatus.OK);
     }
+    
+
+    @RequestMapping(method = RequestMethod.GET, value = "report/filter")
+    public Awesome enumerationReport(
+            @RequestParam(value = "businessDistrict", required = false) String businessDistrict,
+            @RequestParam(value = "fromDate", required = false) String fromDate,
+            @RequestParam(value = "toDate", required = false) String toDate) {
+        Map map = null;
+        try {
+            Object[] count = enumService.enumerationReport(businessDistrict, fromDate, toDate);
+            map = new HashMap<String, Long>();
+            map.put("workOrderCount", count[0]);
+            map.put("requestCount", count[1]);
+            return new Awesome(0, "successful", map);
+        } catch (Exception e) {
+            return new Awesome(400, e.getMessage());
+        }
+
+    }
 
     @RequestMapping(method = RequestMethod.GET, value = "enumerationDashboard")
     public ResponseEntity dashboard(
@@ -93,7 +113,19 @@ public class EnumController {
             awe = StandardResponse.systemError();
         }
         return awe;
-}
+    }
+    
+    @RequestMapping(method = RequestMethod.GET, value = "enumeration_requests/{token}")
+    public Awesome getEnumerationRequestByToken(@PathVariable("token") String token) {
+        Awesome awe;
+        try {
+            awe = enumService.getEnumRequestByToken(token);
+
+        } catch (Exception ex) {
+            awe = StandardResponse.errorDuringProcessing();
+        }
+        return awe;
+    }
 
     @RequestMapping(method = RequestMethod.GET, value = "download_workorder")
     public Awesome downloadWorkOrder(@RequestParam("email") String emailAddress,

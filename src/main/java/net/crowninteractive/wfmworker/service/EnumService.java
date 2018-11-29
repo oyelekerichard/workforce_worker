@@ -427,7 +427,26 @@ public class EnumService {
         }
     }
     
-
+    public Object[] enumerationReport(String district, String from, String to) {
+        return wdao.getEnumerationReport(district, from, to);            
+    }
+    
+    public Awesome getEnumRequestByToken(String token) {
+        try {
+            
+            final EnumerationRequestModel requests = wdao.getEnumRequestByToken(token);
+            
+            if (requests != null) {
+                return StandardResponse.ok(requests);
+            } else {
+                return StandardResponse.noRecords();
+            }
+        } catch (Exception ex) {
+            ex.printStackTrace();
+            return null;
+        }
+    }
+    
 }
 
 enum fileType{
