@@ -968,30 +968,76 @@ public class WorkOrderDao extends AbstractDao<Integer, WorkOrder> {
     }
     
     public EnumerationRequestModel getEnumRequestByToken(String token) {
-        
-       final String sql = String.format("select `id`,`customer_tariff`,`ticket_id`, "
-                + "`token`, `owner_id`,(select name from queue where id=wt.queue_id) as queue_id,"
-                + "(select name from queue_type where id=wt.queue_type_id) as queue_type_id, "
-                + "`closed_by`, `summary`, `description`, `contact_number`, `reference_type`, "
-                + "`reference_type_data`, `address_line_1`, `city`, `state`, `business_unit`, "
-                + "`priority`, `create_time`, `closed_time`, `channel`, `is_active`, `is_closed`, "
-                + "`current_status`, `reported_by`, `customer_name`,`disco`, `sub_disco`, `injection_substation`, "
-                + "`injection_substation_name`, `power_transformer`, `power_transformer_name`, `feeder`,`feeder_name`, "
-                + "`ht_pole`, `high_tension_physical_id`, `distribution_substation`, `distribution_substation_name`,`upriser`, `service_pole`, "
-                + "`service_wire`, `nerc_id`,`connection_type`,`transformer` from work_order_temp wt  "
-                + "where token= '%s' ", token);
+       
+        final String sql = String.format("SELECT `id`,customer_tariff, ticket_id, "
+                + "(select name from queue where id=wt.queue_id) as queue_id,"
+                + "(select name from queue_type where id=wt.queue_type_id) "
+                + "as queue_type_id, `summary`, `description`, `contact_number`,"
+                + " `reference_type`, `reference_type_data`, `address_line_1`, "
+                + "`city`, `state`, `business_unit`, `priority`, `create_time`,"
+                + " `channel`, `is_active`, `current_status`, `reported_by`,  `customer_name`, "
+                + "`disco`, `sub_disco`, `injection_substation`, "
+                + "`injection_substation_name`, `power_transformer`, `power_transformer_name`, "
+                + "`feeder`, `feeder_name`, `ht_pole`, `high_tension_physical_id`, `distribution_substation`, "
+                + "`distribution_substation_name`, `upriser`, `service_pole`, `service_wire`, "
+                + "`nerc_id`, `connection_type`, `transformer`, `token` "
+                + " FROM `work_order_temp` wt "
+                + " where token = '%s' ", token);
       
         
         logger.info("Compiled SQL " + sql);
         
         try {
-            return (EnumerationRequestModel) getEntityManager().
-                    createNativeQuery(sql).getSingleResult();
+             
+            Object[] e = (Object[]) getEntityManager().createNativeQuery(sql).getSingleResult();
+            
+            EnumerationRequestModel m = new EnumerationRequestModel();
+            m.setId((Integer) e[0]);
+            m.setCustomerTariff((String) e[1]);
+            m.setTicketId((Integer) e[2]);
+            m.setQueueId((String) e[3]);
+            m.setQueueTypeId((String) e[4]);
+            m.setSummary((String) e[5]);
+            m.setDescription((String) e[6]);
+            m.setContactNumber((String) e[7]);
+            m.setReferenceType((String) e[8]);
+            m.setReferenceTypeData((String) e[9]);
+            m.setAddressLine1((String) e[10]);
+            m.setCity((String) e[11]);
+            m.setState((String) e[12]);
+            m.setBusinessUnit((String) e[13]);
+            m.setPriority((String) e[14]);
+            m.setCreateTime((Timestamp) e[15]);
+            m.setChannel((String) e[16]);
+            m.setIsActive((Integer) e[17]);
+            m.setCurrentStatus((String) e[18]);
+            m.setReportedBy((String) e[19]);;
+            m.setDisco((String) e[20]);
+            m.setSubDisco((String) e[21]);
+            m.setInjectionSubstation((String) e[22]);
+            m.setInjectionSubstationName((String) e[23]);
+            m.setPowerTransformer((String) e[24]);
+            m.setPowerTransformerName((String) e[25]);
+            m.setFeeder((String) e[26]);
+            m.setFeederName((String) e[27]);
+            m.setHtPole((String) e[28]);
+            m.setHighTensionPhysicalId((String) e[29]);
+            m.setDistributionSubstation((String) e[30]);
+            m.setDistributionSubstationName((String) e[31]);
+            m.setUpriser((String) e[32]);
+            m.setServicePole((String) e[33]);
+            m.setServiceWire((String) e[34]);
+            m.setNercId((String) e[35]);
+            m.setConnectionType((String) e[36]);
+            m.setTransformer((String) e[37]);
+            m.setToken((String) e[38]);
+            
+            return m;
+            
         } catch (NoResultException ex) {
              ex.printStackTrace();
             return null;
         }
-       
     }
 
     public Integer hasNextRecord(Integer start) {
