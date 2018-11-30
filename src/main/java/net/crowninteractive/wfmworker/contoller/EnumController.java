@@ -91,6 +91,18 @@ public class EnumController {
         return new ResponseEntity<String>("enum work order update successful ", HttpStatus.OK);
     }
     
+    @RequestMapping(method = RequestMethod.GET, value = "enumeration_requests/{token}")
+    public Awesome getEnumerationRequestByToken(@PathVariable("token") String token) {
+        Awesome awe;
+        try {
+            awe = enumService.getEnumRequestByToken(token);
+
+        } catch (Exception ex) {
+            awe = StandardResponse.errorDuringProcessing();
+        }
+        return awe;
+    }
+    
     @RequestMapping(method = RequestMethod.GET, value = "enumeration_requests")
     public Awesome getEnumerationRequests(
             @RequestParam(defaultValue = "1", value = "page") Integer page,
@@ -111,18 +123,6 @@ public class EnumController {
         } catch (Exception ex) {
             ex.printStackTrace();
             awe = StandardResponse.systemError();
-        }
-        return awe;
-    }
-    
-    @RequestMapping(method = RequestMethod.GET, value = "enumeration_requests/{token}")
-    public Awesome getEnumerationRequestByToken(@PathVariable("token") String token) {
-        Awesome awe;
-        try {
-            awe = enumService.getEnumRequestByToken(token);
-
-        } catch (Exception ex) {
-            awe = StandardResponse.errorDuringProcessing();
         }
         return awe;
     }

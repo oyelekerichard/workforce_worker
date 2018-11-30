@@ -28,6 +28,7 @@ import net.crowninteractive.wfmworker.dao.QueueTypeData;
 import net.crowninteractive.wfmworker.dao.WorkOrderDao;
 import net.crowninteractive.wfmworker.entity.Dashboard;
 import net.crowninteractive.wfmworker.entity.LowerWidget;
+import net.crowninteractive.wfmworker.entity.RequestEnumerationBody;
 import net.crowninteractive.wfmworker.entity.WorkOrderTemp;
 import net.crowninteractive.wfmworker.exception.WfmWorkerException;
 import net.crowninteractive.wfmworker.misc.Config;
@@ -476,8 +477,7 @@ public class EnumService {
     public Awesome getEnumRequestByToken(String token) {
         try {
             
-            final EnumerationRequestModel requests = wdao.getEnumRequestByToken(token);
-            
+            RequestEnumerationBody requests = wdao.getEnumRequestByToken(token);           
             if (requests != null) {
                 return StandardResponse.ok(requests);
             } else {

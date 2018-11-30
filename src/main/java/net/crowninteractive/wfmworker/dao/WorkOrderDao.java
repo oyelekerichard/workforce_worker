@@ -20,6 +20,7 @@ import javax.persistence.Query;
 import net.crowninteractive.wfmworker.entity.Engineer;
 import net.crowninteractive.wfmworker.entity.EnumerationWorkOrder;
 import net.crowninteractive.wfmworker.entity.QueueType;
+import net.crowninteractive.wfmworker.entity.RequestEnumerationBody;
 import net.crowninteractive.wfmworker.entity.Users;
 import net.crowninteractive.wfmworker.entity.WorkOrder;
 import net.crowninteractive.wfmworker.entity.WorkOrderExtra;
@@ -992,7 +993,7 @@ public class WorkOrderDao extends AbstractDao<Integer, WorkOrder> {
         return new Object[]{enum1, enum2};
     }
     
-    public EnumerationRequestModel getEnumRequestByToken(String token) {
+    public RequestEnumerationBody getEnumRequestByToken(String token) {
        
         final String sql = String.format("SELECT `id`,customer_tariff, ticket_id, "
                 + "(select name from queue where id=wt.queue_id) as queue_id,"
@@ -1014,55 +1015,71 @@ public class WorkOrderDao extends AbstractDao<Integer, WorkOrder> {
         
         try {
              
-            Object[] e = (Object[]) getEntityManager().createNativeQuery(sql).getSingleResult();
+            List<EnumerationRequestModel> model = new ArrayList();
+//            Object[] e = (Object[]) getEntityManager().createNativeQuery(sql).getSingleResult();
+             List<Object[][]> list = getEntityManager().
+                createNativeQuery(sql).getResultList();
+            for (Object[] e : list) {
+                EnumerationRequestModel m = new EnumerationRequestModel();
+                m.setId((Integer) e[0]);
+                m.setCustomerTariff((String) e[1]);
+                m.setTicketId((Integer) e[2]);
+                m.setQueueId((String) e[3]);
+                m.setQueueTypeId((String) e[4]);
+                m.setSummary((String) e[5]);
+                m.setDescription((String) e[6]);
+                m.setContactNumber((String) e[7]);
+                m.setReferenceType((String) e[8]);
+                m.setReferenceTypeData((String) e[9]);
+                m.setAddressLine1((String) e[10]);
+                m.setCity((String) e[11]);
+                m.setState((String) e[12]);
+                m.setBusinessUnit((String) e[13]);
+                m.setPriority((String) e[14]);
+                m.setCreateTime((Timestamp) e[15]);
+                m.setChannel((String) e[16]);
+                m.setIsActive((Integer) e[17]);
+                m.setCurrentStatus((String) e[18]);
+                m.setReportedBy((String) e[19]);;
+                m.setDisco((String) e[20]);
+                m.setSubDisco((String) e[21]);
+                m.setInjectionSubstation((String) e[22]);
+                m.setInjectionSubstationName((String) e[23]);
+                m.setPowerTransformer((String) e[24]);
+                m.setPowerTransformerName((String) e[25]);
+                m.setFeeder((String) e[26]);
+                m.setFeederName((String) e[27]);
+                m.setHtPole((String) e[28]);
+                m.setHighTensionPhysicalId((String) e[29]);
+                m.setDistributionSubstation((String) e[30]);
+                m.setDistributionSubstationName((String) e[31]);
+                m.setUpriser((String) e[32]);
+                m.setServicePole((String) e[33]);
+                m.setServiceWire((String) e[34]);
+                m.setNercId((String) e[35]);
+                m.setConnectionType((String) e[36]);
+                m.setTransformer((String) e[37]);
+                m.setToken((String) e[38]);
+                
+                model.add(m);
+            }
+          // add Enumeration data
+            List<EnumerationWorkOrder> ewos = getEntityManager().
+                createNativeQuery("select * from enumeration_work_order where work_order_temp_token = ? ", EnumerationWorkOrder.class).
+                setParameter(1, token)
+                .getResultList();
             
-            EnumerationRequestModel m = new EnumerationRequestModel();
-            m.setId((Integer) e[0]);
-            m.setCustomerTariff((String) e[1]);
-            m.setTicketId((Integer) e[2]);
-            m.setQueueId((String) e[3]);
-            m.setQueueTypeId((String) e[4]);
-            m.setSummary((String) e[5]);
-            m.setDescription((String) e[6]);
-            m.setContactNumber((String) e[7]);
-            m.setReferenceType((String) e[8]);
-            m.setReferenceTypeData((String) e[9]);
-            m.setAddressLine1((String) e[10]);
-            m.setCity((String) e[11]);
-            m.setState((String) e[12]);
-            m.setBusinessUnit((String) e[13]);
-            m.setPriority((String) e[14]);
-            m.setCreateTime((Timestamp) e[15]);
-            m.setChannel((String) e[16]);
-            m.setIsActive((Integer) e[17]);
-            m.setCurrentStatus((String) e[18]);
-            m.setReportedBy((String) e[19]);;
-            m.setDisco((String) e[20]);
-            m.setSubDisco((String) e[21]);
-            m.setInjectionSubstation((String) e[22]);
-            m.setInjectionSubstationName((String) e[23]);
-            m.setPowerTransformer((String) e[24]);
-            m.setPowerTransformerName((String) e[25]);
-            m.setFeeder((String) e[26]);
-            m.setFeederName((String) e[27]);
-            m.setHtPole((String) e[28]);
-            m.setHighTensionPhysicalId((String) e[29]);
-            m.setDistributionSubstation((String) e[30]);
-            m.setDistributionSubstationName((String) e[31]);
-            m.setUpriser((String) e[32]);
-            m.setServicePole((String) e[33]);
-            m.setServiceWire((String) e[34]);
-            m.setNercId((String) e[35]);
-            m.setConnectionType((String) e[36]);
-            m.setTransformer((String) e[37]);
-            m.setToken((String) e[38]);
-            
-            return m;
+            if (model != null && ewos != null) {
+                if (model.size() > 0 && ewos.size() > 0) {
+                    return new RequestEnumerationBody(model.get(0), ewos.get(0));
+                }
+            }
             
         } catch (NoResultException ex) {
              ex.printStackTrace();
             return null;
-        }
+        }       
+        return null;
     }
 
     public Integer hasNextRecord(Integer start) {
