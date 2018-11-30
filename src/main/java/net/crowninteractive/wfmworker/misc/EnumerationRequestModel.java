@@ -6,13 +6,22 @@
 package net.crowninteractive.wfmworker.misc;
 
 import java.sql.Timestamp;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 /**
  *
  * @author CROWN INTERACTIVE
  */
+
+@Getter
+@Setter
+@NoArgsConstructor
+@AllArgsConstructor
 public class EnumerationRequestModel {
-   
+
     private Integer id;
     private String queueId;
     private String queueTypeId;
@@ -37,7 +46,6 @@ public class EnumerationRequestModel {
     private String serviceWire;
     private String nercId;
     private String connectionType;
-
     private String contactNumber;
     private String referenceType;//Meter Number
     private String referenceTypeData;//Account Number
@@ -59,7 +67,6 @@ public class EnumerationRequestModel {
     private String token;
     
     
-
     public String getQueueId() {
         return queueId;
     }
@@ -403,6 +410,43 @@ public class EnumerationRequestModel {
     public void setToken(String token) {
         this.token = token;
     }
+    
+    
+    @Getter
+    @Setter
+    @NoArgsConstructor
+    @AllArgsConstructor
+    public class RequestListModel {
+        
+        private Integer id;
+        private String queueId;
+        private String queueTypeId;
+        private Integer ticketId;
+        private String referenceType;
+        private String referenceTypeData;
+        private String businessUnit;
+        private String priority;
+        private Timestamp createTime;
+        private String currentStatus;
+        private String reportedBy;
+        private String token;
+
+        public RequestListModel(Object[] e) {
+            this.id = (Integer) e[0];
+            this.queueId = (String) e[1];
+            this.queueTypeId = (String) e[2];
+            this.ticketId = (Integer) e[3];
+            this.referenceType = (String) e[4];
+            this.referenceTypeData = (String) e[5];
+            this.businessUnit = (String) e[6];
+            this.priority = (String) e[7];
+            this.createTime = (Timestamp) e[8];
+            this.currentStatus = (String) e[9];
+            this.reportedBy = (String) e[10];
+            this.token = (String) e[11];
+        }
+   
+   }
 
 }
 
