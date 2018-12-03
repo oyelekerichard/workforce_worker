@@ -29,7 +29,7 @@ import net.crowninteractive.wfmworker.entity.WorkOrderRemark;
 import net.crowninteractive.wfmworker.entity.WorkOrderTemp;
 import net.crowninteractive.wfmworker.exception.WfmWorkerException;
 import net.crowninteractive.wfmworker.misc.EnumerationRequestModel;
-import net.crowninteractive.wfmworker.misc.WorkOrderDownloadModel;
+import net.crowninteractive.wfmworker.misc.EnumerationWorkOrderDownloadModel;
 import net.crowninteractive.wfmworker.misc.WorkOrderEnumerationBody;
 import org.apache.commons.collections4.keyvalue.DefaultMapEntry;
 import org.apache.commons.lang3.RandomStringUtils;
@@ -222,6 +222,7 @@ public class WorkOrderDao extends AbstractDao<Integer, WorkOrder> {
 
         //update work_order
         if (ticketId != 0) {
+            logger.info("-----------Ticket Id Generated for Record -----------------" + ticketId);
             wot.setTicketId(ticketId);
             wot.setCurrentStatus("OPEN");
             wot.setToken(wot.getToken());
@@ -230,11 +231,15 @@ public class WorkOrderDao extends AbstractDao<Integer, WorkOrder> {
             ewod.edit(enumerationWorkOrder);
             temp.delete(wot);
             logger.info("-----------deleting enumeration record -----------------" + wot.getId());
+            logger.info("-----------Ticket Id set for Records -----------------" + enumerationWorkOrder.getWork_order_id());
         }
     }
 
     @Transactional
     public int createWorkOrder(WorkOrderTemp wot, QueueType qt) {
+        
+        logger.info("-----------Queue-----------------" + qt.getQueueId());
+        logger.info("-----------Queue Type -----------------" + qt.getId());
         WorkOrder wo = new WorkOrder();
         wo.setBusinessUnit(wot.getBusinessUnit());
         wo.setAddressLine1(wot.getAddressLine1());
@@ -587,237 +592,7 @@ public class WorkOrderDao extends AbstractDao<Integer, WorkOrder> {
         return new WorkOrderEnumerationBody();
     }
 
-    public List<WorkOrderDownloadModel> getWorkOrders(String district, String from, String to, String queue, String queueType, String priority, String status, String billingId, String ticketId, String reportedBy) {
-        String sql = "SELECT wt.id ,customer_tariff,ticket_id,"
-                + "(select name from queue where id=wt.queue_id) as queue_id,"
-                + "(select name from queue_type where id=wt.queue_type_id) "
-                + "as queue_type_id, `summary`, `description`, `contact_number`, `reference_type`, `reference_type_data`, `address_line_1`, "
-                + "`city`, `state`, `business_unit`, `priority`, `create_time`, `channel`, `is_active`, `current_status`, `reported_by`,  `customer_name`,"
-                + "connection_type,disco,distribution_substation,distribution_substation_name,feeder,feeder_name,high_tension_physical_id,ht_pole,injection_substation,"
-                + "injection_substation_name,nerc_id,power_transformer,power_transformer_name,service_pole,service_wire,sub_disco,transformer,upriser,"
-                + "`created_by` FROM `work_order` wt left join work_order_extra we on wt.id = we.id where business_unit like {unit} and cast(create_time as date) >= cast({from} as date) and cast(create_time as date) <= cast({to} as date )";
-
-        if (to.equals("create_time")) {
-            sql = sql.replace("{to}", "create_time");
-        }
-        if (!to.equals("create_time")) {
-            sql = sql.replace("{to}", String.format("'%s'", to));
-        }
-        if (from.equals("create_time")) {
-            sql = sql.replace("{from}", "create_time");
-        }
-        if (!from.equals("create_time")) {
-            sql = sql.replace("{from}", String.format("'%s'", from));
-        }
-        if (district.equals("business_unit")) {
-            sql = sql.replace("{unit}", district);
-        }
-        if (!district.equals("business_unit")) {
-            sql = sql.replace("{unit}", "'district%'".replace("district", district));
-        }
-        if (queue != null) {
-            sql += "and queue_id=(select id from queue where name like 'quet%')".replace("quet", queue);
-
-        }
-        if (queueType != null) {
-            sql += ("and queue_type_id=(select qt.id from queue_type qt, queue q where qt.name like 'queueName%' and q.name like 'enumeration' and qt.queue_id = q.id)")
-                    .replace("queueName", queueType);
-
-        }
-        if (status != null) {
-            sql += "and current_status like 'statuss%'".replace("statuss", status);
-        }
-        if (priority != null) {
-            sql += "and priority like 'prioritys%'".replace("prioritys", priority);
-        }
-        if (billingId != null) {
-            sql += "and reference_type_data like 'billing%'".replace("billing", billingId);
-        }
-        if (ticketId != null) {
-            sql += String.format("and ticket_id =%s", ticketId);
-        }
-        if (reportedBy != null) {
-            sql += String.format("and reported_by ='%s'", reportedBy);
-        }
-
-        sql += " and current_status not like '%OBSOLETE%";
-
-        logger.info("Compiled SQL " + sql);
-        List<WorkOrderDownloadModel> model = new ArrayList();
-        List<Object[][]> list = getEntityManager().
-                createNativeQuery(sql).getResultList();
-        for (Object[] e : list) {
-            WorkOrderDownloadModel m = new WorkOrderDownloadModel();
-            m.setId((Integer) e[0]);
-            m.setCustomerTariff((String) e[1]);
-            m.setTicketId((Integer) e[2]);
-            m.setQueueId((String) e[3]);
-            m.setQueueTypeId((String) e[4]);
-            m.setSummary((String) e[5]);
-            m.setDescription((String) e[6]);
-            m.setContactNumber((String) e[7]);
-            m.setReferenceType((String) e[8]);
-            m.setReferenceTypeData((String) e[9]);
-            m.setAddressLine1((String) e[10]);
-            m.setCity((String) e[11]);
-            m.setState((String) e[12]);
-            m.setBusinessUnit((String) e[13]);
-            m.setPriority((String) e[14]);
-            m.setCreateTime((Timestamp) e[15]);
-            m.setChannel((String) e[16]);
-            m.setIsActive((Integer) e[17]);
-            m.setCurrentStatus((String) e[18]);
-            m.setReportedBy((String) e[19]);
-            m.setCustomerName((String) e[20]);
-            m.setConnectionType((String) e[21]);
-            m.setDisco((String) e[22]);
-            m.setDistributionSubstation((String) e[23]);
-            m.setDistributionSubstationName((String) e[24]);
-            m.setFeeder((String) e[25]);
-            m.setFeederName((String) e[26]);
-            m.setHighTensionPhysicalId((String) e[27]);
-            m.setHtPole((String) e[28]);
-            m.setInjectionSubstation((String) e[29]);
-            m.setInjectionSubstationName((String) e[30]);
-            m.setNercId((String) e[31]);
-            m.setPowerTransformer((String) e[32]);
-            m.setPowerTransformerName((String) e[33]);
-            m.setServicePole((String) e[34]);
-            m.setServiceWire((String) e[35]);
-            m.setSubDisco((String) e[36]);
-            m.setTransformer((String) e[37]);
-            m.setUpriser((String) e[38]);
-            m.setCreatedBy((Integer) e[39]);
-
-            model.add(m);
-        }
-
-        return model;
-    }
-    
-    public List<WorkOrderDownloadModel> getRequests(String district, String from, String to, String queue, String queueType, String priority, String status, String billingId, String ticketId, String reportedBy) {
-
-        String sql = "SELECT `id`,customer_tariff,ticket_id,"
-                + "(select name from queue where id=wt.queue_id) as queue_id,"
-                + "(select name from queue_type where id=wt.queue_type_id) "
-                + "as queue_type_id, `summary`, `description`, `contact_number`,"
-                + " `reference_type`, `reference_type_data`, `address_line_1`, "
-                + "`city`, `state`, `business_unit`, `priority`, `create_time`,"
-                + " `channel`, `is_active`, `current_status`, `reported_by`,  `customer_name` "
-                + "`disco`, `sub_disco`, `injection_substation`, "
-                + "`injection_substation_name`, `power_transformer`, `power_transformer_name`, "
-                + "`feeder`, `feeder_name`, `ht_pole`, `high_tension_physical_id`, `distribution_substation`, "
-                + "`distribution_substation_name`, `upriser`, `service_pole`, `service_wire`, "
-                + "`nerc_id`, `connection_type`, `transformer`, `created_by` "
-                + "FROM `work_order_temp` wt where business_unit like {unit} "
-                + "and cast(create_time as date) >= cast({from} as date) "
-                + "and cast(create_time as date) <= cast({to} as date )";
-
-        if (to.equals("create_time")) {
-            sql = sql.replace("{to}", "create_time");
-        }
-        if (!to.equals("create_time")) {
-            sql = sql.replace("{to}", String.format("'%s'", to));
-        }
-        if (from.equals("create_time")) {
-            sql = sql.replace("{from}", "create_time");
-        }
-        if (!from.equals("create_time")) {
-            sql = sql.replace("{from}", String.format("'%s'", from));
-        }
-        if (district.equals("business_unit")) {
-            sql = sql.replace("{unit}", district);
-        }
-        if (!district.equals("business_unit")) {
-            sql = sql.replace("{unit}", "'district%'".replace("district", district));
-        }
-        if (queue != null) {
-            sql += "and queue_id=(select id from queue where name like 'quet%')".replace("quet", queue);
-
-        }
-        if (queueType != null) {
-            sql += ("and queue_type_id=(select qt.id from queue_type qt, queue q where qt.name like 'queueName%' and q.name like 'enumeration' and qt.queue_id = q.id)")
-                    .replace("queueName", queueType);
-
-        }
-        if (status != null) {
-            sql += "and current_status like 'statuss%'".replace("statuss", status);
-        }
-        if (priority != null) {
-            sql += "and priority like 'prioritys%'".replace("prioritys", priority);
-        }
-        if (billingId != null) {
-            sql += "and reference_type_data like 'billing%'".replace("billing", billingId);
-        }
-        if (ticketId != null) {
-            sql += String.format("and ticket_id =%s", ticketId);
-        }
-        if (reportedBy != null) {
-            sql += String.format("and reported_by ='%s'", reportedBy);
-        }
-
-        logger.info("Compiled SQL " + sql);
-        List<WorkOrderDownloadModel> model = new ArrayList();
-        List<Object[][]> list = getEntityManager().
-                createNativeQuery(sql).getResultList();
-        for (Object[] e : list) {
-            WorkOrderDownloadModel m = new WorkOrderDownloadModel();
-            m.setId((Integer) e[0]);
-            m.setCustomerTariff((String) e[1]);
-            m.setTicketId((Integer) e[2]);
-            m.setQueueId((String) e[3]);
-            m.setQueueTypeId((String) e[4]);
-            m.setSummary((String) e[5]);
-            m.setDescription((String) e[6]);
-            m.setContactNumber((String) e[7]);
-            m.setReferenceType((String) e[8]);
-            m.setReferenceTypeData((String) e[9]);
-            m.setAddressLine1((String) e[10]);
-            m.setCity((String) e[11]);
-            m.setState((String) e[12]);
-            m.setBusinessUnit((String) e[13]);
-            m.setPriority((String) e[14]);
-            m.setCreateTime((Timestamp) e[15]);
-            m.setChannel((String) e[16]);
-            m.setIsActive((Integer) e[17]);
-            m.setCurrentStatus((String) e[18]);
-            m.setReportedBy((String) e[19]);;
-            m.setDisco((String) e[20]);
-            m.setSubDisco((String) e[21]);
-            m.setInjectionSubstation((String) e[22]);
-            m.setInjectionSubstationName((String) e[23]);
-            m.setPowerTransformer((String) e[24]);
-            m.setPowerTransformerName((String) e[25]);
-            m.setFeeder((String) e[26]);
-            m.setFeederName((String) e[27]);
-            m.setHtPole((String) e[28]);
-            m.setHighTensionPhysicalId((String) e[29]);
-            m.setDistributionSubstation((String) e[30]);
-            m.setDistributionSubstationName((String) e[31]);
-            m.setUpriser((String) e[32]);
-            m.setServicePole((String) e[33]);
-            m.setServiceWire((String) e[34]);
-            m.setNercId((String) e[35]);
-            m.setConnectionType((String) e[36]);
-            m.setTransformer((String) e[37]);
-            m.setCreatedBy((Integer) e[38]);
-
-            model.add(m);
-        }
-
-        return model;
-    }
-
-    public Map.Entry<BigInteger, List<EnumerationRequestModel.RequestListModel>> getRequestsList(String district, String from, String to, Integer page, String queue, String queueType, String priority, String status, String billingId,String reportedBy) {
-        page = (page - 1) * 1000;
-        
-         String sql = "SELECT `id`, "
-                + "(select name from queue where id=wt.queue_id) as queue_id,"
-                + "(select name from queue_type where id=wt.queue_type_id) "
-                + "as queue_type_id,ticket_id, sub_disco, `reference_type`, `reference_type_data`, "
-                + "`business_unit`, `priority`, `create_time`,  `current_status`, `reported_by`,  `token` "
-                + "FROM `work_order_temp` wt where business_unit like {unit} and cast(create_time as date) >= cast({from} as date) and cast(create_time as date) <= cast({to} as date )";
-
+    public List<EnumerationWorkOrderDownloadModel> getEnumerationDownloadList(String sql, String district, String from, String to, String queue, String queueType, String priority, String status, String billingId, String ticketId, String reportedBy) {
            
         if (to.equals("create_time")) {
             sql = sql.replace("{to}", "create_time");
@@ -859,31 +634,18 @@ public class WorkOrderDao extends AbstractDao<Integer, WorkOrder> {
             sql += String.format("and reported_by ='%s'", reportedBy);
         }
         
-        final String sql2 = sql + " limit 1000 offset " + page;
-        
-        logger.info("Compiled SQL " + sql2);
-        List<EnumerationRequestModel.RequestListModel> model = new ArrayList();
+        logger.info("Compiled SQL " + sql);
+        List<EnumerationWorkOrderDownloadModel> model = new ArrayList();
         //initialize count
         BigInteger val = null;
         List<Object[][]> list = getEntityManager().
-                createNativeQuery(sql2).getResultList();
-        for (Object[] e : list) {
-            
-            logger.info("Requests " + e[1]);
-            
-            EnumerationRequestModel enumReqs = new EnumerationRequestModel();
-            
-            // Instantiating the inner class
-            
-            EnumerationRequestModel.RequestListModel m = enumReqs.new RequestListModel(e);
-
-            model.add(m);            
-            // get count
-            Query query = getEntityManager().createNativeQuery(String.format("select count(*) from (%s) as new", sql));  
-            val = (BigInteger) query.getSingleResult();            
-        }
-        
-        return new DefaultMapEntry<>(val, model);
+                createNativeQuery(sql).getResultList();
+        for (Object[] e : list) {            
+            logger.info("Requests " + e[1]);            
+            EnumerationWorkOrderDownloadModel enumReq = new EnumerationWorkOrderDownloadModel(e);
+            model.add(enumReq);                   
+        }       
+        return model;
     }
     
     public Map.Entry<BigInteger, List<EnumerationRequestModel.RequestListModel>> getEnumerationList(String sql, String district, String from, String to, Integer page, String queue, String queueType, String priority, String status, String billingId, String ticketId, String reportedBy) {
@@ -942,7 +704,7 @@ public class WorkOrderDao extends AbstractDao<Integer, WorkOrder> {
                 createNativeQuery(sql2).getResultList();
         for (Object[] e : list) {
             
-            logger.info("Enumeration List -------->" + e[1]);
+            //logger.info("Enumeration List -------->" + e[1]);
             
             EnumerationRequestModel enumReqs = new EnumerationRequestModel();
             
@@ -959,8 +721,8 @@ public class WorkOrderDao extends AbstractDao<Integer, WorkOrder> {
     
     public Object[] getEnumerationReport(String district, String fromDate, String toDate) {
         
-        String sql1 = " select count(*) from work_order w join enumeration_work_order e on w.id = e.work_order_id  "
-                + "where w.queue_id = (select id from queue where name like 'Enumeration') and w.current_status != 'Obsolete'";
+        String sql1 = " select count(*) from work_order w join enumeration_work_order e on w.ticket_id = e.work_order_id  "
+                + "where w.queue_id = (select id from queue where name like '%enumeration%') and w.current_status != 'Obsolete'";
         String sql2 = "select count(*) from work_order_temp ";
         boolean isFirst = true;
 
@@ -1199,10 +961,6 @@ public class WorkOrderDao extends AbstractDao<Integer, WorkOrder> {
             return null;
         }
         return engineerId.get(0);
-    }
-
-    private EnumerationRequestModel EnumerationRequestModel(Object[] e) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
 
 }
