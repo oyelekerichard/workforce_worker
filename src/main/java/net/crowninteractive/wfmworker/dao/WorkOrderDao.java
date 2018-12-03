@@ -30,6 +30,7 @@ import net.crowninteractive.wfmworker.entity.WorkOrderRemark;
 import net.crowninteractive.wfmworker.entity.WorkOrderTemp;
 import net.crowninteractive.wfmworker.exception.WfmWorkerException;
 import net.crowninteractive.wfmworker.misc.EnumerationRequestModel;
+import net.crowninteractive.wfmworker.misc.RequestListModel;
 import net.crowninteractive.wfmworker.misc.EnumerationWorkOrderDownloadModel;
 import net.crowninteractive.wfmworker.misc.WorkOrderEnumerationBody;
 import org.apache.commons.collections4.keyvalue.DefaultMapEntry;
@@ -668,7 +669,7 @@ public class WorkOrderDao extends AbstractDao<Integer, WorkOrder> {
         return model;
     }
     
-    public Map.Entry<BigInteger, List<EnumerationRequestModel.RequestListModel>> getEnumerationList(String sql, String district, String from, String to, Integer page, String queue, String queueType, String priority, String status, String billingId, String ticketId, String reportedBy) {
+    public Map.Entry<BigInteger, List<RequestListModel>> getEnumerationList(String sql, String district, String from, String to, Integer page, String queue, String queueType, String priority, String status, String billingId, String ticketId, String reportedBy) {
         page = (page - 1) * 1000;
            
         if (to.equals("create_time")) {
@@ -717,24 +718,20 @@ public class WorkOrderDao extends AbstractDao<Integer, WorkOrder> {
         final String sql2 = sql + " limit 1000 offset " + page;
         
         logger.info("Compiled SQL " + sql2);
-        List<EnumerationRequestModel.RequestListModel> model = new ArrayList();
+        List<RequestListModel> model = new ArrayList();
         //initialize count
         BigInteger val = null;
-        List<Object[][]> list = getEntityManager().
-                createNativeQuery(sql2).getResultList();
-        for (Object[] e : list) {
-            
-            //logger.info("Enumeration List -------->" + e[1]);
-            
-            EnumerationRequestModel enumReqs = new EnumerationRequestModel();
-            
+        List<Object[][]> list = getEntityManager().createNativeQuery(sql2).getResultList();       
+        for (Object[] e : list) {           
+            //logger.info("Enumeration List -------->" + e[1]);       
             // Instantiating the inner class           
-            EnumerationRequestModel.RequestListModel m = enumReqs.new RequestListModel(e);
-            model.add(m);            
-            // get count
-            Query query = getEntityManager().createNativeQuery(String.format("select count(*) from (%s) as new", sql));  
-            val = (BigInteger) query.getSingleResult();            
+            RequestListModel m = new RequestListModel(e);
+            model.add(m);                       
         }
+        
+        // get count
+        Query query = getEntityManager().createNativeQuery(String.format("select count(*) from (%s) as new", sql));  
+        val = (BigInteger) query.getSingleResult(); 
         
         return new DefaultMapEntry<>(val, model);
     }
