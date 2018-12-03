@@ -152,8 +152,8 @@ public class EnumController {
         return awe;
     }
 
-    @RequestMapping(method = RequestMethod.GET, value = "download_workorder")
-    public Awesome downloadWorkOrder(@RequestParam("email") String emailAddress,
+    @RequestMapping(method = RequestMethod.GET, value = "email_enumeration_work_orders/{emailAddress:.+}")
+    public Awesome emailWorkOrderList(@PathVariable("emailAddress") String emailAddress,
             @RequestParam(defaultValue = "business_unit", value = "district", required = false) String district,
             @RequestParam(defaultValue = "create_time", value = "from", required = false) String from,
             @RequestParam(defaultValue = "create_time", value = "to", required = false) String to,
@@ -166,8 +166,8 @@ public class EnumController {
             @RequestParam(value = "reportedBy", required = false) String reportedBy) {
         Awesome awe;
         try {
-            awe = enumService.sendWorkOrderFile(district, from, to, queue, queueType, priority,
-                    status, billingId, ticketId, reportedBy, emailAddress);
+            awe = enumService.sendEnumerationWorkOrderFile(emailAddress, district, from, to, queue, queueType, priority,
+                    status, billingId, ticketId, reportedBy);
             awe = StandardResponse.ok();
         } catch (Exception ex) {
             L.warning("An error occurred while trying to sendWorkOrderFileToUser " + emailAddress);
@@ -176,8 +176,8 @@ public class EnumController {
         return awe;
     }
 
-    @RequestMapping(method = RequestMethod.GET, value = "download_request")
-    public Awesome downloadRequest(@RequestParam("email") String emailAddress,
+    @RequestMapping(method = RequestMethod.GET, value = "email_enumeration_requests/{emailAddress:.+}")
+    public Awesome emailRequestList(@PathVariable("emailAddress") String emailAddress,
             @RequestParam(defaultValue = "business_unit", value = "district", required = false) String district,
             @RequestParam(defaultValue = "create_time", value = "from", required = false) String from,
             @RequestParam(defaultValue = "create_time", value = "to", required = false) String to,
@@ -190,8 +190,7 @@ public class EnumController {
             @RequestParam(value = "reportedBy", required = false) String reportedBy) {
         Awesome awe;
         try {
-            awe = enumService.sendRequestFile(district, from, to, queue, queueType, priority,
-                    status, billingId, ticketId, reportedBy, emailAddress);
+            awe = enumService.sendEnumerationRequestListFile(emailAddress,district, from, to, queue, queueType, priority, status, billingId, ticketId, reportedBy);
             awe = StandardResponse.ok();
         } catch (Exception ex) {
             L.warning("An error occurred while trying to sendWorkOrderFileToUser " + emailAddress);

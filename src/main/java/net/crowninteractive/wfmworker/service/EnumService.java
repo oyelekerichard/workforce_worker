@@ -33,9 +33,9 @@ import net.crowninteractive.wfmworker.entity.WorkOrderTemp;
 import net.crowninteractive.wfmworker.exception.WfmWorkerException;
 import net.crowninteractive.wfmworker.misc.Config;
 import net.crowninteractive.wfmworker.misc.EnumerationRequestModel;
+import net.crowninteractive.wfmworker.misc.EnumerationWorkOrderDownloadModel;
 import net.crowninteractive.wfmworker.misc.ExcludeForExcel;
 import net.crowninteractive.wfmworker.misc.StandardResponse;
-import net.crowninteractive.wfmworker.misc.WorkOrderDownloadModel;
 import org.apache.commons.mail.EmailAttachment;
 import org.apache.commons.mail.EmailException;
 import org.apache.commons.mail.HtmlEmail;
@@ -248,12 +248,17 @@ public class EnumService {
     }
 
     @Async
-    public Awesome sendWorkOrderFile(String district, String from, String to, String queue, String queueType, String priority, String status, String billingId, String ticketId, String reportedBy, String emailAddress) {
+    public Awesome sendEnumerationWorkOrderFile(String emailAddress, String district, String from, String to, String queue, String queueType, String priority, String status, String billingId, String ticketId, String reportedBy) {
         List<String> err = validateEnumWorkOrder(to, from);
 
         if (err.isEmpty()) {
-            final List<WorkOrderDownloadModel> workOrders = wdao.getWorkOrders(district, from, to, queue, queueType, priority,
-                    status, billingId, ticketId, reportedBy);
+            String sql = "SELECT " + EnumerationWorkOrderDownloadModel.enumerationWorkOrderDataCols() + ",wt.ticket_id, "
+                + "(select name from queue where id=wt.queue_id) as queue_name,"
+                + "(select name from queue_type where id=wt.queue_type_id) as queue_type_name "
+                + " ,wt.current_status "
+                + "FROM `work_order` wt, enumeration_work_order e where wt.ticket_id = e.work_order_id and business_unit like {unit} and cast(create_time as date) >= cast({from} as date) and cast(create_time as date) <= cast({to} as date )";
+
+            final List<EnumerationWorkOrderDownloadModel> workOrders = wdao.getEnumerationDownloadList(sql, district, from, to, queue, queueType, priority,status, billingId, ticketId, reportedBy);
             if (!workOrders.isEmpty()) {
                 sendWorkOrderEmailAttachment(emailAddress, workOrders,fileType.WORKORDER);
             } else {
@@ -266,9 +271,9 @@ public class EnumService {
         return new Awesome(0, "Successful");
     }
 
-    private void sendWorkOrderEmailAttachment(String emailAddress, List<WorkOrderDownloadModel> data,fileType type) {
+    private void sendWorkOrderEmailAttachment(String emailAddress, List<EnumerationWorkOrderDownloadModel> data,fileType type) {
         L.info("Preparing to send WorkOrder email to " + emailAddress);
-        final File excelFileFor = createExcelFileFor(WorkOrderDownloadModel.class, data, true,type);
+        final File excelFileFor = createExcelFileFor(EnumerationWorkOrderDownloadModel.class, data, true,type);
         if (excelFileFor != null) {
             try {
                 sendEmailTo(emailAddress, null, "Your work order download file", "Please find "
@@ -309,7 +314,7 @@ public class EnumService {
             L.info("Creating file with data rows -----------" + data.size());
 
             String fileName = type.equals(fileType.WORKORDER) ? "work_order_report"+System.currentTimeMillis() + ".xls":
-                    "request_report"+System.currentTimeMillis();
+                    "request_report"+System.currentTimeMillis() + ".xls";
             
             final String filePath;
 
@@ -358,11 +363,25 @@ public class EnumService {
             return null;
         }
     }
+    
+    /**
+     * Convenience method to send email in application
+     *
+     * @param address email address for email to be sent to
+     * @param bcc bcc if any can be {@code null}
+     * @param subject subject of message
+     * @param message message to send
+     * @param file file to be attached. Can be {@code null}
+     * @throws EmailException Exception thrown when a checked error occurs
+     * @see EmailException
+     * @see HtmlEmail
+     */
+    @Async
+    public void sendEmailTo(final String address, final String bcc, final String subject,
+            final String message, final File file, fileType type) throws EmailException {
 
-    private void sendEmailTo(String address, String bcc, String subject, String message, File file,fileType type) throws EmailException {
         HtmlEmail emailAgent = new HtmlEmail();
-        EmailAttachment e = new EmailAttachment();
-        e.setPath(file.getAbsolutePath());
+
         //TODO stop using hard-coded values!
         emailAgent.setHostName("smtp.office365.com");
         emailAgent.setSmtpPort(587);
@@ -371,30 +390,41 @@ public class EnumService {
         emailAgent.setFrom("no-reply@ekedp.com");
         emailAgent.setCharset("utf8");
         emailAgent.setMsg(message);
-        emailAgent.setSubject(type.equals(fileType.WORKORDER)? "New Work Order Report Generated For You ":
-                "New Enumeration Report Generated For You" );
+        emailAgent.setSubject(type.equals(fileType.WORKORDER)? "New Enumeration Work Order Report Generated For You ":
+                "New Enumeration Request Report Generated For You" );
         emailAgent.addTo(address);
         if (bcc != null) {
             emailAgent.addBcc(bcc);
         }
         if (file != null) {
             if (file.exists()) {
+                EmailAttachment e = new EmailAttachment();
+                e.setPath(file.getAbsolutePath());
                 emailAgent.attach(e);
             }
         }
+
         emailAgent.send();
         L.info("Email sent to " + address);
+
     }
 
     @Async
-    public Awesome sendRequestFile(String district, String from, String to, String queue, String queueType, String priority, String status, String billingId, String ticketId, String reportedBy, String emailAddress) {
+    public Awesome sendEnumerationRequestListFile(String emailAddress, String district, String from, String to, String queue, String queueType, String priority, String status, String billingId, String ticketId, String reportedBy) {
         List<String> err = validateEnumWorkOrder(to, from);
 
         if (err.isEmpty()) {
-            final List<WorkOrderDownloadModel> workOrders = wdao.getRequests(district, from, to, queue, queueType, priority,
-                    status, billingId, ticketId, reportedBy);
-            if (!workOrders.isEmpty()) {
-                sendWorkOrderEmailAttachment(emailAddress, workOrders,fileType.REQUEST);
+            String sql = "SELECT " + EnumerationWorkOrderDownloadModel.enumerationWorkOrderDataCols() + ",wt.ticket_id, "
+                + "(select name from queue where id=wt.queue_id) as queue_name,"
+                + "(select name from queue_type where id=wt.queue_type_id) as queue_type_name "
+                + ", wt.current_status "
+                + "FROM `work_order_temp` wt, enumeration_work_order e where wt.token = e.work_order_temp_token "
+                + "and wt.business_unit like {unit} and cast(wt.create_time as date) >= cast({from} as date) and cast(wt.create_time as date) <= cast({to} as date )";
+
+            final List<EnumerationWorkOrderDownloadModel> requests = wdao.getEnumerationDownloadList(sql, district, from, to, queue, queueType, priority,status, billingId, ticketId, reportedBy);
+            
+            if (!requests.isEmpty()) {
+                sendWorkOrderEmailAttachment(emailAddress, requests,fileType.REQUEST);
             } else {
                 L.info("No work order found for given params");
             }
@@ -450,7 +480,7 @@ public class EnumService {
                     + "(select name from queue_type where id=wt.queue_type_id) "
                     + "as queue_type_id, wt.ticket_id as ticketId, wt.reference_type as reference_type, wt.reference_type_data as reference_type_data, "
                     + "wt.business_unit as business_unit, wt.priority as priority, wt.create_time as create_time,  wt.current_status as current_status, wt.reported_by as reported_by, wt.token as token "
-                    + "FROM `work_order` wt join enumeration_work_order e on wt.id = e.work_order_id where business_unit like business_unit "
+                    + "FROM `work_order` wt join enumeration_work_order e on wt.ticket_id = e.work_order_id where business_unit like business_unit "
                     + "and wt.current_status != 'Obsolete' and cast(create_time as date) >= cast(create_time as date) and cast(create_time as date) <= cast(create_time as date)"
                     + "and wt.queue_id = (select id from queue where name like '%enumeration%')";
     
