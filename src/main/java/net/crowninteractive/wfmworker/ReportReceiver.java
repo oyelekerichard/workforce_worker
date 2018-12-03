@@ -155,7 +155,7 @@ public class ReportReceiver {
         System.out.println("userDao-----------" + this.usersDao);
         System.out.println("-Email-------------" + email);
         Users u = usersDao.findByEmail(email);
-        if (u.getDistricts() == null) {
+        if (u == null) {
             System.out.println(">>>>>>>>No district for user >>>>>>>>.." + email);
             return;
         }
@@ -179,7 +179,7 @@ public class ReportReceiver {
         f.setBoldweight((short) 4);
         f.setFontHeight((short) 300);
         h.setFont(f);
-        h.setAlignment((short)5);
+        h.setAlignment((short) 5);
 
         //font.setBold(true);
         headerStyle.setFont(font);
@@ -190,8 +190,6 @@ public class ReportReceiver {
             List<WorkOrder> lwListt = wdao.getWorkOrderByParams(districts.get(i), from, to, queueTypeId, tariffs);
             long en = System.currentTimeMillis();
             long timeTaken = en - st;
-            System.out.println(">>>>Work order List >>>>>>>>>" + lwListt.size());
-            System.out.println(">>>Time taken >>>>>>>>>> " + timeTaken);
 
             SXSSFSheet sheet = (SXSSFSheet) workbook.createSheet(districts.get(i));
             sheet.setRandomAccessWindowSize(100);
