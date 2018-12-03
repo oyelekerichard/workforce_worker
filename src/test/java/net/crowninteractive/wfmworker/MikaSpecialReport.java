@@ -85,12 +85,12 @@ public class MikaSpecialReport {
 
         CellStyle h = workbook.createCellStyle();
         Font f = workbook.createFont();
-        f.setBold(true);
+        //f.setBold(true);
         f.setFontHeight((short) 300);
         h.setFont(f);
-        h.setAlignment(HorizontalAlignment.CENTER);
+        //h.setAlignment(HorizontalAlignment.CENTER);
 
-        font.setBold(true);
+        //font.setBold(true);
         headerStyle.setFont(font);
 
         for (int i = 0; i < districts.size(); i++) {
