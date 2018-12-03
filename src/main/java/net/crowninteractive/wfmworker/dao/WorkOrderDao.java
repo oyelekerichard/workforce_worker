@@ -126,7 +126,7 @@ public class WorkOrderDao extends AbstractDao<Integer, WorkOrder> {
     }
 
     public List<WorkOrder> getWorkOrderByParams(String district, String from, String to, String queueTypeIds, String tariffs) {
-        String qry = "select * from work_order where business_unit='%s' and date(create_time) >= date('%s') and date(create_time) <= date('%s') "
+        String qry = "select * from work_order where business_unit='%s' and is_active=1 and date(create_time) >= date('%s') and date(create_time) <= date('%s') "
                 + "and queue_type_id in (" + queueTypeIds + ")";
         if (tariffs.length() > 0) {
             qry.concat(" and customer_tariff in (" + tariffs + ")");

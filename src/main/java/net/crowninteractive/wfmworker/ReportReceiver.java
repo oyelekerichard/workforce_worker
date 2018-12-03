@@ -18,6 +18,7 @@ import javax.jms.Message;
 import javax.jms.TextMessage;
 import net.crowninteractive.wfmworker.dao.UsersDao;
 import net.crowninteractive.wfmworker.dao.WorkOrderDao;
+import net.crowninteractive.wfmworker.entity.Users;
 import net.crowninteractive.wfmworker.entity.WorkOrder;
 import net.crowninteractive.wfmworker.exception.WfmWorkerException;
 import net.crowninteractive.wfmworker.service.SendEmail;
@@ -26,11 +27,11 @@ import org.apache.commons.mail.EmailException;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.CellStyle;
 import org.apache.poi.ss.usermodel.Font;
-import org.apache.poi.ss.usermodel.HorizontalAlignment;
 import org.apache.poi.ss.usermodel.Row;
-import org.apache.poi.ss.usermodel.Sheet;
-import org.apache.poi.ss.usermodel.Workbook;
+
 import org.apache.poi.ss.util.CellRangeAddress;
+import org.apache.poi.xssf.streaming.SXSSFSheet;
+import org.apache.poi.xssf.streaming.SXSSFWorkbook;
 import org.apache.poi.xssf.usermodel.XSSFSheet;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -151,14 +152,23 @@ public class ReportReceiver {
 
     public void processWriteV2(String from, String to, String email) throws FileNotFoundException, IOException, EmailException, WfmWorkerException {
         System.out.println("-------------------------About to process report ---------");
-        String commaSeparated = usersDao.findByEmail(email).getDistricts();
+        System.out.println("userDao-----------" + this.usersDao);
+        System.out.println("-Email-------------" + email);
+        Users u = usersDao.findByEmail(email);
+        if (u.getDistricts() == null) {
+            System.out.println(">>>>>>>>No district for user >>>>>>>>.." + email);
+            return;
+        }
+        String commaSeparated = u.getDistricts();
+        System.out.println("-----Districts are ------ " + commaSeparated);
 
         String queueTypeId = usersDao.getQueueTypeIds(email);
         String tariffs = usersDao.getAssignedTariffs(email);
-        
+
         List<String> districts = new ArrayList<String>(Arrays.asList(commaSeparated.split("\\s*,\\s*")));
-      
-        Workbook workbook = new XSSFWorkbook();
+        System.out.println("districts >>>>>>" + districts);
+
+        SXSSFWorkbook workbook = new SXSSFWorkbook();
 
         CellStyle headerStyle = workbook.createCellStyle();
         Font font = workbook.createFont();
@@ -166,19 +176,25 @@ public class ReportReceiver {
 
         CellStyle h = workbook.createCellStyle();
         Font f = workbook.createFont();
-        f.setBold(true);
+        f.setBoldweight((short) 4);
         f.setFontHeight((short) 300);
         h.setFont(f);
-        h.setAlignment(HorizontalAlignment.CENTER);
+        h.setAlignment((short)5);
 
-        font.setBold(true);
+        //font.setBold(true);
         headerStyle.setFont(font);
 
         for (int i = 0; i < districts.size(); i++) {
 
+            long st = System.currentTimeMillis();
             List<WorkOrder> lwListt = wdao.getWorkOrderByParams(districts.get(i), from, to, queueTypeId, tariffs);
+            long en = System.currentTimeMillis();
+            long timeTaken = en - st;
+            System.out.println(">>>>Work order List >>>>>>>>>" + lwListt.size());
+            System.out.println(">>>Time taken >>>>>>>>>> " + timeTaken);
 
-            Sheet sheet = workbook.createSheet(districts.get(i));
+            SXSSFSheet sheet = (SXSSFSheet) workbook.createSheet(districts.get(i));
+            sheet.setRandomAccessWindowSize(100);
 
             Cell info0 = sheet.createRow(2).createCell(0);
             info0.setCellStyle(h);
@@ -214,6 +230,7 @@ public class ReportReceiver {
 
             int rownum = 6;
             double count = 1;
+
             for (WorkOrder w : lwListt) {
                 Row row = sheet.createRow(rownum++);
                 Cell cell = row.createCell(0);
@@ -224,7 +241,7 @@ public class ReportReceiver {
                 try {
                     cName = wdao.getCustomerName(w);
                 } catch (Exception e) {
-
+                    e.printStackTrace();
                 }
                 row.createCell(2).setCellValue(cName);
                 row.createCell(3).setCellValue(w.getAddressLine1() + ", " + w.getCity());
