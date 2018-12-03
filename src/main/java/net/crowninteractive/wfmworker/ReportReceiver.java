@@ -151,13 +151,17 @@ public class ReportReceiver {
 
     public void processWriteV2(String from, String to, String email) throws FileNotFoundException, IOException, EmailException, WfmWorkerException {
         System.out.println("-------------------------About to process report ---------");
+        System.out.println("userDao-----------" + this.usersDao);
+        System.out.println("-Email-------------" + email);
         String commaSeparated = usersDao.findByEmail(email).getDistricts();
+        System.out.println("-----Districts are ------ " + commaSeparated);
 
         String queueTypeId = usersDao.getQueueTypeIds(email);
         String tariffs = usersDao.getAssignedTariffs(email);
-        
+
         List<String> districts = new ArrayList<String>(Arrays.asList(commaSeparated.split("\\s*,\\s*")));
-      
+        System.out.println("districts >>>>>>" + districts);
+
         Workbook workbook = new XSSFWorkbook();
 
         CellStyle headerStyle = workbook.createCellStyle();
@@ -176,7 +180,12 @@ public class ReportReceiver {
 
         for (int i = 0; i < districts.size(); i++) {
 
+            long st = System.currentTimeMillis();
             List<WorkOrder> lwListt = wdao.getWorkOrderByParams(districts.get(i), from, to, queueTypeId, tariffs);
+            long en = System.currentTimeMillis();
+            long timeTaken = en - st;
+            System.out.println(">>>>Work order List >>>>>>>>>" + lwListt.size());
+            System.out.println(">>>Time taken >>>>>>>>>> " + timeTaken);
 
             Sheet sheet = workbook.createSheet(districts.get(i));
 
@@ -214,6 +223,7 @@ public class ReportReceiver {
 
             int rownum = 6;
             double count = 1;
+            System.out.println(">>>>>>>>>>>..Iterating List " + lwListt);
             for (WorkOrder w : lwListt) {
                 Row row = sheet.createRow(rownum++);
                 Cell cell = row.createCell(0);
@@ -224,7 +234,7 @@ public class ReportReceiver {
                 try {
                     cName = wdao.getCustomerName(w);
                 } catch (Exception e) {
-
+                    e.printStackTrace();
                 }
                 row.createCell(2).setCellValue(cName);
                 row.createCell(3).setCellValue(w.getAddressLine1() + ", " + w.getCity());

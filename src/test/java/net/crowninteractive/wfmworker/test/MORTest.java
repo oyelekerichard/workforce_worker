@@ -39,9 +39,9 @@ public class MORTest {
 
             stream.forEach(line -> {
                 String orderId = line.split(",")[1];
-                Double amount = Double.parseDouble(line.split(",")[2]);
+                Integer amount = Integer.parseInt(line.split(",")[2]);
                 String ticketId =line.split(",")[3];
-                String msg = String.format("A ADMINISTRATIVE CHARGE charge of %.2f with order ID %d has been charged to this account.", amount, orderId);
+                String msg = String.format("A ADMINISTRATIVE CHARGE charge of %.2f with order ID %s has been charged to this account.", new Double(-amount), orderId);
                 dao.addRemarkV2("1", ticketId, msg);
                 
             });
