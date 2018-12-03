@@ -7,7 +7,7 @@ package net.crowninteractive.wfmworker.test;
 
 import java.util.List;
 import net.crowninteractive.wfmworker.dao.WorkOrderDao;
-import net.crowninteractive.wfmworker.misc.WorkOrderDownloadModel;
+import net.crowninteractive.wfmworker.misc.EnumerationWorkOrderDownloadModel;
 import net.crowninteractive.wfmworker.service.EnumService;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -28,7 +28,7 @@ public class EnumWorkerQueryTest {
    
    @Test
    public void testQuery(){
-       List<WorkOrderDownloadModel> workOrders = wdao.getRequests("LEKKI", "create_time", "create_time", null, null, null, null, null, null, null);
+       List<EnumerationWorkOrderDownloadModel> workOrders = wdao.getRequests("LEKKI", "create_time", "create_time", null, null, null, null, null, null, null);
        //  workOrders.stream().map(w -> w.getTransformer()).forEach(System.out::println);
    }
    
