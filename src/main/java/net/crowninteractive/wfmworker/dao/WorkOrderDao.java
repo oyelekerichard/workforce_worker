@@ -11,6 +11,7 @@ import com.google.common.base.Optional;
 import java.math.BigInteger;
 import java.sql.Timestamp;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
@@ -753,6 +754,33 @@ public class WorkOrderDao extends AbstractDao<Integer, WorkOrder> {
         BigInteger enum2 = (BigInteger) getEntityManager().createNativeQuery(sql2).getSingleResult();
 
         return new Object[]{enum1, enum2};
+    }
+    
+     public List<EnumerationWorkOrderDownloadModel> getWorkOrderEnumerationTempByTokens(final String[] tokens) {
+        final StringBuilder builder = new StringBuilder();
+        Arrays.stream(tokens).forEach(s -> builder.append("'").append(s.trim()).append("'").append(","));
+        final String builtParams = StringUtils.chop(builder.toString());
+
+        final String sql = "SELECT " + EnumerationWorkOrderDownloadModel.enumerationWorkOrderDataCols() + ",wt.ticket_id, "
+                + "(select name from queue where id=wt.queue_id) as queue_name,"
+                + "(select name from queue_type where id=wt.queue_type_id) as queue_type_name "
+                + "FROM `work_order_temp` wt,enumeration_work_order e where wt.token = e.work_order_temp_token and wt.token in (" + builtParams + ")";
+
+        logger.info("Executing SQL {} with {}" + sql);
+        
+        List<EnumerationWorkOrderDownloadModel> model = new ArrayList();
+        
+        List<Object[][]> ewos = getEntityManager().
+                createNativeQuery(sql).getResultList();
+        
+        for (Object[] e : ewos) {            
+            logger.info("Requests " + e[1]);            
+            EnumerationWorkOrderDownloadModel enumReq = new EnumerationWorkOrderDownloadModel(e);
+            model.add(enumReq);                   
+        }       
+        return model;
+
+        
     }
     
     public RequestEnumerationBody getEnumRequestByToken(String token) {

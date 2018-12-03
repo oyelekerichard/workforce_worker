@@ -5,14 +5,14 @@
  */
 package net.crowninteractive.wfmworker.contoller;
 
+import javax.json.JsonObject;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.logging.Logger;
-import javax.ws.rs.DefaultValue;
-import javax.ws.rs.QueryParam;
+import javax.ws.rs.core.MediaType;
+import javax.ws.rs.core.Response;
 import net.crowninteractive.wfmworker.entity.Dashboard;
 import net.crowninteractive.wfmworker.entity.WorkOrder;
-import net.crowninteractive.wfmworker.exception.WfmWorkerException;
 import net.crowninteractive.wfmworker.misc.StandardResponse;
 import net.crowninteractive.wfmworker.misc.WorkOrderEnumerationBody;
 import net.crowninteractive.wfmworker.service.Awesome;
@@ -150,6 +150,48 @@ public class EnumController {
             awe = StandardResponse.systemError();
         }
         return awe;
+    }
+    
+    @RequestMapping(method = RequestMethod.POST, value = "download_enumeration_requests")
+    public Response downloadEnumerationRequests(@RequestBody JsonObject jsonObject) {
+        L.entering("download_work_orders", jsonObject.toString());
+        final String elementName = "tokens";
+        if (jsonObject.containsKey(elementName)) {
+            final String[] tokens = jsonObject.getString(elementName).trim().split(",");
+            final Awesome workOrderFile = enumService.createEnumerationWorkOrderTempRequestFile(tokens);
+            if (workOrderFile.getObject() != null) {
+                return Response.ok(workOrderFile.getObject(), MediaType.APPLICATION_OCTET_STREAM)
+                        .header("Content-Disposition", "attachment; filename=work_order_download.xls")
+                        .build();
+            } else {
+                return Response.ok(workOrderFile, MediaType.APPLICATION_JSON)
+                        .build();
+            }
+        } else {
+            return Response.ok(StandardResponse.validationErrors("no element" + elementName
+                    + "found in JsonObject"), MediaType.APPLICATION_JSON).build();
+        }
+    }
+    
+    @RequestMapping(method = RequestMethod.POST, value = "download_enumeration_work_orders")
+    public Response downloadEnumerationWorkOrders(@RequestBody JsonObject jsonObject) {
+        L.entering("download_work_orders", jsonObject.toString());
+        final String elementName = "tokens";
+        if (jsonObject.containsKey(elementName)) {
+            final String[] tokens = jsonObject.getString(elementName).trim().split(",");
+            final Awesome workOrderFile = enumService.createEnumerationWorkOrderTempRequestFile(tokens);
+            if (workOrderFile.getObject() != null) {
+                return Response.ok(workOrderFile.getObject(), MediaType.APPLICATION_OCTET_STREAM)
+                        .header("Content-Disposition", "attachment; filename=work_order_download.xls")
+                        .build();
+            } else {
+                return Response.ok(workOrderFile, MediaType.APPLICATION_JSON)
+                        .build();
+            }
+        } else {
+            return Response.ok(StandardResponse.validationErrors("no element" + elementName
+                    + "found in JsonObject"), MediaType.APPLICATION_JSON).build();
+        }
     }
 
     @RequestMapping(method = RequestMethod.GET, value = "email_enumeration_work_orders/{emailAddress:.+}")
