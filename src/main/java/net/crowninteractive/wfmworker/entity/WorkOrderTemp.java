@@ -31,53 +31,50 @@ public class WorkOrderTemp implements Serializable {
     private static final long serialVersionUID = 1L;
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Basic(optional = false)
+    
     @Column(name = "id")
     private Integer id;
-    @Basic(optional = false)
+    
     @Column(name = "token")
     private String token;
-    @Basic(optional = false)
+    
     @Column(name = "owner_id")
     private int ownerId;
-    @Basic(optional = false)
+    
     @Column(name = "queue_id")
     private int queueId;
-    @Basic(optional = false)
+    
     @Column(name = "queue_type_id")
     private int queueTypeId;
-    @Basic(optional = false)
+    
     @Column(name = "summary")
     private String summary;
     @Lob
     @Column(name = "description")
     private String description;
-    @Basic(optional = false)
     @Column(name = "contact_number")
     private String contactNumber;
-    @Basic(optional = false)
     @Column(name = "reference_type")
     private String referenceType;
     @Column(name = "reference_type_data")
     private String referenceTypeData;
-    @Basic(optional = false)
     @Column(name = "address_line_1")
     private String addressLine1;
     @Column(name = "address_line_2")
     private String addressLine2;
-    @Basic(optional = false)
+    
     @Column(name = "city")
     private String city;
-    @Basic(optional = false)
+    
     @Column(name = "state")
     private String state;
-    @Basic(optional = false)
+    
     @Column(name = "business_unit")
     private String businessUnit;
-    @Basic(optional = false)
+    
     @Column(name = "priority")
     private String priority;
-    @Basic(optional = false)
+    
     @Column(name = "create_time")
     @Temporal(TemporalType.TIMESTAMP)
     private Date createTime;
@@ -105,7 +102,7 @@ public class WorkOrderTemp implements Serializable {
     private Integer createdBy;
     @Column(name = "channel")
     private String channel;
-    @Basic(optional = false)
+    
     @Column(name = "is_active")
     private int isActive;
     @Column(name = "update_time")
@@ -180,10 +177,8 @@ public class WorkOrderTemp implements Serializable {
     private String serviceWire;
     @Column(name = "nerc_id")
     private String nercId;
-    @Basic(optional = false)
     @Column(name = "connection_type")
     private String connectionType;
-    @Basic(optional = false)
     @Column(name = "transformer")
     private String transformer;
     @Column(name = "current_bill")
