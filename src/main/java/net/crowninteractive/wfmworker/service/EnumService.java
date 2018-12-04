@@ -452,7 +452,7 @@ public class EnumService {
                 + "(select name from queue_type where id=wt.queue_type_id) as queue_type_name "
                 + ", wt.current_status "
                 + "FROM `work_order_temp` wt, enumeration_work_order e where wt.token = e.work_order_temp_token "
-                + "and wt.business_unit like {unit} and cast(wt.create_time as date) >= cast({from} as date) and cast(wt.create_time as date) <= cast({to} as date )";
+                + "and wt.business_unit like {unit} and cast(wt.create_time as date) >= cast({from} as date) and cast(wt.create_time as date) <= cast({to} as date ) ORDER BY wt.create_time";
 
             final List<EnumerationWorkOrderDownloadModel> requests = wdao.getEnumerationDownloadList(sql, district, from, to, queue, queueType, priority,status, billingId, ticketId, reportedBy);
             
@@ -515,7 +515,7 @@ public class EnumService {
                     + "wt.business_unit as business_unit, wt.priority as priority, wt.create_time as create_time,  wt.current_status as current_status, wt.reported_by as reported_by, wt.token as token "
                     + "FROM `work_order` wt join enumeration_work_order e on wt.ticket_id = e.work_order_id where business_unit like business_unit "
                     + "and wt.current_status != 'Obsolete' and cast(create_time as date) >= cast(create_time as date) and cast(create_time as date) <= cast(create_time as date)"
-                    + "and wt.queue_id = (select id from queue where name like '%enumeration%')";
+                    + "and wt.queue_id = (select id from queue where name like '%enumeration%') ";
     
                 workOrders = wdao.getEnumerationList(sql, district, from, to, page, queue, queueType, priority, status, billingId, ticketId, reportedBy);
             } else {
