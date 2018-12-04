@@ -5,9 +5,11 @@
  */
 package net.crowninteractive.wfmworker.test;
 
+import java.math.BigInteger;
 import java.util.List;
+import java.util.Map.Entry;
 import net.crowninteractive.wfmworker.dao.WorkOrderDao;
-import net.crowninteractive.wfmworker.misc.EnumerationWorkOrderDownloadModel;
+import net.crowninteractive.wfmworker.misc.RequestListModel;
 import net.crowninteractive.wfmworker.service.EnumService;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -28,7 +30,7 @@ public class EnumWorkerQueryTest {
    
    @Test
    public void testQuery(){
-       List<EnumerationWorkOrderDownloadModel> workOrders = wdao.getRequests("LEKKI", "create_time", "create_time", null, null, null, null, null, null, null);
+       Entry<BigInteger,List<RequestListModel>> workOrders = wdao.getEnumerationList("","LEKKI", "create_time", "create_time", null, null, null, null, null, null, null,null);
        //  workOrders.stream().map(w -> w.getTransformer()).forEach(System.out::println);
    }
    
