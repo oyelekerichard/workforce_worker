@@ -9,7 +9,6 @@ import javax.json.JsonObject;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.logging.Logger;
-import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import net.crowninteractive.wfmworker.entity.Dashboard;
 import net.crowninteractive.wfmworker.entity.WorkOrder;
@@ -21,6 +20,7 @@ import net.crowninteractive.wfmworker.service.Token;
 import net.crowninteractive.wfmworker.service.WorkOrderService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -153,44 +153,54 @@ public class EnumController {
     }
     
     @RequestMapping(method = RequestMethod.POST, value = "download_enumeration_requests")
-    public Response downloadEnumerationRequests(@RequestBody JsonObject jsonObject) {
+    public ResponseEntity downloadEnumerationRequests(@RequestBody JsonObject jsonObject) {
         L.entering("download_work_orders", jsonObject.toString());
         final String elementName = "tokens";
         if (jsonObject.containsKey(elementName)) {
             final String[] tokens = jsonObject.getString(elementName).trim().split(",");
             final Awesome workOrderFile = enumService.createEnumerationWorkOrderTempRequestFile(tokens);
             if (workOrderFile.getObject() != null) {
-                return Response.ok(workOrderFile.getObject(), MediaType.APPLICATION_OCTET_STREAM)
-                        .header("Content-Disposition", "attachment; filename=work_order_download.xls")
-                        .build();
+                return ResponseEntity.ok()
+                    .header("Content-Disposition", "attachment; filename=work_order_download.xls")
+                    .contentType(MediaType.APPLICATION_OCTET_STREAM)
+                    //.contentLength("") //
+                    .body(workOrderFile.getObject());
+                
             } else {
-                return Response.ok(workOrderFile, MediaType.APPLICATION_JSON)
-                        .build();
+                return ResponseEntity.ok()
+                    .contentType(MediaType.APPLICATION_JSON)
+                    .body(workOrderFile);
             }
         } else {
-            return Response.ok(StandardResponse.validationErrors("no element" + elementName
-                    + "found in JsonObject"), MediaType.APPLICATION_JSON).build();
+            return ResponseEntity.ok()
+                    .contentType(MediaType.APPLICATION_JSON)
+                    .body(StandardResponse.validationErrors("no element" + elementName + "found in JsonObject"));
         }
     }
     
     @RequestMapping(method = RequestMethod.POST, value = "download_enumeration_work_orders")
-    public Response downloadEnumerationWorkOrders(@RequestBody JsonObject jsonObject) {
+    public ResponseEntity downloadEnumerationWorkOrders(@RequestBody JsonObject jsonObject) {
         L.entering("download_work_orders", jsonObject.toString());
         final String elementName = "tokens";
         if (jsonObject.containsKey(elementName)) {
             final String[] tokens = jsonObject.getString(elementName).trim().split(",");
             final Awesome workOrderFile = enumService.createEnumerationWorkOrderTempRequestFile(tokens);
             if (workOrderFile.getObject() != null) {
-                return Response.ok(workOrderFile.getObject(), MediaType.APPLICATION_OCTET_STREAM)
-                        .header("Content-Disposition", "attachment; filename=work_order_download.xls")
-                        .build();
+                return ResponseEntity.ok()
+                    .header("Content-Disposition", "attachment; filename=work_order_download.xls")
+                    .contentType(MediaType.APPLICATION_OCTET_STREAM)
+                    //.contentLength("") //
+                    .body(workOrderFile.getObject());
+                
             } else {
-                return Response.ok(workOrderFile, MediaType.APPLICATION_JSON)
-                        .build();
+                return ResponseEntity.ok()
+                    .contentType(MediaType.APPLICATION_JSON)
+                    .body(workOrderFile);
             }
         } else {
-            return Response.ok(StandardResponse.validationErrors("no element" + elementName
-                    + "found in JsonObject"), MediaType.APPLICATION_JSON).build();
+            return ResponseEntity.ok()
+                    .contentType(MediaType.APPLICATION_JSON)
+                    .body(StandardResponse.validationErrors("no element" + elementName + "found in JsonObject"));
         }
     }
 
