@@ -49,7 +49,7 @@ public class ReportReceiver {
     @Autowired
     private UsersDao usersDao;
 
-    @JmsListener(destination = "${nerc.report.queue}")
+    //@JmsListener(destination = "${nerc.report.queue}")
     public void handleMessage(Message message) {
 
         if (message instanceof TextMessage) {
