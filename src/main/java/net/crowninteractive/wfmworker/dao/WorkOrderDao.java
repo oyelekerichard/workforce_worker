@@ -11,6 +11,7 @@ import com.google.common.base.Optional;
 import java.math.BigInteger;
 import java.sql.Timestamp;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
@@ -30,6 +31,7 @@ import net.crowninteractive.wfmworker.entity.WorkOrderTemp;
 import net.crowninteractive.wfmworker.exception.WfmWorkerException;
 import net.crowninteractive.wfmworker.misc.EnumerationRequestModel;
 import net.crowninteractive.wfmworker.misc.EnumerationWorkOrderDownloadModel;
+import net.crowninteractive.wfmworker.misc.RequestListModel;
 import net.crowninteractive.wfmworker.misc.WorkOrderEnumerationBody;
 import org.apache.commons.collections4.keyvalue.DefaultMapEntry;
 import org.apache.commons.lang3.RandomStringUtils;
@@ -648,7 +650,7 @@ public class WorkOrderDao extends AbstractDao<Integer, WorkOrder> {
         return model;
     }
     
-    public Map.Entry<BigInteger, List<EnumerationRequestModel.RequestListModel>> getEnumerationList(String sql, String district, String from, String to, Integer page, String queue, String queueType, String priority, String status, String billingId, String ticketId, String reportedBy) {
+    public Map.Entry<BigInteger, List<RequestListModel>> getEnumerationList(String sql, String district, String from, String to, Integer page, String queue, String queueType, String priority, String status, String billingId, String ticketId, String reportedBy) {
         page = (page - 1) * 1000;
            
         if (to.equals("create_time")) {
@@ -697,24 +699,20 @@ public class WorkOrderDao extends AbstractDao<Integer, WorkOrder> {
         final String sql2 = sql + " limit 1000 offset " + page;
         
         logger.info("Compiled SQL " + sql2);
-        List<EnumerationRequestModel.RequestListModel> model = new ArrayList();
+        List<RequestListModel> model = new ArrayList();
         //initialize count
         BigInteger val = null;
-        List<Object[][]> list = getEntityManager().
-                createNativeQuery(sql2).getResultList();
-        for (Object[] e : list) {
-            
-            //logger.info("Enumeration List -------->" + e[1]);
-            
-            EnumerationRequestModel enumReqs = new EnumerationRequestModel();
-            
+        List<Object[][]> list = getEntityManager().createNativeQuery(sql2).getResultList();       
+        for (Object[] e : list) {           
+            //logger.info("Enumeration List -------->" + e[1]);       
             // Instantiating the inner class           
-            EnumerationRequestModel.RequestListModel m = enumReqs.new RequestListModel(e);
-            model.add(m);            
-            // get count
-            Query query = getEntityManager().createNativeQuery(String.format("select count(*) from (%s) as new", sql));  
-            val = (BigInteger) query.getSingleResult();            
+            RequestListModel m = new RequestListModel(e);
+            model.add(m);                       
         }
+        
+        // get count
+        Query query = getEntityManager().createNativeQuery(String.format("select count(*) from (%s) as new", sql));  
+        val = (BigInteger) query.getSingleResult(); 
         
         return new DefaultMapEntry<>(val, model);
     }
@@ -753,6 +751,33 @@ public class WorkOrderDao extends AbstractDao<Integer, WorkOrder> {
         BigInteger enum2 = (BigInteger) getEntityManager().createNativeQuery(sql2).getSingleResult();
 
         return new Object[]{enum1, enum2};
+    }
+    
+     public List<EnumerationWorkOrderDownloadModel> getWorkOrderEnumerationTempByTokens(final String[] tokens) {
+        final StringBuilder builder = new StringBuilder();
+        Arrays.stream(tokens).forEach(s -> builder.append("'").append(s.trim()).append("'").append(","));
+        final String builtParams = StringUtils.chop(builder.toString());
+
+        final String sql = "SELECT " + EnumerationWorkOrderDownloadModel.enumerationWorkOrderDataCols() + ",wt.ticket_id, "
+                + "(select name from queue where id=wt.queue_id) as queue_name,"
+                + "(select name from queue_type where id=wt.queue_type_id) as queue_type_name "
+                + "FROM `work_order_temp` wt,enumeration_work_order e where wt.token = e.work_order_temp_token and wt.token in (" + builtParams + ")";
+
+        logger.info("Executing SQL {} with {}" + sql);
+        
+        List<EnumerationWorkOrderDownloadModel> model = new ArrayList();
+        
+        List<Object[][]> ewos = getEntityManager().
+                createNativeQuery(sql).getResultList();
+        
+        for (Object[] e : ewos) {            
+            logger.info("Requests " + e[1]);            
+            EnumerationWorkOrderDownloadModel enumReq = new EnumerationWorkOrderDownloadModel(e);
+            model.add(enumReq);                   
+        }       
+        return model;
+
+        
     }
     
     public RequestEnumerationBody getEnumRequestByToken(String token) {
