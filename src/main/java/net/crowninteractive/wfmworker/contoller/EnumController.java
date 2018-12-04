@@ -5,6 +5,12 @@
  */
 package net.crowninteractive.wfmworker.contoller;
 
+import java.io.File;
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.util.Arrays;
 import javax.json.JsonObject;
 import java.util.HashMap;
 import java.util.Map;
@@ -22,6 +28,7 @@ import net.crowninteractive.wfmworker.service.EnumService;
 import net.crowninteractive.wfmworker.service.Token;
 import net.crowninteractive.wfmworker.service.WorkOrderService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.io.ByteArrayResource;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -166,23 +173,25 @@ public class EnumController {
     }
     
     @RequestMapping(method = RequestMethod.POST, value = "download_enumeration_requests")
-    public ResponseEntity downloadEnumerationRequests(@RequestBody JsonObject jsonObject) {
-        L.entering("download_work_orders", jsonObject.toString());
+    public ResponseEntity downloadEnumerationRequests(@RequestBody Token tokens) throws IOException {
+        L.entering("download_work_orders", Arrays.toString(tokens.getTokens()));
         final String elementName = "tokens";
-        if (jsonObject.containsKey(elementName)) {
-            final String[] tokens = jsonObject.getString(elementName).trim().split(",");
-            final Awesome workOrderFile = enumService.createEnumerationWorkOrderTempRequestFile(tokens);
-            if (workOrderFile.getObject() != null) {
+        if (tokens.getTokens().length != -1) {
+            final String[] tokns = tokens.getTokens();
+            final File requestFile = enumService.createEnumerationWorkOrderTempRequestFile(tokns);
+            if (requestFile.isFile()) {
+                Path path = Paths.get(requestFile.getAbsolutePath());
+                byte[] data = Files.readAllBytes(path);
+                ByteArrayResource resource = new ByteArrayResource(data);
                 return ResponseEntity.ok()
-                    .header("Content-Disposition", "attachment; filename=work_order_download.xls")
+                    .header("Content-Disposition", "attachment; filename=enumeration_request_download.xls")
                     .contentType(MediaType.APPLICATION_OCTET_STREAM)
-                    //.contentLength("") //
-                    .body(workOrderFile.getObject());
+                    .body(resource);
                 
             } else {
                 return ResponseEntity.ok()
                     .contentType(MediaType.APPLICATION_JSON)
-                    .body(workOrderFile);
+                    .body(StandardResponse.validationErrors("no Record found for " + elementName));
             }
         } else {
             return ResponseEntity.ok()
@@ -192,23 +201,25 @@ public class EnumController {
     }
     
     @RequestMapping(method = RequestMethod.POST, value = "download_enumeration_work_orders")
-    public ResponseEntity downloadEnumerationWorkOrders(@RequestBody JsonObject jsonObject) {
-        L.entering("download_work_orders", jsonObject.toString());
+    public ResponseEntity downloadEnumerationWorkOrders(@RequestBody Token tokens) throws IOException {
+        L.entering("download_work_orders", Arrays.toString(tokens.getTokens()));
         final String elementName = "tokens";
-        if (jsonObject.containsKey(elementName)) {
-            final String[] tokens = jsonObject.getString(elementName).trim().split(",");
-            final Awesome workOrderFile = enumService.createEnumerationWorkOrderTempRequestFile(tokens);
-            if (workOrderFile.getObject() != null) {
+        if (tokens.getTokens().length != -1) {
+            final String[] tokns = tokens.getTokens();
+            final File workOrderFile = enumService.createEnumerationWorkOrderFile(tokns);
+            if (workOrderFile.isFile()) {
+                Path path = Paths.get(workOrderFile.getAbsolutePath());
+                byte[] data = Files.readAllBytes(path);
+                ByteArrayResource resource = new ByteArrayResource(data);
                 return ResponseEntity.ok()
-                    .header("Content-Disposition", "attachment; filename=work_order_download.xls")
+                    .header("Content-Disposition", "attachment; filename=enumeration_work_orders_download.xls")
                     .contentType(MediaType.APPLICATION_OCTET_STREAM)
-                    //.contentLength("") //
-                    .body(workOrderFile.getObject());
+                    .body(resource);
                 
             } else {
                 return ResponseEntity.ok()
                     .contentType(MediaType.APPLICATION_JSON)
-                    .body(workOrderFile);
+                    .body(StandardResponse.validationErrors("no Record found for " + elementName));
             }
         } else {
             return ResponseEntity.ok()
