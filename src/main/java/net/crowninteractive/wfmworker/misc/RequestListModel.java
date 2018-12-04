@@ -36,6 +36,8 @@ public class RequestListModel{
     private String currentStatus;
     private String reportedBy;
     private String token;
+    private String addressLine1;
+    private String city;
 
 
     public RequestListModel(Object[] e) {
@@ -51,6 +53,8 @@ public class RequestListModel{
         this.currentStatus = (String) e[9];
         this.reportedBy = (String) e[10];
         this.token = (String) e[11];
+        this.addressLine1 = (String) e[12];
+        this.city = (String) e[13];
     }
    
 }
