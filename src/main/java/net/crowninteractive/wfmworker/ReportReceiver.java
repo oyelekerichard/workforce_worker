@@ -98,7 +98,7 @@ public class ReportReceiver {
                 }
 
                 row.createCell(1).setCellValue(w.getTicketId());
-                row.createCell(2).setCellValue(wdao.getCustomerName(w));
+                row.createCell(2).setCellValue(w.getCustomerName()==null ? "":w.getCustomerName());
                 row.createCell(3).setCellValue(w.getAddressLine1() + ", " + w.getCity());
                 row.createCell(4).setCellValue(getBillingId(w));
                 row.createCell(5).setCellValue(String.valueOf(w.getContactNumber()));
@@ -151,7 +151,7 @@ public class ReportReceiver {
     }
 
     public void processWriteV2(String from, String to, String email) throws FileNotFoundException, IOException, EmailException, WfmWorkerException {
-        System.out.println("-------------------------About to process report ---------");
+        System.out.println("-------------------------Modified report ---------");
         System.out.println("userDao-----------" + this.usersDao);
         System.out.println("-Email-------------" + email);
         Users u = usersDao.findByEmail(email);
@@ -236,12 +236,8 @@ public class ReportReceiver {
 
                 row.createCell(1).setCellValue(w.getTicketId());
                 String cName = "";
-                try {
-                    cName = wdao.getCustomerName(w);
-                } catch (Exception e) {
-                    e.printStackTrace();
-                }
-                row.createCell(2).setCellValue(cName);
+               
+                row.createCell(2).setCellValue(w.getCustomerName()==null ? "":w.getCustomerName());
                 row.createCell(3).setCellValue(w.getAddressLine1() + ", " + w.getCity());
                 row.createCell(4).setCellValue(getBillingId(w));
                 row.createCell(5).setCellValue(String.valueOf(w.getContactNumber()));
