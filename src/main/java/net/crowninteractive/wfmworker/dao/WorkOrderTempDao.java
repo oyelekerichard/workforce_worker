@@ -5,9 +5,7 @@
  */
 package net.crowninteractive.wfmworker.dao;
 
-import com.dyfferential.vyral.web.util.DateFormatter;
 import java.util.Date;
-import java.util.List;
 import net.crowninteractive.wfmworker.entity.EnumerationWorkOrder;
 import net.crowninteractive.wfmworker.entity.QueueType;
 import net.crowninteractive.wfmworker.entity.WorkOrder;
@@ -24,6 +22,8 @@ import org.springframework.stereotype.Repository;
 @Repository
 public class WorkOrderTempDao extends AbstractDao<Integer, WorkOrderTemp> {
 
+   
+    private WorkOrderTempDao temp;
     @Autowired
     private EnumerationWorkOrderDao ewod;
 
@@ -60,7 +60,6 @@ public class WorkOrderTempDao extends AbstractDao<Integer, WorkOrderTemp> {
             WorkOrderTemp wotSave = save(wot);
             if (wotSave != null) {
                 retn = wotSave.getId();
-                ed.setWork_order_temp_token(token);
                 EnumerationWorkOrder edSave = ewod.save(ed);
                 if (edSave != null) {
                     retn = wotSave.getId();
@@ -81,11 +80,11 @@ public class WorkOrderTempDao extends AbstractDao<Integer, WorkOrderTemp> {
     private Object getUniqueEnumWorkOrderToken() {
         String token = RandomStringUtils.randomAlphanumeric(30);
 
-        String sql = String.format("select token from work_order_temp where token='%s' limit 1", token);
+        String sql = String.format("select * from work_order_temp where token='%s' ", token);
         System.out.println(sql);
-        List resultList = getEntityManager().createNativeQuery(sql).getResultList();
+        WorkOrder w = (WorkOrder) getEntityManager().createNativeQuery(sql, WorkOrder.class).getSingleResult();
 
-        if (!resultList.isEmpty()) {
+        if (w != null) {
             return getUniqueEnumWorkOrderToken();
         } else {
             return token;
