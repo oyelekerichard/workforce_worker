@@ -8,13 +8,16 @@ package net.crowninteractive.wfmworker.contoller;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.logging.Logger;
+import javax.servlet.http.HttpServletRequest;
 import javax.ws.rs.DefaultValue;
 import javax.ws.rs.QueryParam;
+import javax.ws.rs.core.Context;
 import net.crowninteractive.wfmworker.entity.Dashboard;
 import net.crowninteractive.wfmworker.entity.WorkOrder;
 import net.crowninteractive.wfmworker.exception.WfmWorkerException;
 import net.crowninteractive.wfmworker.misc.StandardResponse;
 import net.crowninteractive.wfmworker.misc.WorkOrderEnumerationBody;
+import net.crowninteractive.wfmworker.misc.WorkOrderJson;
 import net.crowninteractive.wfmworker.service.Awesome;
 import net.crowninteractive.wfmworker.service.EnumService;
 import net.crowninteractive.wfmworker.service.Token;
@@ -41,7 +44,7 @@ public class EnumController {
 
     @Autowired
     private EnumService enumService;
-    
+
     @Autowired
     private WorkOrderService service;
 
@@ -50,12 +53,22 @@ public class EnumController {
         return new ResponseEntity<String>("Test value", HttpStatus.OK);
     }
 
+    @RequestMapping(method = RequestMethod.POST, value = "create_enumeration_work_order")
+    public Awesome createEnumerationWorkOrder(@RequestBody WorkOrderJson obj, @Context HttpServletRequest request) {
+
+        try {
+            return enumService.createEnumerationWorkOrder(obj);
+        } catch (Exception ex) {
+            return new Awesome(400, ex.getMessage());
+        }
+
+    }
+
     @RequestMapping(method = RequestMethod.POST, value = "approve_enum_work_order")
     public ResponseEntity approveEnumWorkOrders(@RequestBody Token tokens) {
         String message = enumService.approveWorkOrders(tokens);
         return new ResponseEntity<Awesome>(new Awesome(0, message), HttpStatus.OK);
     }
-    
 
     @RequestMapping(method = RequestMethod.GET, value = "report/filter")
     public Awesome enumerationReport(
@@ -90,7 +103,7 @@ public class EnumController {
 
         return new ResponseEntity<String>("enum work order update successful ", HttpStatus.OK);
     }
-    
+
     @RequestMapping(method = RequestMethod.GET, value = "enumeration_requests/{token}")
     public Awesome getEnumerationRequestByToken(@PathVariable("token") String token) {
         Awesome awe;
@@ -102,7 +115,7 @@ public class EnumController {
         }
         return awe;
     }
-    
+
     @RequestMapping(method = RequestMethod.GET, value = "enumeration_requests")
     public Awesome getEnumerationRequests(
             @RequestParam(defaultValue = "1", value = "page") Integer page,
@@ -126,7 +139,7 @@ public class EnumController {
         }
         return awe;
     }
-    
+
     @RequestMapping(method = RequestMethod.GET, value = "enumeration_work_orders")
     public Awesome getEnumerationWorkOrders(
             @RequestParam(defaultValue = "1", value = "page") Integer page,
@@ -190,7 +203,7 @@ public class EnumController {
             @RequestParam(value = "reportedBy", required = false) String reportedBy) {
         Awesome awe;
         try {
-            awe = enumService.sendEnumerationRequestListFile(emailAddress,district, from, to, queue, queueType, priority, status, billingId, ticketId, reportedBy);
+            awe = enumService.sendEnumerationRequestListFile(emailAddress, district, from, to, queue, queueType, priority, status, billingId, ticketId, reportedBy);
             awe = StandardResponse.ok();
         } catch (Exception ex) {
             L.warning("An error occurred while trying to sendWorkOrderFileToUser " + emailAddress);
@@ -222,5 +235,5 @@ public class EnumController {
             return new ResponseEntity<String>(e.getMessage(), HttpStatus.BAD_REQUEST);
         }
     }
-    
+
 }

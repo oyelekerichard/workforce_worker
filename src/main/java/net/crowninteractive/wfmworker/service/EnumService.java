@@ -26,6 +26,7 @@ import javax.annotation.PostConstruct;
 import net.crowninteractive.wfmworker.dao.BarChartWidget_1;
 import net.crowninteractive.wfmworker.dao.QueueTypeData;
 import net.crowninteractive.wfmworker.dao.WorkOrderDao;
+import net.crowninteractive.wfmworker.dao.WorkOrderTempDao;
 import net.crowninteractive.wfmworker.entity.Dashboard;
 import net.crowninteractive.wfmworker.entity.LowerWidget;
 import net.crowninteractive.wfmworker.entity.RequestEnumerationBody;
@@ -36,6 +37,7 @@ import net.crowninteractive.wfmworker.misc.EnumerationRequestModel;
 import net.crowninteractive.wfmworker.misc.EnumerationWorkOrderDownloadModel;
 import net.crowninteractive.wfmworker.misc.ExcludeForExcel;
 import net.crowninteractive.wfmworker.misc.StandardResponse;
+import net.crowninteractive.wfmworker.misc.WorkOrderJson;
 import org.apache.commons.mail.EmailAttachment;
 import org.apache.commons.mail.EmailException;
 import org.apache.commons.mail.HtmlEmail;
@@ -61,6 +63,9 @@ public class EnumService {
 
     @Autowired
     private WorkOrderDao wdao;
+
+    @Autowired
+    private WorkOrderTempDao wotDao;
 
     private List<QueueTypeData> qtees;
     private List<LowerWidget> statusByDistrict = new ArrayList();
@@ -101,6 +106,17 @@ public class EnumService {
 
     }
 
+    public Awesome createEnumerationWorkOrder(WorkOrderJson workOrderJson){
+        
+        Integer i = wotDao.createEnumerationWorkOrder(workOrderJson);
+            if (i > 0) {
+                return StandardResponse.ok();
+            } else {
+                return StandardResponse.errorDuringProcessing();
+            }
+        
+    }
+    
     public String approveWorkOrders(Token tokens) {
 
         try {

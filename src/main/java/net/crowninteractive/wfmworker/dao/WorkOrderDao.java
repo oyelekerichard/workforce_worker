@@ -49,7 +49,7 @@ public class WorkOrderDao extends AbstractDao<Integer, WorkOrder> {
     private final Logger logger = Logger.getLogger("DaoLogger");
 
     @Autowired
-    private WorkOrderTempDap temp;
+    private WorkOrderTempDao temp;
     @Autowired
     private EnumerationWorkOrderDao ewod;
     @Autowired
