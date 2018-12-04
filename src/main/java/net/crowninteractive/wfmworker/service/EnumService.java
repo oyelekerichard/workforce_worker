@@ -35,6 +35,7 @@ import net.crowninteractive.wfmworker.misc.Config;
 import net.crowninteractive.wfmworker.misc.EnumerationRequestModel;
 import net.crowninteractive.wfmworker.misc.EnumerationWorkOrderDownloadModel;
 import net.crowninteractive.wfmworker.misc.ExcludeForExcel;
+import net.crowninteractive.wfmworker.misc.RequestListModel;
 import net.crowninteractive.wfmworker.misc.StandardResponse;
 import org.apache.commons.mail.EmailAttachment;
 import org.apache.commons.mail.EmailException;
@@ -455,7 +456,7 @@ public class EnumService {
             String reportedBy) {
         try {
 
-            Entry<BigInteger, List<EnumerationRequestModel.RequestListModel>> workOrders;
+            Entry<BigInteger, List<RequestListModel>> workOrders;
             List<String> err = validateEnumWorkOrder(to, from);
             String ticketId = null;
             if (err.isEmpty()) {
@@ -487,7 +488,7 @@ public class EnumService {
                                 String queueType, String priority, String status, String billingId, String ticketId, String reportedBy) {
         try {
 
-            Entry<BigInteger, List<EnumerationRequestModel.RequestListModel>> workOrders;
+            Entry<BigInteger, List<RequestListModel>> workOrders;
             List<String> err = validateEnumWorkOrder(to, from);
             if (err.isEmpty()) {
                 
