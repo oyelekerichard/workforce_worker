@@ -753,31 +753,70 @@ public class WorkOrderDao extends AbstractDao<Integer, WorkOrder> {
         return new Object[]{enum1, enum2};
     }
     
-     public List<EnumerationWorkOrderDownloadModel> getWorkOrderEnumerationTempByTokens(final String[] tokens) {
-        final StringBuilder builder = new StringBuilder();
-        Arrays.stream(tokens).forEach(s -> builder.append("'").append(s.trim()).append("'").append(","));
-        final String builtParams = StringUtils.chop(builder.toString());
+    public List<EnumerationWorkOrderDownloadModel> getWorkOrderEnumerationTempByTokens(final String[] tokens) {
+        try {
+            final StringBuilder builder = new StringBuilder();
+            Arrays.stream(tokens).forEach(s -> builder.append("'").append(s.trim()).append("'").append(","));
+            final String builtParams = StringUtils.chop(builder.toString());
 
-        final String sql = "SELECT " + EnumerationWorkOrderDownloadModel.enumerationWorkOrderDataCols() + ",wt.ticket_id, "
+            String sql = "SELECT " + EnumerationWorkOrderDownloadModel.enumerationWorkOrderDataCols() + ",wt.ticket_id, "
                 + "(select name from queue where id=wt.queue_id) as queue_name,"
                 + "(select name from queue_type where id=wt.queue_type_id) as queue_type_name "
+                + " ,wt.current_status "
                 + "FROM `work_order_temp` wt,enumeration_work_order e where wt.token = e.work_order_temp_token and wt.token in (" + builtParams + ")";
+            
+            logger.info("Executing SQL {} with {}" + sql);
 
-        logger.info("Executing SQL {} with {}" + sql);
-        
-        List<EnumerationWorkOrderDownloadModel> model = new ArrayList();
-        
-        List<Object[][]> ewos = getEntityManager().
-                createNativeQuery(sql).getResultList();
-        
-        for (Object[] e : ewos) {            
-            logger.info("Requests " + e[1]);            
-            EnumerationWorkOrderDownloadModel enumReq = new EnumerationWorkOrderDownloadModel(e);
-            model.add(enumReq);                   
-        }       
-        return model;
+            List<EnumerationWorkOrderDownloadModel> model = new ArrayList();
 
-        
+            List<Object[][]> ewos = getEntityManager().
+                    createNativeQuery(sql).getResultList();
+
+            for (Object[] e : ewos) {            
+                logger.info("Requests " + e[1]);            
+                EnumerationWorkOrderDownloadModel enumReq = new EnumerationWorkOrderDownloadModel(e);
+                model.add(enumReq);                   
+            }
+            logger.info("--------Gotten Requests Enumeration ---------");
+            return model;
+                
+        } catch (NoResultException ex) {
+            ex.printStackTrace();
+            return null;
+        }              
+    }
+    
+    public List<EnumerationWorkOrderDownloadModel> getWorkOrderEnumerationByTokens(final String[] tokens) {
+        try {
+            final StringBuilder builder = new StringBuilder();
+            Arrays.stream(tokens).forEach(s -> builder.append("'").append(s.trim()).append("'").append(","));
+            final String builtParams = StringUtils.chop(builder.toString());
+
+            String sql = "SELECT " + EnumerationWorkOrderDownloadModel.enumerationWorkOrderDataCols() + ",wt.ticket_id, "
+                + "(select name from queue where id=wt.queue_id) as queue_name,"
+                + "(select name from queue_type where id=wt.queue_type_id) as queue_type_name "
+                + " ,wt.current_status "
+                + "FROM `work_order` wt, enumeration_work_order e where wt.ticket_id = e.work_order_id and wt.token in (" + builtParams + ")";
+            
+            logger.info("Executing SQL {} with {}" + sql);
+
+            List<EnumerationWorkOrderDownloadModel> model = new ArrayList();
+
+            List<Object[][]> ewos = getEntityManager().
+                    createNativeQuery(sql).getResultList();
+
+            for (Object[] e : ewos) {            
+                logger.info("Requests " + e[1]);            
+                EnumerationWorkOrderDownloadModel enumReq = new EnumerationWorkOrderDownloadModel(e);
+                model.add(enumReq);                   
+            }
+            logger.info("--------Gotten Requests Enumeration ---------");
+            return model;
+                
+        } catch (NoResultException ex) {
+            ex.printStackTrace();
+            return null;
+        }              
     }
     
     public RequestEnumerationBody getEnumRequestByToken(String token) {
