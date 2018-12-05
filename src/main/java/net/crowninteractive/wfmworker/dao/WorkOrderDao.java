@@ -20,6 +20,7 @@ import javax.persistence.NoResultException;
 import javax.persistence.Query;
 import net.crowninteractive.wfmworker.entity.Engineer;
 import net.crowninteractive.wfmworker.entity.EnumerationWorkOrder;
+import net.crowninteractive.wfmworker.entity.Queue;
 import net.crowninteractive.wfmworker.entity.QueueType;
 import net.crowninteractive.wfmworker.entity.RequestEnumerationBody;
 import net.crowninteractive.wfmworker.entity.Users;
@@ -31,6 +32,7 @@ import net.crowninteractive.wfmworker.entity.WorkOrderTemp;
 import net.crowninteractive.wfmworker.exception.WfmWorkerException;
 import net.crowninteractive.wfmworker.misc.EnumerationRequestModel;
 import net.crowninteractive.wfmworker.misc.EnumerationWorkOrderDownloadModel;
+import net.crowninteractive.wfmworker.misc.QueueTypeEnum;
 import net.crowninteractive.wfmworker.misc.RequestListModel;
 import net.crowninteractive.wfmworker.misc.WorkOrderEnumerationBody;
 import org.apache.commons.collections4.keyvalue.DefaultMapEntry;
@@ -1025,6 +1027,28 @@ public class WorkOrderDao extends AbstractDao<Integer, WorkOrder> {
             return null;
         }
         return engineerId.get(0);
+    }
+    
+    public Queue getQueue(String name) {
+
+        Queue queue = (Queue) getEntityManager()
+                .createNativeQuery("select * from queue where name=? ", Queue.class).setParameter(1,
+                name).getSingleResult();
+        return queue;
+    }
+    
+    public List<QueueTypeEnum> getEnumerationQueueTypeByQueueIdList(String token) {
+        List<Object[][]> list = getEntityManager()
+                .createNativeQuery("select qt.id as id, qt.token as token, qt.owner_id as owner_id, qt.description as description, qt.create_time as create_time, qt.is_active as is_active, qt.name as name from queue_type qt where qt.queue_id=(select id from queue where token=?) and qt.is_active=1").setParameter(1,
+                token).getResultList();
+        List<QueueTypeEnum> model = new ArrayList();
+        for (Object[] e : list) {                  
+            // Instantiating the inner class           
+            QueueTypeEnum m = new QueueTypeEnum((Integer) e[0], (String) e[1], (Integer) e[2], (String) e[3], (Date) e[4], (Integer) e[5], (String) e[6]);
+            model.add(m);                       
+        }
+        
+        return model;
     }
 
 }
