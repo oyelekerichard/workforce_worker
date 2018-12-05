@@ -5,8 +5,10 @@
  */
 package net.crowninteractive.wfmworker.misc;
 
+import com.dyfferential.vyral.common.util.DateTime;
 import java.io.Serializable;
 import java.sql.Timestamp;
+import java.util.Date;
 import javax.persistence.Entity;
 import javax.persistence.Id;
 import lombok.AllArgsConstructor;
@@ -32,7 +34,7 @@ public class RequestListModel{
     private String referenceTypeData;
     private String businessUnit;
     private String priority;
-    private Timestamp createTime;
+    private Date createTime;
     private String currentStatus;
     private String reportedBy;
     private String token;
@@ -49,7 +51,7 @@ public class RequestListModel{
         this.referenceTypeData = (String) e[5];
         this.businessUnit = (String) e[6];
         this.priority = (String) e[7];
-        this.createTime = (Timestamp) e[8];
+        this.createTime = new Date((((Timestamp) e[8])).getTime());
         this.currentStatus = (String) e[9];
         this.reportedBy = (String) e[10];
         this.token = (String) e[11];
