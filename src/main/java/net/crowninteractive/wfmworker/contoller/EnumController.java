@@ -11,14 +11,13 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.Arrays;
-import javax.json.JsonObject;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.logging.Logger;
 import javax.servlet.http.HttpServletRequest;
 import javax.ws.rs.core.Context;
-import javax.ws.rs.core.Response;
 import net.crowninteractive.wfmworker.entity.Dashboard;
+import net.crowninteractive.wfmworker.entity.Queue;
 import net.crowninteractive.wfmworker.entity.WorkOrder;
 import net.crowninteractive.wfmworker.misc.StandardResponse;
 import net.crowninteractive.wfmworker.misc.WorkOrderEnumerationBody;
@@ -297,6 +296,21 @@ public class EnumController {
             e.printStackTrace();
             return new ResponseEntity<String>(e.getMessage(), HttpStatus.BAD_REQUEST);
         }
+    }
+    
+    @RequestMapping(method = RequestMethod.GET, value = "/queue_type/{token}")
+    public Awesome getqueuetype(@PathVariable("token") String id) {
+        Awesome awe;
+        try {
+            if (id != null && id.equals(((Queue) enumService.getEnumerationQueue().getObject()).getToken())) {
+                awe = enumService.getqueueTypeByQueueid(id);
+            } else {
+                awe = StandardResponse.validationErrors("Invalid queue token");
+            }
+        } catch (Exception ex) {
+            awe = StandardResponse.invalidUser();
+        }
+        return awe;
     }
 
 }

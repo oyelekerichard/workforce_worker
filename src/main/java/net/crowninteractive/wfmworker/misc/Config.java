@@ -56,4 +56,8 @@ public class Config extends Properties {
     public String getEMCCGetCustomerDetailsURL() {
        return getProperty("emcc.customer.detail");   
     }
+    
+    public String getEnumerationQueueName() {
+        return getProperty("enumeration");
+    }
 }
