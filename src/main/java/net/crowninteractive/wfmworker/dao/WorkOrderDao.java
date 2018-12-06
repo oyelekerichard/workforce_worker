@@ -717,7 +717,7 @@ public class WorkOrderDao extends AbstractDao<Integer, WorkOrder> {
             sql += String.format("and reported_by ='%s'", reportedBy);
         }
         
-        final String sql2 = sql + " limit 1000 offset " + page;
+         final String sql2 = sql + " ORDER BY wt.create_time DESC limit 1000 offset " + page;
         
         logger.info("Compiled SQL " + sql2);
         List<RequestListModel> model = new ArrayList();
