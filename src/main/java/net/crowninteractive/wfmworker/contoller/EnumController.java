@@ -5,15 +5,19 @@
  */
 package net.crowninteractive.wfmworker.contoller;
 
-import javax.json.JsonObject;
+import java.io.File;
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.logging.Logger;
 import javax.servlet.http.HttpServletRequest;
 import javax.ws.rs.core.Context;
-import javax.ws.rs.core.MediaType;
-import javax.ws.rs.core.Response;
 import net.crowninteractive.wfmworker.entity.Dashboard;
+import net.crowninteractive.wfmworker.entity.Queue;
 import net.crowninteractive.wfmworker.entity.WorkOrder;
 import net.crowninteractive.wfmworker.misc.StandardResponse;
 import net.crowninteractive.wfmworker.misc.WorkOrderEnumerationBody;
@@ -23,7 +27,9 @@ import net.crowninteractive.wfmworker.service.EnumService;
 import net.crowninteractive.wfmworker.service.Token;
 import net.crowninteractive.wfmworker.service.WorkOrderService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.io.ByteArrayResource;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -165,47 +171,62 @@ public class EnumController {
         return awe;
     }
     
-    @RequestMapping(method = RequestMethod.POST, value = "download_enumeration_requests")
-    public Response downloadEnumerationRequests(@RequestBody JsonObject jsonObject) {
-        L.entering("download_work_orders", jsonObject.toString());
+     @RequestMapping(method = RequestMethod.POST, value = "download_enumeration_requests")
+    public ResponseEntity downloadEnumerationRequests(@RequestBody Token tokens) throws IOException {
+        L.entering("download_work_orders", Arrays.toString(tokens.getTokens()));
         final String elementName = "tokens";
-        if (jsonObject.containsKey(elementName)) {
-            final String[] tokens = jsonObject.getString(elementName).trim().split(",");
-            final Awesome workOrderFile = enumService.createEnumerationWorkOrderTempRequestFile(tokens);
-            if (workOrderFile.getObject() != null) {
-                return Response.ok(workOrderFile.getObject(), MediaType.APPLICATION_OCTET_STREAM)
-                        .header("Content-Disposition", "attachment; filename=work_order_download.xls")
-                        .build();
+        if (tokens.getTokens().length != -1) {
+            final String[] tokns = tokens.getTokens();
+            final File requestFile = enumService.createEnumerationWorkOrderTempRequestFile(tokns);
+            if (requestFile.isFile()) {
+                Path path = Paths.get(requestFile.getAbsolutePath());
+                byte[] data = Files.readAllBytes(path);
+                ByteArrayResource resource = new ByteArrayResource(data);
+                return ResponseEntity.ok()
+                    .header("Content-Disposition", "attachment; filename=enumeration_request_download.xls")
+                    .contentType(MediaType.APPLICATION_OCTET_STREAM)
+                    .body(resource);
+                
             } else {
-                return Response.ok(workOrderFile, MediaType.APPLICATION_JSON)
-                        .build();
+                return ResponseEntity.ok()
+                    .contentType(MediaType.APPLICATION_JSON)
+                    .body(StandardResponse.validationErrors("no Record found for " + elementName));
             }
         } else {
-            return Response.ok(StandardResponse.validationErrors("no element" + elementName
-                    + "found in JsonObject"), MediaType.APPLICATION_JSON).build();
+            return ResponseEntity.ok()
+                    .contentType(MediaType.APPLICATION_JSON)
+                    .body(StandardResponse.validationErrors("no element" + elementName + "found in JsonObject"));
         }
     }
     
     @RequestMapping(method = RequestMethod.POST, value = "download_enumeration_work_orders")
-    public Response downloadEnumerationWorkOrders(@RequestBody JsonObject jsonObject) {
-        L.entering("download_work_orders", jsonObject.toString());
+    public ResponseEntity downloadEnumerationWorkOrders(@RequestBody Token tokens) throws IOException {
+        L.entering("download_work_orders", Arrays.toString(tokens.getTokens()));
         final String elementName = "tokens";
-        if (jsonObject.containsKey(elementName)) {
-            final String[] tokens = jsonObject.getString(elementName).trim().split(",");
-            final Awesome workOrderFile = enumService.createEnumerationWorkOrderTempRequestFile(tokens);
-            if (workOrderFile.getObject() != null) {
-                return Response.ok(workOrderFile.getObject(), MediaType.APPLICATION_OCTET_STREAM)
-                        .header("Content-Disposition", "attachment; filename=work_order_download.xls")
-                        .build();
+        if (tokens.getTokens().length != -1) {
+            final String[] tokns = tokens.getTokens();
+            final File workOrderFile = enumService.createEnumerationWorkOrderFile(tokns);
+            if (workOrderFile.isFile()) {
+                Path path = Paths.get(workOrderFile.getAbsolutePath());
+                byte[] data = Files.readAllBytes(path);
+                ByteArrayResource resource = new ByteArrayResource(data);
+                return ResponseEntity.ok()
+                    .header("Content-Disposition", "attachment; filename=enumeration_work_orders_download.xls")
+                    .contentType(MediaType.APPLICATION_OCTET_STREAM)
+                    .body(resource);
+                
             } else {
-                return Response.ok(workOrderFile, MediaType.APPLICATION_JSON)
-                        .build();
+                return ResponseEntity.ok()
+                    .contentType(MediaType.APPLICATION_JSON)
+                    .body(StandardResponse.validationErrors("no Record found for " + elementName));
             }
         } else {
-            return Response.ok(StandardResponse.validationErrors("no element" + elementName
-                    + "found in JsonObject"), MediaType.APPLICATION_JSON).build();
+            return ResponseEntity.ok()
+                    .contentType(MediaType.APPLICATION_JSON)
+                    .body(StandardResponse.validationErrors("no element" + elementName + "found in JsonObject"));
         }
     }
+
 
     @RequestMapping(method = RequestMethod.GET, value = "email_enumeration_work_orders/{emailAddress:.+}")
     public Awesome emailWorkOrderList(@PathVariable("emailAddress") String emailAddress,
@@ -276,6 +297,21 @@ public class EnumController {
             e.printStackTrace();
             return new ResponseEntity<String>(e.getMessage(), HttpStatus.BAD_REQUEST);
         }
+    }
+    
+    @RequestMapping(method = RequestMethod.GET, value = "/queue_type/{token}")
+    public Awesome getqueuetype(@PathVariable("token") String id) {
+        Awesome awe;
+        try {
+            if (id != null && id.equals(((Queue) enumService.getEnumerationQueue().getObject()).getToken())) {
+                awe = enumService.getqueueTypeByQueueid(id);
+            } else {
+                awe = StandardResponse.validationErrors("Invalid queue token");
+            }
+        } catch (Exception ex) {
+            awe = StandardResponse.invalidUser();
+        }
+        return awe;
     }
 
 }

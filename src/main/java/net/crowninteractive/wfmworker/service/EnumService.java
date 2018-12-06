@@ -29,6 +29,7 @@ import net.crowninteractive.wfmworker.dao.WorkOrderDao;
 import net.crowninteractive.wfmworker.dao.WorkOrderTempDao;
 import net.crowninteractive.wfmworker.entity.Dashboard;
 import net.crowninteractive.wfmworker.entity.LowerWidget;
+import net.crowninteractive.wfmworker.entity.Queue;
 import net.crowninteractive.wfmworker.entity.RequestEnumerationBody;
 import net.crowninteractive.wfmworker.entity.WorkOrderTemp;
 import net.crowninteractive.wfmworker.exception.WfmWorkerException;
@@ -37,6 +38,7 @@ import net.crowninteractive.wfmworker.misc.EnumerationRequestModel;
 import net.crowninteractive.wfmworker.misc.RequestListModel;
 import net.crowninteractive.wfmworker.misc.EnumerationWorkOrderDownloadModel;
 import net.crowninteractive.wfmworker.misc.ExcludeForExcel;
+import net.crowninteractive.wfmworker.misc.QueueTypeEnum;
 import net.crowninteractive.wfmworker.misc.StandardResponse;
 import net.crowninteractive.wfmworker.misc.WorkOrderJson;
 import org.apache.commons.mail.EmailAttachment;
@@ -67,6 +69,8 @@ public class EnumService {
 
     @Autowired
     private WorkOrderTempDao wotDao;
+    
+    private static final Config c = Config.getInstance();
 
     private List<QueueTypeData> qtees;
     private List<LowerWidget> statusByDistrict = new ArrayList();
@@ -264,20 +268,20 @@ public class EnumService {
         WorkOrderTemp wot = wdao.getEnumWorkOrderByTicketId(Integer.parseInt(ticketId));
     }
     
-    public Awesome createEnumerationWorkOrderTempRequestFile(final String[] tokens) {
+    public File createEnumerationWorkOrderTempRequestFile(final String[] tokens) {
         final List<EnumerationWorkOrderDownloadModel> workOrderTemps = wdao.getWorkOrderEnumerationTempByTokens(tokens);
 
-        if (workOrderTemps.isEmpty()) {
-            return StandardResponse.noRecords();
-        } else {
-            final File excelFileForWorkOrder = createExcelFileFor(EnumerationWorkOrderDownloadModel.class,
+        final File excelFileForWorkOrder = createExcelFileFor(EnumerationWorkOrderDownloadModel.class,
                     workOrderTemps, false, fileType.REQUEST);
-            if (excelFileForWorkOrder != null) {
-                return StandardResponse.ok(excelFileForWorkOrder);
-            } else {
-                return StandardResponse.errorDuringProcessing();
-            }
-        }
+        return excelFileForWorkOrder; 
+    }
+    
+    public File createEnumerationWorkOrderFile(final String[] tokens) {
+        final List<EnumerationWorkOrderDownloadModel> workOrders = wdao.getWorkOrderEnumerationByTokens(tokens);
+
+        final File excelFileForWorkOrder = createExcelFileFor(EnumerationWorkOrderDownloadModel.class,
+                    workOrders, false, fileType.WORKORDER);
+        return excelFileForWorkOrder; 
     }
 
     @Async
@@ -552,7 +556,37 @@ public class EnumService {
         }
     }
     
+    public Awesome getqueueTypeByQueueid(String token) {
+        try {
+            List<QueueTypeEnum> qts = wdao.getEnumerationQueueTypeByQueueIdList(token);
+
+            if (qts != null && !qts.isEmpty()) {
+                return StandardResponse.ok(qts);
+            } else {
+                return StandardResponse.noRecords();
+            }
+        } catch (Exception ex) {
+            ex.printStackTrace();
+            return null;
+        }
+    }
+    
+    public Awesome getEnumerationQueue() {
+        try {
+            Queue qt = wdao.getQueue(c.getEnumerationQueueName());
+            if (qt != null) {
+                return StandardResponse.ok(qt);
+            } else {
+                return StandardResponse.unableToComplete();
+            }
+        } catch (Exception ex) {
+            ex.printStackTrace();
+            return null;
+        }
+    }
+    
 }
+
 
 enum fileType{
     REQUEST,WORKORDER;
