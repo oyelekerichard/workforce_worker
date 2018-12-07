@@ -5,7 +5,9 @@
  */
 package net.crowninteractive.wfmworker.dao;
 
+import com.dyfferential.vyral.web.util.DateFormatter;
 import java.util.Date;
+import java.util.List;
 import net.crowninteractive.wfmworker.entity.EnumerationWorkOrder;
 import net.crowninteractive.wfmworker.entity.QueueType;
 import net.crowninteractive.wfmworker.entity.WorkOrder;
@@ -22,8 +24,6 @@ import org.springframework.stereotype.Repository;
 @Repository
 public class WorkOrderTempDao extends AbstractDao<Integer, WorkOrderTemp> {
 
-   
-    private WorkOrderTempDao temp;
     @Autowired
     private EnumerationWorkOrderDao ewod;
 
@@ -60,6 +60,7 @@ public class WorkOrderTempDao extends AbstractDao<Integer, WorkOrderTemp> {
             WorkOrderTemp wotSave = save(wot);
             if (wotSave != null) {
                 retn = wotSave.getId();
+                ed.setWork_order_temp_token(token);
                 EnumerationWorkOrder edSave = ewod.save(ed);
                 if (edSave != null) {
                     retn = wotSave.getId();
@@ -72,19 +73,22 @@ public class WorkOrderTempDao extends AbstractDao<Integer, WorkOrderTemp> {
     }
 
     public QueueType getQueueTypeByToken(String queueTypeToken) {
-        String sql = String.format("select * from queue_type where token='%s' ", queueTypeToken);
-        System.out.println(sql);
-        return (QueueType) getEntityManager().createNativeQuery(sql, QueueType.class).getSingleResult();
+        String sql = String.format("select * from queue_type where token='%s' limit 1", queueTypeToken);
+        List<QueueType> qt = getEntityManager().createNativeQuery(sql).getResultList();
+        if(!qt.isEmpty()) {
+            return qt.get(0);
+        }
+        return null;
     }
 
     private Object getUniqueEnumWorkOrderToken() {
         String token = RandomStringUtils.randomAlphanumeric(30);
 
-        String sql = String.format("select * from work_order_temp where token='%s' ", token);
+        String sql = String.format("select token from work_order_temp where token='%s' limit 1", token);
         System.out.println(sql);
-        WorkOrder w = (WorkOrder) getEntityManager().createNativeQuery(sql, WorkOrder.class).getSingleResult();
+        List resultList = getEntityManager().createNativeQuery(sql).getResultList();
 
-        if (w != null) {
+        if (!resultList.isEmpty()) {
             return getUniqueEnumWorkOrderToken();
         } else {
             return token;
