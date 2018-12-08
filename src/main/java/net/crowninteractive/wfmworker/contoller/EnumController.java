@@ -65,6 +65,7 @@ public class EnumController {
         try {
             return enumService.createEnumerationWorkOrder(obj);
         } catch (Exception ex) {
+            ex.printStackTrace();
             return new Awesome(400, ex.getMessage());
         }
 
