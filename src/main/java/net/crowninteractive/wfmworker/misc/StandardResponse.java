@@ -15,6 +15,7 @@ import net.crowninteractive.wfmworker.service.Awesome;
 public class StandardResponse {
 
     private static final int OK = 0;
+    private static final int ERROR = 1;
     private static final int VALIDATION_ERROR = 200;
     private static final int NO_RECORDS_AVAILABLE = 400;
 
@@ -60,6 +61,10 @@ public class StandardResponse {
 
     public static Awesome systemError() {
         return new Awesome(SYSTEM_ERROR, "System Error");
+    }
+
+    public static Awesome Error(String msg) {
+        return new Awesome(ERROR, msg);
     }
 
     public static Awesome cityNotFound() {
