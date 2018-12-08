@@ -12,7 +12,9 @@ import net.crowninteractive.wfmworker.entity.EnumerationWorkOrder;
 import net.crowninteractive.wfmworker.entity.QueueType;
 import net.crowninteractive.wfmworker.entity.WorkOrder;
 import net.crowninteractive.wfmworker.entity.WorkOrderTemp;
+import net.crowninteractive.wfmworker.misc.StandardResponse;
 import net.crowninteractive.wfmworker.misc.WorkOrderJson;
+import net.crowninteractive.wfmworker.service.Awesome;
 import org.apache.commons.lang3.RandomStringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
@@ -27,8 +29,8 @@ public class WorkOrderTempDao extends AbstractDao<Integer, WorkOrderTemp> {
     @Autowired
     private EnumerationWorkOrderDao ewod;
 
-    public Integer createEnumerationWorkOrder(WorkOrderJson workOrderJson) {
-        int retn = 0;
+    public Awesome createEnumerationWorkOrder(WorkOrderJson workOrderJson) {
+        Awesome retn = StandardResponse.unableToComplete();
         String token = (String) getUniqueEnumWorkOrderToken();
         QueueType qt = getQueueTypeByToken(workOrderJson.getQueueTypeToken());
         if (qt != null) {
@@ -59,16 +61,24 @@ public class WorkOrderTempDao extends AbstractDao<Integer, WorkOrderTemp> {
             if (ed != null) {
                 WorkOrderTemp wotSave = save(wot);
                 if (wotSave != null) {
-                    retn = wotSave.getId();
+                    
                     ed.setWork_order_temp_token(token);
                     EnumerationWorkOrder edSave = ewod.save(ed);
                     if (edSave != null) {
-                        retn = wotSave.getId();
+                        retn = StandardResponse.ok();
                         //saving was successful
+                    }else{
+                    retn = StandardResponse.Error("Couldn't save Enumeration Work Order");    
                     }
+                }else{
+                    retn = StandardResponse.Error("Couldn't save Work Order request");
                 }
 
+            }else{
+                retn = StandardResponse.Error("Couldn't find Enumeration Work Order in request");
             }
+        }else{
+            retn = StandardResponse.Error("Unknown queue type");
         }
         return retn;
     }

@@ -113,12 +113,8 @@ public class EnumService {
 
     public Awesome createEnumerationWorkOrder(WorkOrderJson workOrderJson){
         
-        Integer i = wotDao.createEnumerationWorkOrder(workOrderJson);
-            if (i > 0) {
-                return StandardResponse.ok();
-            } else {
-                return StandardResponse.errorDuringProcessing();
-            }
+        return wotDao.createEnumerationWorkOrder(workOrderJson);
+           
         
     }
     
