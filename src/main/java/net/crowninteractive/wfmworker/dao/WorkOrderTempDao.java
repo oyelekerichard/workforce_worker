@@ -31,51 +31,52 @@ public class WorkOrderTempDao extends AbstractDao<Integer, WorkOrderTemp> {
         int retn = 0;
         String token = (String) getUniqueEnumWorkOrderToken();
         QueueType qt = getQueueTypeByToken(workOrderJson.getQueueTypeToken());
+        if (qt != null) {
+            EnumerationWorkOrder ed = workOrderJson.getEnumerationData();
 
-        EnumerationWorkOrder ed = workOrderJson.getEnumerationData();
+            WorkOrderTemp wot = new WorkOrderTemp();
 
-        WorkOrderTemp wot = new WorkOrderTemp();
+            wot.setQueueId(qt.getQueueId().getId());
+            wot.setQueueTypeId(qt.getId());
+            wot.setSummary(workOrderJson.getSummary());
+            wot.setDescription(workOrderJson.getDescription());
+            wot.setContactNumber(workOrderJson.getContactNumber());
+            wot.setAddressLine1(workOrderJson.getAddress());
+            wot.setAddressLine2("");
+            wot.setCity(workOrderJson.getCity());
+            wot.setState("Lagos");
+            wot.setBusinessUnit(workOrderJson.getBusinessUnit());
+            wot.setPriority(workOrderJson.getPriority());
+            wot.setCreateTime(new Date());
+            wot.setChannel("ENUMERATION");
+            wot.setReportedBy(workOrderJson.getReportedBy());
+            wot.setCreatedBy(0);
+            wot.setCustomerName(workOrderJson.getCustomerName());
+            wot.setReferenceType(workOrderJson.getReferenceType());
+            wot.setReferenceTypeData(workOrderJson.getReferenceTypeData());
+            wot.setToken(token);
 
-        wot.setQueueId(qt.getQueueId().getId());
-        wot.setQueueTypeId(qt.getId());
-        wot.setSummary(workOrderJson.getSummary());
-        wot.setDescription(workOrderJson.getDescription());
-        wot.setContactNumber(workOrderJson.getContactNumber());
-        wot.setAddressLine1(workOrderJson.getAddress());
-        wot.setAddressLine2("");
-        wot.setCity(workOrderJson.getCity());
-        wot.setState("Lagos");
-        wot.setBusinessUnit(workOrderJson.getBusinessUnit());
-        wot.setPriority(workOrderJson.getPriority());
-        wot.setCreateTime(new Date());
-        wot.setChannel("ENUMERATION");
-        wot.setReportedBy(workOrderJson.getReportedBy());
-        wot.setCreatedBy(0);
-        wot.setCustomerName(workOrderJson.getCustomerName());
-        wot.setReferenceType(workOrderJson.getReferenceType());
-        wot.setReferenceTypeData(workOrderJson.getReferenceTypeData());
-        wot.setToken(token);
-
-        if (ed != null) {
-            WorkOrderTemp wotSave = save(wot);
-            if (wotSave != null) {
-                retn = wotSave.getId();
-                ed.setWork_order_temp_token(token);
-                EnumerationWorkOrder edSave = ewod.save(ed);
-                if (edSave != null) {
+            if (ed != null) {
+                WorkOrderTemp wotSave = save(wot);
+                if (wotSave != null) {
                     retn = wotSave.getId();
-                    //saving was successful
+                    ed.setWork_order_temp_token(token);
+                    EnumerationWorkOrder edSave = ewod.save(ed);
+                    if (edSave != null) {
+                        retn = wotSave.getId();
+                        //saving was successful
+                    }
                 }
-            }
 
+            }
         }
         return retn;
     }
 
     public QueueType getQueueTypeByToken(String queueTypeToken) {
         String sql = String.format("select * from queue_type where token='%s' limit 1", queueTypeToken);
-        List<QueueType> qt = getEntityManager().createNativeQuery(sql).getResultList();
-        if(!qt.isEmpty()) {
+        List<QueueType> qt = (List<QueueType>) getEntityManager().createNativeQuery(sql).getResultList();
+        if (!qt.isEmpty()) {
             return qt.get(0);
         }
         return null;
