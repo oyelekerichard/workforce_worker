@@ -85,7 +85,7 @@ public class WorkOrderTempDao extends AbstractDao<Integer, WorkOrderTemp> {
 
     public QueueType getQueueTypeByToken(String queueTypeToken) {
         String sql = String.format("select * from queue_type where token='%s' limit 1", queueTypeToken);
-        List<QueueType> qt = (List<QueueType>) getEntityManager().createNativeQuery(sql).getResultList();
+        List<QueueType> qt = getEntityManager().createNativeQuery(sql,QueueType.class).getResultList();
         if (!qt.isEmpty()) {
             return qt.get(0);
         }
