@@ -854,7 +854,7 @@ public class WorkOrderDao extends AbstractDao<Integer, WorkOrder> {
                 + "`feeder`, `feeder_name`, `ht_pole`, `high_tension_physical_id`, `distribution_substation`, "
                 + "`distribution_substation_name`, `upriser`, `service_pole`, `service_wire`, "
                 + "`nerc_id`, `connection_type`, `transformer`, `token` "
-                + " FROM `work_order_temp` wt "
+                + " FROM `work_order_temp` wt"
                 + " where token = '%s' ", token);
       
         
