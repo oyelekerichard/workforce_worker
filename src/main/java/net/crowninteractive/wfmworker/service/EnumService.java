@@ -132,17 +132,6 @@ public class EnumService {
                     if (workOrderTemp != null) {
                             System.out.println("workOrderTemp is not empty");
                         if (workOrderTemp.getTicketId() == null) {
-                            String customername = null;
-                            String type = "a";
-                            Awesome awe = getCustomerDetails(workOrderTemp.getReferenceTypeData(), type);
-                            if (awe.getResp() == 0) {
-                                Gson gson = new GsonBuilder().create();
-                                Map jsonMap = gson.fromJson(gson.toJson(awe.getObject()), Map.class);
-                                customername = (String) jsonMap.get("name");
-                            } else {
-                                customername = workOrderTemp.getCustomerName();
-                            }
-                            workOrderTemp.setCustomerName(customername);
                             wdao.approveEnumWorkOrder(workOrderTemp);
                             success++;
                         } else {

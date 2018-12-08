@@ -849,13 +849,13 @@ public class WorkOrderDao extends AbstractDao<Integer, WorkOrder> {
                 + " `reference_type`, `reference_type_data`, `address_line_1`, "
                 + "`city`, `state`, `business_unit`, `priority`, `create_time`,"
                 + " `channel`, `is_active`, `current_status`, `reported_by`,  `customer_name`, "
-                + "`disco`, `sub_disco`, `injection_substation`, "
+                + "`disco`, `sub_disco`, e.`injection_substation`, "
                 + "`injection_substation_name`, `power_transformer`, `power_transformer_name`, "
                 + "`feeder`, `feeder_name`, `ht_pole`, `high_tension_physical_id`, `distribution_substation`, "
                 + "`distribution_substation_name`, `upriser`, `service_pole`, `service_wire`, "
                 + "`nerc_id`, `connection_type`, `transformer`, `token` "
-                + " FROM `work_order_temp` wt "
-                + " where token = '%s' ", token);
+                + " FROM `work_order_temp` wt, enumeration_work_order e"
+                + " where token = '%s' and wt.token = e.work_order_temp_token", token);
       
         
         logger.info("Compiled SQL " + sql);
