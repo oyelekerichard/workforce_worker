@@ -709,7 +709,7 @@ public class WorkOrderDao extends AbstractDao<Integer, WorkOrder> {
             //logger.info("Enumeration List -------->" + e[1]);       
             // Instantiating the inner class           
             RequestListModel m = new RequestListModel(e);
-            model.add(m);                       
+            model.add(m);                      
         }
         
         // get count
