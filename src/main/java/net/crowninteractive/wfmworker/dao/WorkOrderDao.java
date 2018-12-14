@@ -723,7 +723,7 @@ public class WorkOrderDao extends AbstractDao<Integer, WorkOrder> {
         
         String sql1 = " select count(*) from work_order w join enumeration_work_order e on w.ticket_id = e.work_order_id  "
                 + "where w.queue_id = (select id from queue where name like '%enumeration%') and w.current_status != 'Obsolete'";
-        String sql2 = "select count(*) from work_order_temp ";
+        String sql2 = "select count(*) from `work_order_temp` wt, enumeration_work_order e where wt.token= e.work_order_temp_token";
         boolean isFirst = true;
 
         if (district != null) {
