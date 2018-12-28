@@ -5,81 +5,110 @@
  */
 package net.crowninteractive.wfmworker.misc;
 
-import java.sql.Timestamp;
-import java.util.Date;
-
-
+import com.google.gson.annotations.Expose;
+import com.google.gson.annotations.SerializedName;
+import net.crowninteractive.wfmworker.entity.EnumerationWorkOrder;
 
 /**
  *
  * @author uchep
  */
+public class WorkOrderJson {
 
-
-public class WorkOrderDownloadModel{
-
-    
-    private Integer id;
-    private String queueId;
-    private String queueTypeId;
+    @SerializedName("summary")
+    @Expose
     private String summary;
+    @SerializedName("description")
+    @Expose
     private String description;
-    private Integer ticketId;
-    private String disco;
-    private String subDisco;
-    private String injectionSubstation;
-    private String injectionSubstationName;
-    private String powerTransformer;
-    private String powerTransformerName;
-    private String feeder;
-    private String feederName;
-    private String htPole;
-    private String highTensionPhysicalId;
-    private String distributionSubstation;
-    private String distributionSubstationName;
-    private String transformer;
-    private String upriser;
-    private String servicePole;
-    private String serviceWire;
-    private String nercId;
-    private String connectionType;
-
-    private String contactNumber;
-    private String referenceType;//Meter Number
-    private String referenceTypeData;//Account Number
-    private String customerName;
-    private String tariff;
+    @SerializedName("queueTypeToken")
+    @Expose
+    private String queueTypeToken;
+    @SerializedName("businessUnit")
+    @Expose
     private String businessUnit;
-    private String addressLine1;
-    private String landmark = "";
-    private String city;
-    private String state;
+    @SerializedName("contactNumber")
+    @Expose
+    private String contactNumber;
+    @SerializedName("referenceType")
+    @Expose
+    private String referenceType;
+    @SerializedName("referenceTypeData")
+    @Expose
+    private String referenceTypeData;
+    @SerializedName("priority")
+    @Expose
     private String priority;
-    private Timestamp createTime;
-    private String currentStatus;
+    @SerializedName("city")
+    @Expose
+    private String city;
+    @SerializedName("address")
+    @Expose
+    private String address;
+    @SerializedName("serviceWireCode")
+    @Expose
+    private String serviceWireCode;
+    @SerializedName("reportedBy")
+    @Expose
     private String reportedBy;
-    private String customerTariff;
-    private String channel;
-    private Integer isActive;
-    private Integer createdBy;
+    @SerializedName("disco")
+    @Expose
+    private String disco;
+    @SerializedName("subDisco")
+    @Expose
+    private String subDisco;
+    @SerializedName("injectionSubstation")
+    @Expose
+    private String injectionSubstation;
+    @SerializedName("injectionSubstationName")
+    @Expose
+    private String injectionSubstationName;
+    @SerializedName("powerTransformer")
+    @Expose
+    private String powerTransformer;
+    @SerializedName("powerTransformerName")
+    @Expose
+    private String powerTransformerName;
+    @SerializedName("feeder")
+    @Expose
+    private String feeder;
+    @SerializedName("feederName")
+    @Expose
+    private String feederName;
+    @SerializedName("htPole")
+    @Expose
+    private String htPole;
+    @SerializedName("highTensionPhysicalId")
+    @Expose
+    private String highTensionPhysicalId;
+    @SerializedName("distributionSubstation")
+    @Expose
+    private String distributionSubstation;
+    @SerializedName("distributionSubstationName")
+    @Expose
+    private String distributionSubstationName;
+    @SerializedName("upriser")
+    @Expose
+    private String upriser;
+    @SerializedName("servicePole")
+    @Expose
+    private String servicePole;
+    @SerializedName("serviceWire")
+    @Expose
+    private String serviceWire;
+    @SerializedName("nercId")
+    @Expose
+    private String nercId;
+    @SerializedName("connectionType")
+    @Expose
+    private String connectionType;
+    @SerializedName("transformer")
+    @Expose
+    private String transformer;
+
+    private String customerName;
     
-    
-
-    public String getQueueId() {
-        return queueId;
-    }
-
-    public void setQueueId(String queueId) {
-        this.queueId = queueId;
-    }
-
-    public String getQueueTypeId() {
-        return queueTypeId;
-    }
-
-    public void setQueueTypeId(String queueTypeId) {
-        this.queueTypeId = queueTypeId;
-    }
+    private EnumerationWorkOrder enumerationData;
 
     public String getSummary() {
         return summary;
@@ -97,12 +126,84 @@ public class WorkOrderDownloadModel{
         this.description = description;
     }
 
-    public Integer getTicketId() {
-        return ticketId;
+    public String getQueueTypeToken() {
+        return queueTypeToken;
     }
 
-    public void setTicketId(Integer ticketId) {
-        this.ticketId = ticketId;
+    public void setQueueTypeToken(String queueTypeToken) {
+        this.queueTypeToken = queueTypeToken;
+    }
+
+    public String getBusinessUnit() {
+        return businessUnit;
+    }
+
+    public void setBusinessUnit(String businessUnit) {
+        this.businessUnit = businessUnit;
+    }
+
+    public String getContactNumber() {
+        return contactNumber;
+    }
+
+    public void setContactNumber(String contactNumber) {
+        this.contactNumber = contactNumber;
+    }
+
+    public String getReferenceType() {
+        return referenceType;
+    }
+
+    public void setReferenceType(String referenceType) {
+        this.referenceType = referenceType;
+    }
+
+    public String getReferenceTypeData() {
+        return referenceTypeData;
+    }
+
+    public void setReferenceTypeData(String referenceTypeData) {
+        this.referenceTypeData = referenceTypeData;
+    }
+
+    public String getPriority() {
+        return priority;
+    }
+
+    public void setPriority(String priority) {
+        this.priority = priority;
+    }
+
+    public String getCity() {
+        return city;
+    }
+
+    public void setCity(String city) {
+        this.city = city;
+    }
+
+    public String getAddress() {
+        return address;
+    }
+
+    public void setAddress(String address) {
+        this.address = address;
+    }
+
+    public String getServiceWireCode() {
+        return serviceWireCode;
+    }
+
+    public void setServiceWireCode(String serviceWireCode) {
+        this.serviceWireCode = serviceWireCode;
+    }
+
+    public String getReportedBy() {
+        return reportedBy;
+    }
+
+    public void setReportedBy(String reportedBy) {
+        this.reportedBy = reportedBy;
     }
 
     public String getDisco() {
@@ -201,14 +302,6 @@ public class WorkOrderDownloadModel{
         this.distributionSubstationName = distributionSubstationName;
     }
 
-    public String getTransformer() {
-        return transformer;
-    }
-
-    public void setTransformer(String transformer) {
-        this.transformer = transformer;
-    }
-
     public String getUpriser() {
         return upriser;
     }
@@ -249,28 +342,12 @@ public class WorkOrderDownloadModel{
         this.connectionType = connectionType;
     }
 
-    public String getContactNumber() {
-        return contactNumber;
+    public String getTransformer() {
+        return transformer;
     }
 
-    public void setContactNumber(String contactNumber) {
-        this.contactNumber = contactNumber;
-    }
-
-    public String getReferenceType() {
-        return referenceType;
-    }
-
-    public void setReferenceType(String referenceType) {
-        this.referenceType = referenceType;
-    }
-
-    public String getReferenceTypeData() {
-        return referenceTypeData;
-    }
-
-    public void setReferenceTypeData(String referenceTypeData) {
-        this.referenceTypeData = referenceTypeData;
+    public void setTransformer(String transformer) {
+        this.transformer = transformer;
     }
 
     public String getCustomerName() {
@@ -281,129 +358,12 @@ public class WorkOrderDownloadModel{
         this.customerName = customerName;
     }
 
-    public String getTariff() {
-        return tariff;
+    public EnumerationWorkOrder getEnumerationData() {
+        return enumerationData;
     }
 
-    public void setTariff(String tariff) {
-        this.tariff = tariff;
+    public void setEnumerationData(EnumerationWorkOrder enumerationData) {
+        this.enumerationData = enumerationData;
     }
-
-    public String getBusinessUnit() {
-        return businessUnit;
-    }
-
-    public void setBusinessUnit(String businessUnit) {
-        this.businessUnit = businessUnit;
-    }
-
-    public String getAddressLine1() {
-        return addressLine1;
-    }
-
-    public void setAddressLine1(String addressLine1) {
-        this.addressLine1 = addressLine1;
-    }
-
-    public String getLandmark() {
-        return landmark;
-    }
-
-    public void setLandmark(String landmark) {
-        this.landmark = landmark;
-    }
-
-    public String getCity() {
-        return city;
-    }
-
-    public void setCity(String city) {
-        this.city = city;
-    }
-
-    public String getState() {
-        return state;
-    }
-
-    public void setState(String state) {
-        this.state = state;
-    }
-
-    public String getPriority() {
-        return priority;
-    }
-
-    public void setPriority(String priority) {
-        this.priority = priority;
-    }
-
-    public Timestamp getCreateTime() {
-        return createTime;
-    }
-
-    public void setCreateTime(Timestamp createTime) {
-        this.createTime = createTime;
-    }
-
-    public String getCurrentStatus() {
-        return currentStatus;
-    }
-
-    public void setCurrentStatus(String currentStatus) {
-        this.currentStatus = currentStatus;
-    }
-
-    public String getReportedBy() {
-        return reportedBy;
-    }
-
-    public void setReportedBy(String reportedBy) {
-        this.reportedBy = reportedBy;
-    }
-
-    public Integer getId() {
-        return id;
-    }
-
-    public void setId(Integer id) {
-        this.id = id;
-    }
-
-    public String getCustomerTariff() {
-        return customerTariff;
-    }
-
-    public void setCustomerTariff(String customerTariff) {
-        this.customerTariff = customerTariff;
-    }
-
-    public String getChannel() {
-        return channel;
-    }
-
-    public void setChannel(String channel) {
-        this.channel = channel;
-    }
-
-    public Integer getIsActive() {
-        return isActive;
-    }
-
-    public void setIsActive(Integer isActive) {
-        this.isActive = isActive;
-    }
-
-    public Integer getCreatedBy() {
-        return createdBy;
-    }
-
-    public void setCreatedBy(Integer createdBy) {
-        this.createdBy = createdBy;
-    }
-    
-    
-    
-    
-    
 
 }
