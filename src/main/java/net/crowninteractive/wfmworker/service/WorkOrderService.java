@@ -248,7 +248,7 @@ public class WorkOrderService {
             }
 
             ticketId = wor.getTicketId();
-
+            System.out.println(">>>>>>>>>>>>Ticket updated in disconnection queue "+ticketId);
             return StandardResponse.ok(ticketId);
 
         } catch (Exception ex) {
