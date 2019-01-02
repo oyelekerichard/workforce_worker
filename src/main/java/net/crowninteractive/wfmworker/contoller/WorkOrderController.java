@@ -49,7 +49,7 @@ public class WorkOrderController extends Extension {
             System.out.println(awe);
         } catch (Exception ex) {
             ex.printStackTrace();
-            awe = StandardResponse.invalidUser();
+            awe = StandardResponse.systemError(ex.getMessage());
         }
         return process(awe, request);
     }
