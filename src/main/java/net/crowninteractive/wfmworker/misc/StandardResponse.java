@@ -153,4 +153,8 @@ public class StandardResponse {
     public static Awesome cannotConnectToRemoteHost() {
         return new Awesome(INTEGRATION_CONNECTION_FAILED, "unable to connect to remote host");
     }
+
+    public static Awesome systemError(String message) {
+        return new Awesome(SYSTEM_ERROR, message);
+    }
 }

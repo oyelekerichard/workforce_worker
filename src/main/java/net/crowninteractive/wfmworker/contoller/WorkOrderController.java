@@ -40,7 +40,6 @@ public class WorkOrderController extends Extension {
 
     @RequestMapping(method = RequestMethod.POST, value = "emcc_disconnect")
     public String addToDisconnectQueue(@RequestBody RequestObj obj, @Context HttpServletRequest request) {
-        System.out.println(">>>>>>>>>>>>>>>Entering Method >>>>>>>>>>>>");
         Awesome awe;
         try {
             System.out.println(obj);
@@ -50,7 +49,7 @@ public class WorkOrderController extends Extension {
             System.out.println(awe);
         } catch (Exception ex) {
             ex.printStackTrace();
-            awe = StandardResponse.invalidUser();
+            awe = StandardResponse.systemError(ex.getMessage());
         }
         return process(awe, request);
     }
