@@ -235,7 +235,7 @@ public class WorkOrderService {
                 wor.setEngineerId(new Engineer(found));
                 wor.setIsAssigned(Short.valueOf("1"));
                 wor.setDateAssigned(new Date());
-                wor.setLastPaymentAmount(Double.valueOf(r.getLastPaidAmount() == null ? "0:00" : r.getLastPaidAmount()));
+                wor.setLastPaymentAmount(Double.valueOf(r.getLastPaidAmount() == null ? "0.00" : r.getLastPaidAmount()));
                 wor.setLastPaymentDate(r.getLastPaymentDate());
                 wor.setCurrentBill(Double.valueOf(r.getCurrentBill() == null ? "0.00" : r.getCurrentBill()));
                 wor.setPreviousOutstanding(r.getPreviousOutstanding());
