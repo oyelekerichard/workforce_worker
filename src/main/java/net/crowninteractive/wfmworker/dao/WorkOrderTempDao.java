@@ -55,27 +55,45 @@ public class WorkOrderTempDao extends AbstractDao<Integer, WorkOrderTemp> {
             wot.setReferenceType(workOrderJson.getReferenceType());
             wot.setReferenceTypeData(workOrderJson.getReferenceTypeData());
             wot.setToken(token);
+            wot.setDisco(workOrderJson.getDisco());
+            wot.setBusinessUnit(workOrderJson.getBusinessUnit());
+            wot.setInjectionSubstation(workOrderJson.getInjectionSubstation());
+            wot.setInjectionSubstationName(workOrderJson.getInjectionSubstationName());
+            wot.setPowerTransformer(workOrderJson.getPowerTransformer());
+            wot.setPowerTransformerName(workOrderJson.getPowerTransformerName());
+            wot.setFeeder(workOrderJson.getFeeder());
+            wot.setFeederName(workOrderJson.getFeederName());
+            wot.setHtPole(ed.getHtpoleid());
+            wot.setHighTensionPhysicalId("0000");
+            wot.setDistributionSubstation(workOrderJson.getDistributionSubstation());
+            wot.setDistributionSubstationName(workOrderJson.getDistributionSubstationName());
+            wot.setUpriser(workOrderJson.getUpriser());
+            wot.setServicePole(workOrderJson.getServicePole());
+            wot.setServiceWire(workOrderJson.getServiceWire());
+            wot.setNercId(workOrderJson.getNercId());
+            wot.setConnectionType(workOrderJson.getConnectionType());
+            wot.setTransformer(workOrderJson.getTransformer());
 
             if (ed != null) {
                 WorkOrderTemp wotSave = save(wot);
                 if (wotSave != null) {
-                    
+
                     ed.setWork_order_temp_token(token);
                     EnumerationWorkOrder edSave = ewod.save(ed);
                     if (edSave != null) {
                         retn = StandardResponse.ok();
                         //saving was successful
-                    }else{
-                    retn = StandardResponse.Error("Couldn't save Enumeration Work Order");    
+                    } else {
+                        retn = StandardResponse.Error("Couldn't save Enumeration Work Order");
                     }
-                }else{
+                } else {
                     retn = StandardResponse.Error("Couldn't save Work Order request");
                 }
 
-            }else{
+            } else {
                 retn = StandardResponse.Error("Couldn't find Enumeration Work Order in request");
             }
-        }else{
+        } else {
             retn = StandardResponse.Error("Unknown queue type");
         }
         return retn;
@@ -83,7 +101,7 @@ public class WorkOrderTempDao extends AbstractDao<Integer, WorkOrderTemp> {
 
     public QueueType getQueueTypeByToken(String queueTypeToken) {
         String sql = String.format("select * from queue_type where token='%s' limit 1", queueTypeToken);
-        List<QueueType> qt = (List<QueueType>) getEntityManager().createNativeQuery(sql).getResultList();
+        List<QueueType> qt = getEntityManager().createNativeQuery(sql, QueueType.class).getResultList();
         if (!qt.isEmpty()) {
             return qt.get(0);
         }

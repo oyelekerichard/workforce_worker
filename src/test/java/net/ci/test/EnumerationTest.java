@@ -6,7 +6,9 @@
 package net.ci.test;
 
 import com.google.gson.Gson;
+import net.crowninteractive.wfmworker.dao.WorkOrderDao;
 import net.crowninteractive.wfmworker.dao.WorkOrderTempDao;
+import net.crowninteractive.wfmworker.entity.EnumerationWorkOrder;
 import net.crowninteractive.wfmworker.misc.WorkOrderJson;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -24,6 +26,9 @@ public class EnumerationTest {
 
     @Autowired
     private WorkOrderTempDao temp;
+
+    @Autowired
+    private WorkOrderDao wdao;
 
     String sql = "{\n"
             + "  \"summary\": \"Work for TEST USER reported by MEDIUM [The pp meter is over reading according to d user]\",\n"
@@ -109,12 +114,16 @@ public class EnumerationTest {
             + "  }\n"
             + "}";
 
-    @Test
+   
     public void testCreateWorkOrderTemp() {
         WorkOrderJson woj = new Gson().fromJson(sql, WorkOrderJson.class);
         temp.createEnumerationWorkOrder(woj);
     }
 
+    public void get(){
+        EnumerationWorkOrder enumerationWorkOrder = wdao.getEnumerationWorkOrder("DP2Hn7775MoL1w6VxIZnD1e4GJWeHX");
+        System.out.println(new Gson().toJson(enumerationWorkOrder));
+    }
     
     
 }

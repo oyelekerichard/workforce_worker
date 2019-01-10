@@ -269,7 +269,9 @@ public class WorkOrderDao extends AbstractDao<Integer, WorkOrder> {
         wo.setToken(wot.getToken());
         wo.setSlot(wot.getSlot());
         wo.setDebtBalanceAmount(Double.valueOf(0));
-
+        wo.setIsAssigned((short)0);
+        wo.setDebtBalanceAmount(0.0);
+        wo.setIsClosed((short)0);
 //        wo.setCurrentBill(wot.getCurrentBill());
 //        wo.setLastPaymentAmount(wot.getLastPaymentAmount());
 //        wo.setLastPaymentDate(wot.getLastPaymentDate());
@@ -742,7 +744,8 @@ public class WorkOrderDao extends AbstractDao<Integer, WorkOrder> {
         
         String sql1 = " select count(*) from work_order w join enumeration_work_order e on w.ticket_id = e.work_order_id  "
                 + "where w.queue_id = (select id from queue where name like '%enumeration%') and w.current_status != 'Obsolete'";
-        String sql2 = "select count(*) from work_order_temp ";
+        String sql2 = "select count(*) from `work_order_temp` wt, enumeration_work_order e where wt.token= e.work_order_temp_token ";
+        
         boolean isFirst = true;
 
         if (district != null) {
@@ -854,7 +857,7 @@ public class WorkOrderDao extends AbstractDao<Integer, WorkOrder> {
                 + "`feeder`, `feeder_name`, `ht_pole`, `high_tension_physical_id`, `distribution_substation`, "
                 + "`distribution_substation_name`, `upriser`, `service_pole`, `service_wire`, "
                 + "`nerc_id`, `connection_type`, `transformer`, `token` "
-                + " FROM `work_order_temp` wt "
+                + " FROM `work_order_temp` wt"
                 + " where token = '%s' ", token);
       
         
