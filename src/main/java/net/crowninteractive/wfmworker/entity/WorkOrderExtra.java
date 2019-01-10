@@ -61,10 +61,8 @@ public class WorkOrderExtra implements Serializable {
     private String serviceWire;
     @Column(name = "nerc_id")
     private String nercId;
-    @Basic(optional = false)
     @Column(name = "connection_type")
     private String connectionType;
-    @Basic(optional = false)
     @Column(name = "transformer")
     private String transformer;
 

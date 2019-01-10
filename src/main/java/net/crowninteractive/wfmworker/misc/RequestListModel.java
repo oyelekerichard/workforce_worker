@@ -42,6 +42,7 @@ public class RequestListModel{
     private String city;
 
 
+
     public RequestListModel(Object[] e) {
         this.id = (Integer) e[0];
         this.queueId = (String) e[1];
@@ -57,6 +58,7 @@ public class RequestListModel{
         this.token = (String) e[11];
         this.addressLine1 = (String) e[12];
         this.city = (String) e[13];
+
     }
    
 }

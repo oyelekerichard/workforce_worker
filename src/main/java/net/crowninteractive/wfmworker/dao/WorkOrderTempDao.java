@@ -5,6 +5,7 @@
  */
 package net.crowninteractive.wfmworker.dao;
 
+
 import java.util.Date;
 import java.util.List;
 import net.crowninteractive.wfmworker.entity.EnumerationWorkOrder;
@@ -95,6 +96,7 @@ public class WorkOrderTempDao extends AbstractDao<Integer, WorkOrderTemp> {
             }
         } else {
             retn = StandardResponse.Error("Unknown queue type");
+
         }
         return retn;
     }
@@ -106,6 +108,7 @@ public class WorkOrderTempDao extends AbstractDao<Integer, WorkOrderTemp> {
             return qt.get(0);
         }
         return null;
+
     }
 
     private Object getUniqueEnumWorkOrderToken() {

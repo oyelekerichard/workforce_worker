@@ -45,12 +45,11 @@ public class WorkOrderController extends Extension {
             System.out.println(obj);
             //check deliquency upload
             String desc = obj.getDescription().concat(String.format(" | Debt amount is %s Naira", obj.getAmount()));
-            //awe = service.addToDisconnectionQueue(obj.getAmount(), obj.getBillingId(), obj.getBusinessUnit(), obj.getTariff(), obj.getCity(), obj.getAddress(), obj.getPhone(), obj.getSummary(), desc, obj.getReportedBy(), obj.getCurrentBill(), obj.getLastPaidAmount(), obj.getLastPaymentDate());
             awe = service.addToDisconnectionQueue(obj);
             System.out.println(awe);
         } catch (Exception ex) {
             ex.printStackTrace();
-            awe = StandardResponse.invalidUser();
+            awe = StandardResponse.systemError(ex.getMessage());
         }
         return process(awe, request);
     }
