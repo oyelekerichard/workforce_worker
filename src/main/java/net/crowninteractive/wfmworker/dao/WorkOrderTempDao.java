@@ -5,12 +5,11 @@
  */
 package net.crowninteractive.wfmworker.dao;
 
-import com.dyfferential.vyral.web.util.DateFormatter;
+
 import java.util.Date;
 import java.util.List;
 import net.crowninteractive.wfmworker.entity.EnumerationWorkOrder;
 import net.crowninteractive.wfmworker.entity.QueueType;
-import net.crowninteractive.wfmworker.entity.WorkOrder;
 import net.crowninteractive.wfmworker.entity.WorkOrderTemp;
 import net.crowninteractive.wfmworker.misc.StandardResponse;
 import net.crowninteractive.wfmworker.misc.WorkOrderJson;
@@ -97,6 +96,7 @@ public class WorkOrderTempDao extends AbstractDao<Integer, WorkOrderTemp> {
             }
         } else {
             retn = StandardResponse.Error("Unknown queue type");
+
         }
         return retn;
     }
@@ -108,6 +108,7 @@ public class WorkOrderTempDao extends AbstractDao<Integer, WorkOrderTemp> {
             return qt.get(0);
         }
         return null;
+
     }
 
     private Object getUniqueEnumWorkOrderToken() {

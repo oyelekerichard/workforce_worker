@@ -112,10 +112,9 @@ public class EnumService {
     }
 
     public Awesome createEnumerationWorkOrder(WorkOrderJson workOrderJson){
-        
+
         return wotDao.createEnumerationWorkOrder(workOrderJson);
-           
-        
+     
     }
     
     public String approveWorkOrders(Token tokens) {
@@ -143,7 +142,7 @@ public class EnumService {
                         System.out.println("workOrderTemp is empty");
                         failure++;
                     }
-
+                    System.out.println("Done and dusted!!!");
                 }
                 return String.format((success > 0 ? success + " work order(s) were successfully approved," : "") + (failure > 0 ? failure + " approval request failed," : "") + (approved > 0 ? approved + " already approved" : ""));
             }
@@ -443,6 +442,7 @@ public class EnumService {
                 + "FROM `work_order_temp` wt, enumeration_work_order e where wt.token = e.work_order_temp_token "
                 + "and wt.business_unit like {unit} and cast(wt.create_time as date) >= cast({from} as date) and cast(wt.create_time as date) <= cast({to} as date )";
 
+
             final List<EnumerationWorkOrderDownloadModel> requests = wdao.getEnumerationDownloadList(sql, district, from, to, queue, queueType, priority,status, billingId, ticketId, reportedBy);
             
             if (!requests.isEmpty()) {
@@ -544,6 +544,7 @@ public class EnumService {
     public Awesome getqueueTypeByQueueid(String token) {
         try {
             List<QueueTypeEnum> qts = wdao.getEnumerationQueueTypeByQueueIdList(token);
+
 
             if (qts != null && !qts.isEmpty()) {
                 return StandardResponse.ok(qts);

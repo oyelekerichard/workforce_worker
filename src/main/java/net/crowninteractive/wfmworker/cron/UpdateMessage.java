@@ -36,6 +36,11 @@ public class UpdateMessage {
     public void setStatus(String status) {
         this.status = status;
     }
+
+    @Override
+    public String toString() {
+        return "UpdateMessage{" + "accountNumber=" + accountNumber + ", status=" + status + '}';
+    }
     
     
     
