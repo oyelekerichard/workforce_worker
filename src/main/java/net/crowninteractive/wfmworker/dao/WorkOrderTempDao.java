@@ -55,6 +55,7 @@ public class WorkOrderTempDao extends AbstractDao<Integer, WorkOrderTemp> {
         wot.setReferenceType(workOrderJson.getReferenceType());
         wot.setReferenceTypeData(workOrderJson.getReferenceTypeData());
         wot.setToken(token);
+        wot.setCustomerTariff(ed.getOld_tariff());
 
         if (ed != null) {
             WorkOrderTemp wotSave = save(wot);
