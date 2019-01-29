@@ -222,7 +222,7 @@ public class WorkOrderDao extends AbstractDao<Integer, WorkOrder> {
     public void approveEnumWorkOrder(WorkOrderTemp wot) {
         QueueType qt = getQueueTypeByID(wot.getQueueTypeId());
         EnumerationWorkOrder enumerationWorkOrder = getEnumerationWorkOrder(wot.getToken());
-        int ticketId = this.createWorkOrder(wot, qt);
+        int ticketId = this.createWorkOrderV2(wot, qt, enumerationWorkOrder);
 
         //update work_order
         if (ticketId != 0) {
@@ -238,6 +238,70 @@ public class WorkOrderDao extends AbstractDao<Integer, WorkOrder> {
             logger.info("-----------Ticket Id set for Records -----------------" + enumerationWorkOrder.getWork_order_id());
         }
     }
+    
+    @Transactional
+    public int createWorkOrderV2(WorkOrderTemp wot, QueueType qt, EnumerationWorkOrder ew) {
+
+        logger.info("-----------Queue-----------------" + qt.getQueueId());
+        logger.info("-----------Queue Type -----------------" + qt.getId());
+        WorkOrder wo = new WorkOrder();
+        wo.setBusinessUnit(wot.getBusinessUnit());
+        wo.setAddressLine1(wot.getAddressLine1());
+        wo.setAddressLine2(wot.getAddressLine2());
+        wo.setQueueId(qt.getQueueId());
+        wo.setQueueTypeId(qt);
+        wo.setTicketId(ticketCount());
+        wo.setContactNumber(wot.getContactNumber());
+        wo.setCustomerName(wot.getCustomerName());
+        wo.setOwnerId(wot.getOwnerId());
+        wo.setReportedBy(wot.getReportedBy());
+        wo.setCreateTime(new Date());
+        wo.setCurrentStatus("OPEN");
+        wo.setCustomerTariff(ew.getTariff());
+        wo.setCity(wot.getCity());
+        wo.setPriority(wot.getPriority());
+        wo.setReferenceType(wot.getReferenceType());
+        wo.setReferenceTypeData(wot.getReferenceTypeData());
+        wo.setState(wot.getState());
+        wo.setSummary(wot.getSummary());
+        wo.setToken(wot.getToken());
+        wo.setSlot(wot.getSlot());
+        wo.setDebtBalanceAmount(Double.valueOf(0));
+        
+        // add is_active and owner_id
+        wo.setIsActive(1);
+        wo.setOwnerId(1);
+
+//        wo.setCurrentBill(wot.getCurrentBill());
+//        wo.setLastPaymentAmount(wot.getLastPaymentAmount());
+//        wo.setLastPaymentDate(wot.getLastPaymentDate());
+        WorkOrder w = save(wo);
+        WorkOrderExtra woe = new WorkOrderExtra();
+        woe.setConnectionType(wot.getConnectionType());
+        woe.setTransformer(wot.getTransformer());
+        woe.setDisco(wot.getDisco());
+        woe.setDistributionSubstation(wot.getDistributionSubstation());
+        woe.setDistributionSubstationName(wot.getDistributionSubstationName());
+        woe.setFeeder(wot.getFeeder());
+        woe.setFeederName(wot.getFeederName());
+        woe.setHighTensionPhysicalId(wot.getHighTensionPhysicalId());
+        woe.setHtPole(wot.getHtPole());
+        woe.setInjectionSubstation(wot.getInjectionSubstation());
+        woe.setInjectionSubstationName(wot.getInjectionSubstationName());
+        woe.setNercId(wot.getNercId());
+        woe.setPowerTransformer(wot.getPowerTransformer());
+        woe.setPowerTransformerName(wot.getPowerTransformerName());
+        woe.setServicePole(wot.getServicePole());
+        woe.setServiceWire(wot.getServiceWire());
+        woe.setSubDisco(wot.getSubDisco());
+        woe.setUpriser(wot.getUpriser());
+
+        woe.setId(w);
+        wdao.save(woe);
+        return w.getTicketId();
+    }
+    
+    
 
     @Transactional
     public int createWorkOrder(WorkOrderTemp wot, QueueType qt) {
