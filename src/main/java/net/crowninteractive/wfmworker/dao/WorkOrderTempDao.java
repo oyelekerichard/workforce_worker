@@ -74,7 +74,8 @@ public class WorkOrderTempDao extends AbstractDao<Integer, WorkOrderTemp> {
             wot.setNercId(workOrderJson.getNercId());
             wot.setConnectionType(workOrderJson.getConnectionType());
             wot.setTransformer(workOrderJson.getTransformer());
-            wot.setCustomerTariff(ed.getOld_tariff());
+            wot.setCustomerTariff(ed.getTariff());
+            wot.setCurrentStatus("SUBMITTED");
 
             if (ed != null) {
                 WorkOrderTemp wotSave = save(wot);
