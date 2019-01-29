@@ -30,16 +30,15 @@ import net.crowninteractive.wfmworker.dao.WorkOrderTempDao;
 import net.crowninteractive.wfmworker.entity.Dashboard;
 import net.crowninteractive.wfmworker.entity.LowerWidget;
 import net.crowninteractive.wfmworker.entity.Queue;
-import net.crowninteractive.wfmworker.entity.QueueType;
 import net.crowninteractive.wfmworker.entity.RequestEnumerationBody;
 import net.crowninteractive.wfmworker.entity.WorkOrderTemp;
 import net.crowninteractive.wfmworker.exception.WfmWorkerException;
 import net.crowninteractive.wfmworker.misc.Config;
 import net.crowninteractive.wfmworker.misc.EnumerationRequestModel;
+import net.crowninteractive.wfmworker.misc.RequestListModel;
 import net.crowninteractive.wfmworker.misc.EnumerationWorkOrderDownloadModel;
 import net.crowninteractive.wfmworker.misc.ExcludeForExcel;
 import net.crowninteractive.wfmworker.misc.QueueTypeEnum;
-import net.crowninteractive.wfmworker.misc.RequestListModel;
 import net.crowninteractive.wfmworker.misc.StandardResponse;
 import net.crowninteractive.wfmworker.misc.WorkOrderJson;
 import org.apache.commons.mail.EmailAttachment;
@@ -113,14 +112,9 @@ public class EnumService {
     }
 
     public Awesome createEnumerationWorkOrder(WorkOrderJson workOrderJson){
-        
-        Integer i = wotDao.createEnumerationWorkOrder(workOrderJson);
-            if (i > 0) {
-                return StandardResponse.ok();
-            } else {
-                return StandardResponse.errorDuringProcessing();
-            }
-        
+
+        return wotDao.createEnumerationWorkOrder(workOrderJson);
+     
     }
     
     public String approveWorkOrders(Token tokens) {
@@ -137,17 +131,6 @@ public class EnumService {
                     if (workOrderTemp != null) {
                             System.out.println("workOrderTemp is not empty");
                         if (workOrderTemp.getTicketId() == null) {
-                            String customername = null;
-                            String type = "a";
-                            Awesome awe = getCustomerDetails(workOrderTemp.getReferenceTypeData(), type);
-                            if (awe.getResp() == 0) {
-                                Gson gson = new GsonBuilder().create();
-                                Map jsonMap = gson.fromJson(gson.toJson(awe.getObject()), Map.class);
-                                customername = (String) jsonMap.get("name");
-                            } else {
-                                customername = workOrderTemp.getCustomerName();
-                            }
-                            workOrderTemp.setCustomerName(customername);
                             wdao.approveEnumWorkOrder(workOrderTemp);
                             success++;
                         } else {
@@ -457,7 +440,8 @@ public class EnumService {
                 + "(select name from queue_type where id=wt.queue_type_id) as queue_type_name "
                 + ", wt.current_status "
                 + "FROM `work_order_temp` wt, enumeration_work_order e where wt.token = e.work_order_temp_token "
-                + "and wt.business_unit like {unit} and cast(wt.create_time as date) >= cast({from} as date) and cast(wt.create_time as date) <= cast({to} as date ) ORDER BY wt.create_time";
+                + "and wt.business_unit like {unit} and cast(wt.create_time as date) >= cast({from} as date) and cast(wt.create_time as date) <= cast({to} as date )";
+
 
             final List<EnumerationWorkOrderDownloadModel> requests = wdao.getEnumerationDownloadList(sql, district, from, to, queue, queueType, priority,status, billingId, ticketId, reportedBy);
             
@@ -482,14 +466,14 @@ public class EnumService {
             String ticketId = null;
             if (err.isEmpty()) {
                 
-                String sql = "SELECT wt.`id` as id, "
+                 String sql = "SELECT wt.`id` as id, "
                     + "(select name from queue where id=wt.queue_id) as queue_id,"
                     + "(select name from queue_type where id=wt.queue_type_id) "
                     + "as queue_type_id,wt.ticket_id as ticket_id, wt.`reference_type` as reference_type, wt.`reference_type_data` as reference_type_data, "
                     + "wt.`business_unit` as business_unit, wt.`priority` as priority, wt.`create_time` as create_time,  wt.`current_status` as current_status, wt.`reported_by` as reported_by,  wt.`token` as token, wt.address_line_1 as address_line_1, wt.city as city "
                     + "FROM `work_order_temp` wt, enumeration_work_order e where wt.token= e.work_order_temp_token and business_unit like {unit} and cast(create_time as date) >= cast({from} as date) and cast(create_time as date) <= cast({to} as date )";
                 
-                workOrders = wdao.getEnumerationList(sql, district, from, to, page, queue, queueType, priority, status, billingId, ticketId, reportedBy);
+                 workOrders = wdao.getEnumerationList(sql, district, from, to, page, queue, queueType, priority, status, billingId, ticketId, reportedBy);
             } else {
                 return StandardResponse.validationErrors("Invalid Date Format");
             }
@@ -506,7 +490,7 @@ public class EnumService {
     }
     
     public Awesome getEnumWorkOrderList(String district, String from, String to, Integer page, String queue, 
-                                String queueType, String priority, String status, String billingId, String ticketId, String reportedBy) { 
+                                String queueType, String priority, String status, String billingId, String ticketId, String reportedBy) {
         try {
 
             Entry<BigInteger, List<RequestListModel>> workOrders;
@@ -517,7 +501,7 @@ public class EnumService {
                     + "(select name from queue where id=wt.queue_id) as queue_id,"
                     + "(select name from queue_type where id=wt.queue_type_id) "
                     + "as queue_type_id, wt.ticket_id as ticketId, wt.reference_type as reference_type, wt.reference_type_data as reference_type_data, "
-                    + "wt.business_unit as business_unit, wt.priority as priority, wt.create_time as create_time,  wt.current_status as current_status, wt.reported_by as reported_by, wt.token as token, wt.address_line_1 as address_line_1, wt.city as city, e.is_migrated "
+                    + "wt.business_unit as business_unit, wt.priority as priority, wt.create_time as create_time,  wt.current_status as current_status, wt.reported_by as reported_by, wt.token as token, wt.address_line_1 as address_line_1, wt.city as city "
                     + "FROM `work_order` wt join enumeration_work_order e on wt.ticket_id = e.work_order_id where business_unit like business_unit "
                     + "and wt.current_status != 'Obsolete' and cast(create_time as date) >= cast(create_time as date) and cast(create_time as date) <= cast(create_time as date)"
                     + "and wt.queue_id = (select id from queue where name like '%enumeration%') ";
@@ -561,6 +545,7 @@ public class EnumService {
         try {
             List<QueueTypeEnum> qts = wdao.getEnumerationQueueTypeByQueueIdList(token);
 
+
             if (qts != null && !qts.isEmpty()) {
                 return StandardResponse.ok(qts);
             } else {
@@ -587,6 +572,7 @@ public class EnumService {
     }
     
 }
+
 
 enum fileType{
     REQUEST,WORKORDER;

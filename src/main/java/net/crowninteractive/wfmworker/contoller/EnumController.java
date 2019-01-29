@@ -65,6 +65,8 @@ public class EnumController {
         try {
             return enumService.createEnumerationWorkOrder(obj);
         } catch (Exception ex) {
+            ex.printStackTrace();
+
             return new Awesome(400, ex.getMessage());
         }
 
@@ -170,8 +172,9 @@ public class EnumController {
         }
         return awe;
     }
-    
+
     @RequestMapping(method = RequestMethod.POST, value = "download_enumeration_requests")
+
     public ResponseEntity downloadEnumerationRequests(@RequestBody Token tokens) throws IOException {
         L.entering("download_work_orders", Arrays.toString(tokens.getTokens()));
         final String elementName = "tokens";
@@ -183,14 +186,14 @@ public class EnumController {
                 byte[] data = Files.readAllBytes(path);
                 ByteArrayResource resource = new ByteArrayResource(data);
                 return ResponseEntity.ok()
-                    .header("Content-Disposition", "attachment; filename=enumeration_request_download.xls")
-                    .contentType(MediaType.APPLICATION_OCTET_STREAM)
-                    .body(resource);
-                
+                        .header("Content-Disposition", "attachment; filename=enumeration_request_download.xls")
+                        .contentType(MediaType.APPLICATION_OCTET_STREAM)
+                        .body(resource);
+
             } else {
                 return ResponseEntity.ok()
-                    .contentType(MediaType.APPLICATION_JSON)
-                    .body(StandardResponse.validationErrors("no Record found for " + elementName));
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .body(StandardResponse.validationErrors("no Record found for " + elementName));
             }
         } else {
             return ResponseEntity.ok()
@@ -198,7 +201,7 @@ public class EnumController {
                     .body(StandardResponse.validationErrors("no element" + elementName + "found in JsonObject"));
         }
     }
-    
+
     @RequestMapping(method = RequestMethod.POST, value = "download_enumeration_work_orders")
     public ResponseEntity downloadEnumerationWorkOrders(@RequestBody Token tokens) throws IOException {
         L.entering("download_work_orders", Arrays.toString(tokens.getTokens()));
@@ -211,14 +214,14 @@ public class EnumController {
                 byte[] data = Files.readAllBytes(path);
                 ByteArrayResource resource = new ByteArrayResource(data);
                 return ResponseEntity.ok()
-                    .header("Content-Disposition", "attachment; filename=enumeration_work_orders_download.xls")
-                    .contentType(MediaType.APPLICATION_OCTET_STREAM)
-                    .body(resource);
-                
+                        .header("Content-Disposition", "attachment; filename=enumeration_work_orders_download.xls")
+                        .contentType(MediaType.APPLICATION_OCTET_STREAM)
+                        .body(resource);
+
             } else {
                 return ResponseEntity.ok()
-                    .contentType(MediaType.APPLICATION_JSON)
-                    .body(StandardResponse.validationErrors("no Record found for " + elementName));
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .body(StandardResponse.validationErrors("no Record found for " + elementName));
             }
         } else {
             return ResponseEntity.ok()
@@ -228,6 +231,7 @@ public class EnumController {
     }
 
     @RequestMapping(method = RequestMethod.GET, value = "email_enumeration_work_orders/{emailAddress:.+}")
+
     public Awesome emailWorkOrderList(@PathVariable("emailAddress") String emailAddress,
             @RequestParam(defaultValue = "business_unit", value = "district", required = false) String district,
             @RequestParam(defaultValue = "create_time", value = "from", required = false) String from,
@@ -297,7 +301,7 @@ public class EnumController {
             return new ResponseEntity<String>(e.getMessage(), HttpStatus.BAD_REQUEST);
         }
     }
-    
+
     @RequestMapping(method = RequestMethod.GET, value = "/queue_type/{token}")
     public Awesome getqueuetype(@PathVariable("token") String id) {
         Awesome awe;

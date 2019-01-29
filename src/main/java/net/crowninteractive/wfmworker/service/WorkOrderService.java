@@ -30,6 +30,8 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.jms.core.JmsTemplate;
 import org.springframework.jms.core.MessageCreator;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Propagation;
+import org.springframework.transaction.annotation.Transactional;
 
 /**
  *
@@ -198,6 +200,7 @@ public class WorkOrderService {
         return wdao.findByTicketIdEnum(ticketId);
     }
 
+    @Transactional(propagation = Propagation.REQUIRES_NEW)
     public void generateStaffCode(Integer counter) {
         while (counter != null) {
             counter = wdao.hasNextRecord(counter);

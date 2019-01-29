@@ -40,7 +40,7 @@ public class RequestListModel{
     private String token;
     private String addressLine1;
     private String city;
-    private Byte isMigrated;
+
 
 
     public RequestListModel(Object[] e) {
@@ -58,7 +58,7 @@ public class RequestListModel{
         this.token = (String) e[11];
         this.addressLine1 = (String) e[12];
         this.city = (String) e[13];
-        this.isMigrated = e.length >= 15 ? (Byte) e[14] : 0;
+
     }
    
 }
