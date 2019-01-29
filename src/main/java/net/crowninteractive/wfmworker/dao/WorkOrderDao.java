@@ -304,6 +304,8 @@ public class WorkOrderDao extends AbstractDao<Integer, WorkOrder> {
     @Transactional
     public int createWorkOrderV2(WorkOrderTemp wot, QueueType qt, EnumerationWorkOrder ew) {
 
+        logger.info("-----------Queue-----------------" + qt.getQueueId());
+        logger.info("-----------Queue Type -----------------" + qt.getId());
         WorkOrder wo = new WorkOrder();
         wo.setBusinessUnit(wot.getBusinessUnit());
         wo.setAddressLine1(wot.getAddressLine1());
@@ -327,10 +329,14 @@ public class WorkOrderDao extends AbstractDao<Integer, WorkOrder> {
         wo.setToken(wot.getToken());
         wo.setSlot(wot.getSlot());
         wo.setDebtBalanceAmount(Double.valueOf(0));
+        wo.setIsAssigned((short)0);
+        wo.setDebtBalanceAmount(0.0);
+        wo.setIsClosed((short)0);
         
         // add is_active and owner_id
         wo.setIsActive(1);
         wo.setOwnerId(1);
+        wo.setIsAssigned(0);
 
 //        wo.setCurrentBill(wot.getCurrentBill());
 //        wo.setLastPaymentAmount(wot.getLastPaymentAmount());
