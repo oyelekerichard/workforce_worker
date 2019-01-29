@@ -336,7 +336,7 @@ public class WorkOrderDao extends AbstractDao<Integer, WorkOrder> {
         // add is_active and owner_id
         wo.setIsActive(1);
         wo.setOwnerId(1);
-        wo.setIsAssigned(0);
+        wo.setIsAssigned((short)0);
 
 //        wo.setCurrentBill(wot.getCurrentBill());
 //        wo.setLastPaymentAmount(wot.getLastPaymentAmount());
