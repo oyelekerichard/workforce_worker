@@ -93,7 +93,7 @@ public class WorkOrderController extends Extension {
                     String desc = obj.getDescription().concat(String.format(" | Debt amount is %s Naira", obj.getAmount()));
                     awe = service.addToDisconnectionQueue(obj);
                     System.out.println(awe);
-                    compeletedDeliquencies.add(new CompletedDeliquency(obj.getBillingId(), (Integer) awe.getObject()));
+                    compeletedDeliquencies.add(new CompletedDeliquency(obj.getBillingId(), (Integer) awe.getObject(),obj.getDeliquencyReportRecordId()));
                     observer.updateDeqliquency(new Gson().toJson(compeletedDeliquencies));
                 } catch (Exception ex) {
                     ex.printStackTrace();
@@ -143,14 +143,17 @@ public class WorkOrderController extends Extension {
 
         private String accountNumber;
         private Integer ticketId;
+        private Integer deliquencyReportId;
 
         public CompletedDeliquency() {
         }
 
-        public CompletedDeliquency(String accountNumber, Integer ticketId) {
+        public CompletedDeliquency(String accountNumber, Integer ticketId, Integer deliquencyReportId) {
             this.accountNumber = accountNumber;
             this.ticketId = ticketId;
+            this.deliquencyReportId = deliquencyReportId;
         }
+        
 
         public String getAccountNumber() {
             return accountNumber;
@@ -167,6 +170,17 @@ public class WorkOrderController extends Extension {
         public void setTicketId(Integer ticketId) {
             this.ticketId = ticketId;
         }
+
+        public Integer getDeliquencyReportId() {
+            return deliquencyReportId;
+        }
+
+        public void setDeliquencyReportId(Integer deliquencyReportId) {
+            this.deliquencyReportId = deliquencyReportId;
+        }
+        
+        
+        
 
     }
 
