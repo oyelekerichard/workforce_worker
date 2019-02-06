@@ -9,13 +9,9 @@ import com.google.common.base.Optional;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import java.util.Date;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import javax.jms.JMSException;
-import javax.jms.Message;
-import javax.jms.Session;
-import javax.jms.TextMessage;
+import net.crowninteractive.wfmworker.ExecutorServiceConfig;
 import net.crowninteractive.wfmworker.dao.RequestObj;
 import net.crowninteractive.wfmworker.dao.WorkOrderDao;
 import net.crowninteractive.wfmworker.entity.Engineer;
@@ -26,9 +22,9 @@ import net.crowninteractive.wfmworker.exception.WfmWorkerException;
 import net.crowninteractive.wfmworker.misc.StandardResponse;
 import net.crowninteractive.wfmworker.misc.WorkOrderEnumerationBody;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.jms.core.JmsTemplate;
-import org.springframework.jms.core.MessageCreator;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
@@ -116,31 +112,6 @@ public class WorkOrderService {
         return wdao.createWorkOrder(worder);
     }
 
-    public Awesome processItems(RequestObj[] reqList) {
-        Awesome awe = null;
-        for (RequestObj obj : reqList) {
-            String desc = obj.getDescription().concat(String.format(" | Debt amount is %s Naira", obj.getAmount()));
-            WorkOrder w = addToDisconnectionQueueV2(obj.getAmount(), obj.getBillingId(), obj.getBusinessUnit(), obj.getTariff(), obj.getCity(), obj.getAddress(), obj.getPhone(), obj.getSummary(), desc, obj.getReportedBy());
-            //write message to queue
-            template.send(disconnectionQueue, new MessageCreator() {
-                @Override
-                public Message createMessage(Session sn) throws JMSException {
-                    TextMessage message = sn.createTextMessage();
-                    Map<String, String> myMap = new HashMap<String, String>();
-                    myMap.put("acctRecId", obj.getAcctRecId());
-                    myMap.put("ticketId", String.valueOf(w.getTicketId()));
-
-                    Gson gson = new GsonBuilder().create();
-                    String msg = gson.toJson(myMap);
-                    message.setText(msg);
-                    return message;
-                }
-            });
-        }
-
-        return awe;
-    }
-
     public WorkOrder addToDisconnectionQueueV2(String amount, String billingID, String businessUnit, String tarriff, String city, String address, String phone, String summary, String description, String reportedBy) {
 
         try {
@@ -159,7 +130,9 @@ public class WorkOrderService {
             //fetch queueTypeToken
             QueueType qt = wdao.getEmccConfigDisconnectQueueTypeAndQueue();
             if (qt != null) {
+
                 int ticketId = 0;
+
                 List<WorkOrder> wo = wdao.getLastWorkOrderinQueueType(billingID, qt.getId());
                 if (wo != null) {
 
@@ -209,7 +182,7 @@ public class WorkOrderService {
 
     public Awesome addToDisconnectionQueue(RequestObj r) {
         try {
-           //fetch queueTypeToken
+            //fetch queueTypeToken
             QueueType qt = wdao.getEmccConfigDisconnectQueueTypeAndQueue();
             if (qt == null) {
                 return StandardResponse.disconnectionQueueTypeNotSet();
@@ -234,7 +207,7 @@ public class WorkOrderService {
 //            }
 
             if (found != null) {
-              
+
                 wor.setEngineerId(new Engineer(found));
                 wor.setIsAssigned(Short.valueOf("1"));
                 wor.setDateAssigned(new Date());
@@ -249,9 +222,9 @@ public class WorkOrderService {
 
                 wdao.edit(wor);
             }
-
+            wor.setDateAssigned(new Date());
             ticketId = wor.getTicketId();
-            System.out.println(">>>>>>>>>>>>Ticket updated in disconnection queue "+ticketId);
+            System.out.println(":::::: Ticket updated in disconnection queue :::::::::: " + ticketId);
             return StandardResponse.ok(ticketId);
 
         } catch (Exception ex) {

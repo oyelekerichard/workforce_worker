@@ -62,6 +62,7 @@ public class RequestObj {
     private Double previousOutstanding;
     private Date dueDate;
     private String staffId;
+    private Integer deliquencyReportRecordId;
 
     public String getAccountNumber() {
         return accountNumber;
@@ -447,10 +448,23 @@ public class RequestObj {
         this.staffId = staffId;
     }
 
-    @Override
-    public String toString() {
-        return "RequestObj{" + "acctRecId=" + acctRecId + ", ticketId=" + ticketId + ", amount=" + amount + ", reference=" + reference + ", start=" + start + ", count=" + count + ", startdate=" + startdate + ", enddate=" + enddate + ", oldPassword=" + oldPassword + ", newPassword=" + newPassword + ", roles=" + roles + ", loginurl=" + loginurl + ", stateId=" + stateId + ", email=" + email + ", password=" + password + ", firstname=" + firstname + ", lastname=" + lastname + ", phone=" + phone + ", address=" + address + ", state=" + state + ", image=" + image + ", thumbnail=" + thumbnail + ", token=" + token + ", cityToken=" + cityToken + ", billingId=" + billingId + ", city=" + city + ", reportedBy=" + reportedBy + ", businessUnit=" + businessUnit + ", tariff=" + tariff + ", summary=" + summary + ", description=" + description + ", customerName=" + customerName + ", accountNumber=" + accountNumber + ", chargeTypeToken=" + chargeTypeToken + ", frequency=" + frequency + ", tokens=" + tokens + ", setup=" + setup + ", name=" + name + ", district=" + district + ", currentBill=" + currentBill + ", lastPaidAmount=" + lastPaidAmount + ", lastPaymentDate=" + lastPaymentDate + ", orderId=" + orderId + ", purpose=" + purpose + ", orderIdStatus=" + orderIdStatus + ", previousOutstanding=" + previousOutstanding + ", dueDate=" + dueDate + ", staffId=" + staffId + '}';
+    public Integer getDeliquencyReportRecordId() {
+        return deliquencyReportRecordId;
     }
 
+    public void setDeliquencyReportRecordId(Integer deliquencyReportRecordId) {
+        this.deliquencyReportRecordId = deliquencyReportRecordId;
+    }
+
+    
+    
+    @Override
+    public String toString() {
+        return "RequestObj{" + "acctRecId=" + acctRecId + ", ticketId=" + ticketId + ", amount=" + amount + ", reference=" + reference + ", start=" + start + ", count=" + count + ", startdate=" + startdate + ", enddate=" + enddate + ", oldPassword=" + oldPassword + ", newPassword=" + newPassword + ", roles=" + roles + ", loginurl=" + loginurl + ", stateId=" + stateId + ", email=" + email + ", password=" + password + ", firstname=" + firstname + ", lastname=" + lastname + ", phone=" + phone + ", address=" + address + ", state=" + state + ", image=" + image + ", thumbnail=" + thumbnail + ", token=" + token + ", cityToken=" + cityToken + ", billingId=" + billingId + ", city=" + city + ", reportedBy=" + reportedBy + ", businessUnit=" + businessUnit + ", tariff=" + tariff + ", summary=" + summary + ", description=" + description + ", customerName=" + customerName + ", accountNumber=" + accountNumber + ", chargeTypeToken=" + chargeTypeToken + ", frequency=" + frequency + ", tokens=" + tokens + ", setup=" + setup + ", name=" + name + ", district=" + district + ", currentBill=" + currentBill + ", lastPaidAmount=" + lastPaidAmount + ", lastPaymentDate=" + lastPaymentDate + ", orderId=" + orderId + ", purpose=" + purpose + ", orderIdStatus=" + orderIdStatus + ", previousOutstanding=" + previousOutstanding + ", dueDate=" + dueDate + ", staffId=" + staffId + ", deliquencyReportRecordId=" + deliquencyReportRecordId + '}';
+    }
+    
+    
+
    
+
 }
