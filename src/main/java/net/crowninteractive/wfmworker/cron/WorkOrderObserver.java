@@ -24,6 +24,9 @@ public class WorkOrderObserver {
     @Value(value = "${meter.rollout.queue.local}")
     private String meterRollOutQueueLocal;
 
+    @Value(value = "${deliquency.update.local}")
+    private String deliquencyLocal;
+
     @Autowired
     private JmsTemplate template;
 
@@ -33,6 +36,18 @@ public class WorkOrderObserver {
             public Message createMessage(javax.jms.Session session) throws JMSException {
                 TextMessage message = session.createTextMessage();
                 message.setText(value);
+                return message;
+            }
+        });
+
+    }
+
+    public void updateDeqliquency(String updates) {
+        template.send(deliquencyLocal, new MessageCreator() {
+            @Override
+            public Message createMessage(javax.jms.Session session) throws JMSException {
+                TextMessage message = session.createTextMessage();
+                message.setText(updates);
                 return message;
             }
         });

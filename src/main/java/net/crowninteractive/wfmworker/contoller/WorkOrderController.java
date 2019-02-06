@@ -6,9 +6,12 @@
 package net.crowninteractive.wfmworker.contoller;
 
 import com.google.gson.Gson;
+import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.ExecutorService;
 import javax.servlet.http.HttpServletRequest;
 import javax.ws.rs.core.Context;
+import net.crowninteractive.wfmworker.cron.WorkOrderObserver;
 import net.crowninteractive.wfmworker.dao.RequestObj;
 import net.crowninteractive.wfmworker.entity.WorkOrder;
 import net.crowninteractive.wfmworker.entity.WorkOrderMessage;
@@ -18,6 +21,7 @@ import net.crowninteractive.wfmworker.misc.StandardResponse;
 import net.crowninteractive.wfmworker.service.Awesome;
 import net.crowninteractive.wfmworker.service.WorkOrderService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -37,6 +41,10 @@ public class WorkOrderController extends Extension {
 
     @Autowired
     private WorkOrderService service;
+    @Qualifier(value = "fixedThreadPool")
+    private ExecutorService executorService;
+    @Autowired
+    private WorkOrderObserver observer;
 
     @RequestMapping(method = RequestMethod.POST, value = "emcc_disconnect")
     public String addToDisconnectQueue(@RequestBody RequestObj obj, @Context HttpServletRequest request) {
@@ -67,18 +75,36 @@ public class WorkOrderController extends Extension {
 
     }
 
-    @RequestMapping(method = RequestMethod.POST, value = "emcc_disconnectv2")
+    @RequestMapping(method = RequestMethod.POST, value = "bulk_emcc_disconnect")
     public String addToDisconnectQueueV2(@RequestBody RequestObj[] reqList, @Context HttpServletRequest request) {
-        Awesome awe;
-        try {
-            //check deliquency upload
-            awe = service.processItems(reqList);
-            System.out.println(awe);
-        } catch (Exception ex) {
-            ex.printStackTrace();
-            awe = StandardResponse.invalidUser();
-        }
-        return process(awe, request);
+
+        Runnable runnable = () -> {
+
+            List<CompletedDeliquency> compeletedDeliquencies = null;
+
+            Awesome awe = null;
+            for (RequestObj obj : reqList) {
+
+                compeletedDeliquencies = new ArrayList();
+
+                try {
+                    System.out.println(obj);
+                    //check deliquency upload
+                    String desc = obj.getDescription().concat(String.format(" | Debt amount is %s Naira", obj.getAmount()));
+                    awe = service.addToDisconnectionQueue(obj);
+                    System.out.println(awe);
+                    compeletedDeliquencies.add(new CompletedDeliquency(obj.getBillingId(), (Integer) awe.getObject()));
+                    observer.updateDeqliquency(new Gson().toJson(compeletedDeliquencies));
+                } catch (Exception ex) {
+                    ex.printStackTrace();
+                    awe = StandardResponse.systemError(ex.getMessage());
+                }
+            }
+        };
+
+        executorService.submit(runnable);
+
+        return process(new Awesome(0, "::::: successfully submitted :::::"), request);
     }
 
     @RequestMapping(method = RequestMethod.GET, value = "/{queueId}")
@@ -111,6 +137,37 @@ public class WorkOrderController extends Extension {
         }
 
         return "my name is remi";
+    }
+
+    class CompletedDeliquency {
+
+        private String accountNumber;
+        private Integer ticketId;
+
+        public CompletedDeliquency() {
+        }
+
+        public CompletedDeliquency(String accountNumber, Integer ticketId) {
+            this.accountNumber = accountNumber;
+            this.ticketId = ticketId;
+        }
+
+        public String getAccountNumber() {
+            return accountNumber;
+        }
+
+        public void setAccountNumber(String accountNumber) {
+            this.accountNumber = accountNumber;
+        }
+
+        public Integer getTicketId() {
+            return ticketId;
+        }
+
+        public void setTicketId(Integer ticketId) {
+            this.ticketId = ticketId;
+        }
+
     }
 
 }
