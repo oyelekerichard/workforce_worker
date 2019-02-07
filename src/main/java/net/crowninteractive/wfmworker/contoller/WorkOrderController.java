@@ -41,6 +41,7 @@ public class WorkOrderController extends Extension {
 
     @Autowired
     private WorkOrderService service;
+    @Autowired
     @Qualifier(value = "fixedThreadPool")
     private ExecutorService executorService;
     @Autowired
