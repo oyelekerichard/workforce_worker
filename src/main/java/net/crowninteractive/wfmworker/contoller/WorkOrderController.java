@@ -95,12 +95,13 @@ public class WorkOrderController extends Extension {
                     awe = service.addToDisconnectionQueue(obj);
                     System.out.println(awe);
                     compeletedDeliquencies.add(new CompletedDeliquency(obj.getBillingId(), (Integer) awe.getObject(),obj.getDeliquencyReportRecordId()));
-                    observer.updateDeqliquency(new Gson().toJson(compeletedDeliquencies));
+                   
                 } catch (Exception ex) {
                     ex.printStackTrace();
                     awe = StandardResponse.systemError(ex.getMessage());
                 }
             }
+             observer.updateDeqliquency(new Gson().toJson(compeletedDeliquencies));
         };
 
         executorService.submit(runnable);
