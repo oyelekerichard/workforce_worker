@@ -8,9 +8,11 @@ package net.crowninteractive.wfmworker.dao;
 
 //~--- non-JDK imports --------------------------------------------------------
 import com.google.common.base.Optional;
+import java.io.IOException;
 import java.math.BigInteger;
 import java.sql.Connection;
 import java.sql.DriverManager;
+import java.sql.PreparedStatement;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.sql.Timestamp;
@@ -1015,38 +1017,60 @@ public class WorkOrderDao extends AbstractDao<Integer, WorkOrder> {
     public Integer createWorkOrder(QueueType qt, RequestObj r) {
 
         reentrantLock.lock();
+        int ticketId = ticketCount();
         System.out.println(":::::: Waiting Threads to create work order :::::::" + reentrantLock.getQueueLength());
         try {
 
-            WorkOrder.WorkOrderBuilder builder = new WorkOrder.WorkOrderBuilder();
-            builder.setAddressLine1(r.getAddress()).setBusinessUnit(r.getBusinessUnit()).setAmount(r.getAmount() == null ? Double.valueOf(0.00) : Double.valueOf(r.getAmount()))
-                    .setCity(r.getCity()).setContactNumber(r.getPhone()).setCurrentBill(r.getCurrentBill() == null ? Double.valueOf(0.00) : Double.valueOf(r.getCurrentBill()))
-                    .setDescription(r.getDescription()).setDueDate(r.getDueDate())
-                    .setLastPaymentAmount(r.getLastPaidAmount() == null ? Double.valueOf(0.00) : Double.valueOf(r.getLastPaidAmount())).setLastPaymentDate(r.getLastPaymentDate())
-                    .setPreviousOutstanding(r.getPreviousOutstanding()).setClosed(Short.valueOf("0")).setActive(1)
-                    .setPurpose(r.getPurpose()).setReportedBy(r.getReportedBy()).setSummary(r.getSummary()).setQueueType(qt)
-                    .setCreateTime(new Date()).setCurrentStatus("OPEN").setPriority("Low").setReferenceType("Billing ID")
-                    .setState("Lagos").setChannel("EMCC").setTariff(r.getTariff()).setBillingId(r.getBillingId()).setName(r.getName()).setAssigned(Short.valueOf("0"))
-                    .setQueue(qt.getQueueId()).setToken(RandomStringUtils.randomAlphanumeric(30)).setDebtBalanceAmount(0.0).setTicketId(ticketCount());
+            try (Connection emcc = DriverManager.getConnection(
+                    "jdbc:mysql://172.29.12.3/wfm_new?useSSL=false", "wfm", "tombraider");
+                    Statement stmt = emcc.createStatement();) {
 
-            Integer found = Optional.fromNullable(r.getStaffId()).isPresent() ? getEngineerIdByStaffId(r.getStaffId()) : getEngineerIdByBook(r.getAccountNumber(), qt.getId());
+                String createWorkOrderPstmt = "insert into work_order (address_line_1,business_unit,amount,city,contact_number,current_bill,description,due_date,last_payment_amount,last_payment_date,previous_outstanding,is_closed,is_active,purpose,reported_by,summary,queue_type_id,create_time,current_status,priority,reference_type,state,channel,tariff,reference_type_data,is_assigned,queue_id,token,debt_balance_amount,ticket_id,engineer_id,is_assigned,date_assigned,work_date) values (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)";
+                PreparedStatement ps1 = emcc.prepareStatement(createWorkOrderPstmt);
+                ps1.setString(1, r.getAddress());
+                ps1.setString(2, r.getBusinessUnit());
+                ps1.setDouble(3, r.getAmount() == null ? Double.valueOf(0.00) : Double.valueOf(r.getAmount()));
+                ps1.setString(4, r.getCity());
+                ps1.setString(5, r.getPhone() == null ? "-" : r.getPhone());
+                ps1.setDouble(6, r.getCurrentBill() == null ? Double.valueOf(0.00) : Double.valueOf(r.getCurrentBill()));
+                ps1.setString(7, r.getDescription());
+                ps1.setDate(8, new java.sql.Date(r.getDueDate().getTime()));
+                if (r.getLastPaidAmount() != null) {
+                    ps1.setDouble(9, new Double(r.getLastPaidAmount()));
+                    ps1.setDate(10, new java.sql.Date(r.getLastPaymentDate().getTime()));
+                }
+                ps1.setDouble(11, r.getPreviousOutstanding());
+                ps1.setInt(12, 0);
+                ps1.setInt(13, 1);
+                ps1.setString(14, r.getPurpose());
+                ps1.setString(15, r.getReportedBy());
+                ps1.setString(16, r.getSummary());
+                ps1.setInt(17, qt.getId());
+                ps1.setDate(18, new java.sql.Date(System.currentTimeMillis()));
+                ps1.setString(19, "OPEN");
+                ps1.setString(20, "Low");
+                ps1.setString(21, "Billing ID");
+                ps1.setString(22, "Lagos");
+                ps1.setString(23, "Emcc");
+                ps1.setString(24, r.getTariff());
+                ps1.setString(25, r.getBillingId());
+                if (found != null) {
+                    ps1.setInt(26, 1);
+                    ps1.setInt(31, found);
+                    ps1.setInt(32, 1);
+                    ps1.setDate(33, new java.sql.Date(System.currentTimeMillis()));
+                    ps1.setDate(34, new java.sql.Date(System.currentTimeMillis()));
+                }
+                ps1.setInt(27, qt.getQueueId().getId());
+                ps1.setString(28, RandomStringUtils.randomAlphanumeric(30));
+                ps1.setDouble(29, 0.0);
+                ps1.setInt(30, ticketId);
 
-            if (r.getLastPaidAmount() != null) {
-                builder.setLastPaymentDate(r.getLastPaymentDate());
-                builder.setLastPaymentAmount(Double.valueOf(r.getLastPaidAmount()));
+                ps1.executeUpdate();
+
             }
 
-            if (found != null) {
-                builder.setEngineerId(new Engineer(found));
-                builder.setAssigned(Short.valueOf("1"));
-                builder.setDateAssigned(new Date());
-                builder.setWorkDate(new Date());
-
-            }
-
-            builder.setOwnerId(1);
-            WorkOrder build = builder.build();
-            return save(build).getTicketId();
+            return ticketId;
 
         } catch (Exception e) {
             e.printStackTrace();
