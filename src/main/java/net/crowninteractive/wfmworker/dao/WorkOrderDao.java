@@ -9,6 +9,10 @@ package net.crowninteractive.wfmworker.dao;
 //~--- non-JDK imports --------------------------------------------------------
 import com.google.common.base.Optional;
 import java.math.BigInteger;
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.SQLException;
+import java.sql.Statement;
 import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -42,8 +46,8 @@ import org.apache.commons.lang3.time.DateFormatUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
-import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
+import javax.annotation.PostConstruct;
 
 /**
  *
@@ -68,6 +72,26 @@ public class WorkOrderDao extends AbstractDao<Integer, WorkOrder> {
     private WorkOrderDaoV2 wdao2;
     @Autowired
     private ReentrantLock reentrantLock;
+    private Connection conn;
+
+    @PostConstruct
+    public void initDataSource() throws ClassNotFoundException, SQLException {
+        final String JDBC_DRIVER = "com.mysql.jdbc.Driver";
+        final String DB_URL = "jdbc:mysql://172.29.11.11/wfm_new";
+        final String USER = "troot";
+        final String PASS = "tombraider";
+
+        conn = null;
+        Statement stmt = null;
+        try {
+            Class.forName("com.mysql.jdbc.Driver");
+            conn = DriverManager.getConnection(DB_URL, USER, PASS);
+
+        } finally {
+
+        }
+
+    }
 
     public int ticketCount() {
         Integer max = (Integer) getEntityManager()
@@ -989,13 +1013,11 @@ public class WorkOrderDao extends AbstractDao<Integer, WorkOrder> {
     }
 
     public Integer createWorkOrder(QueueType qt, RequestObj r) {
-  
+
         reentrantLock.lock();
-        System.out.println(":::::: Waiting Threads to create work order :::::::"+reentrantLock.getQueueLength());
+        System.out.println(":::::: Waiting Threads to create work order :::::::" + reentrantLock.getQueueLength());
         try {
-            
-           
-           
+
             WorkOrder.WorkOrderBuilder builder = new WorkOrder.WorkOrderBuilder();
             builder.setAddressLine1(r.getAddress()).setBusinessUnit(r.getBusinessUnit()).setAmount(r.getAmount() == null ? Double.valueOf(0.00) : Double.valueOf(r.getAmount()))
                     .setCity(r.getCity()).setContactNumber(r.getPhone()).setCurrentBill(r.getCurrentBill() == null ? Double.valueOf(0.00) : Double.valueOf(r.getCurrentBill()))

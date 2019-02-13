@@ -9,6 +9,8 @@ import com.google.gson.Gson;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.ExecutorService;
+import java.util.concurrent.TimeUnit;
+import javax.annotation.PreDestroy;
 import javax.servlet.http.HttpServletRequest;
 import javax.ws.rs.core.Context;
 import net.crowninteractive.wfmworker.cron.WorkOrderObserver;
@@ -90,18 +92,18 @@ public class WorkOrderController extends Extension {
 
                 try {
                     System.out.println(obj);
-                  
+
                     String desc = obj.getDescription().concat(String.format(" | Debt amount is %s Naira", obj.getAmount()));
                     awe = service.addToDisconnectionQueue(obj);
                     System.out.println(awe);
-                    compeletedDeliquencies.add(new CompletedDeliquency(obj.getBillingId(), (Integer) awe.getObject(),obj.getDeliquencyReportRecordId()));
-                   
+                    compeletedDeliquencies.add(new CompletedDeliquency(obj.getBillingId(), (Integer) awe.getObject(), obj.getDeliquencyReportRecordId()));
+
                 } catch (Exception ex) {
                     ex.printStackTrace();
                     awe = StandardResponse.systemError(ex.getMessage());
                 }
             }
-             observer.updateDeqliquency(new Gson().toJson(compeletedDeliquencies));
+            observer.updateDeqliquency(new Gson().toJson(compeletedDeliquencies));
         };
 
         executorService.submit(runnable);
@@ -141,6 +143,11 @@ public class WorkOrderController extends Extension {
         return "my name is remi";
     }
 
+    @PreDestroy
+    public void terminateScheduledExecutor() throws InterruptedException {
+        this.executorService.awaitTermination(120, TimeUnit.MINUTES);
+    }
+
     class CompletedDeliquency {
 
         private String accountNumber;
@@ -155,7 +162,6 @@ public class WorkOrderController extends Extension {
             this.ticketId = ticketId;
             this.deliquencyReportId = deliquencyReportId;
         }
-        
 
         public String getAccountNumber() {
             return accountNumber;
@@ -180,9 +186,6 @@ public class WorkOrderController extends Extension {
         public void setDeliquencyReportId(Integer deliquencyReportId) {
             this.deliquencyReportId = deliquencyReportId;
         }
-        
-        
-        
 
     }
 
