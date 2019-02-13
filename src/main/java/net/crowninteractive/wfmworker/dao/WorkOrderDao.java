@@ -1021,15 +1021,13 @@ public class WorkOrderDao extends AbstractDao<Integer, WorkOrder> {
         System.out.println(":::::: Waiting Threads to create work order :::::::" + reentrantLock.getQueueLength());
         try {
 
-                 Integer found = Optional.fromNullable(r.getStaffId()).isPresent() ? getEngineerIdByStaffId(r.getStaffId()) : getEngineerIdByBook(r.getAccountNumber(), qt.getId());
-
-          
+            Integer found = Optional.fromNullable(r.getStaffId()).isPresent() ? getEngineerIdByStaffId(r.getStaffId()) : getEngineerIdByBook(r.getAccountNumber(), qt.getId());
 
             try (Connection emcc = DriverManager.getConnection(
                     "jdbc:mysql://172.29.12.3/wfm_new?useSSL=false", "troot", "tombraider");
                     Statement stmt = emcc.createStatement();) {
 
-                String createWorkOrderPstmt = "insert into work_order (address_line_1,business_unit,amount,city,contact_number,current_bill,description,due_date,last_payment_amount,last_payment_date,previous_outstanding,is_closed,is_active,purpose,reported_by,summary,queue_type_id,create_time,current_status,priority,reference_type,state,channel,customer_tariff,reference_type_data,is_assigned,queue_id,token,debt_balance_amount,ticket_id,engineer_id,is_assigned,date_assigned,work_date) values (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)";
+                String createWorkOrderPstmt = "insert into work_order (address_line_1,business_unit,amount,city,contact_number,current_bill,description,due_date,last_payment_amount,last_payment_date,previous_outstanding,is_closed,is_active,purpose,reported_by,summary,queue_type_id,create_time,current_status,priority,reference_type,state,channel,customer_tariff,reference_type_data,is_assignedqueue_id,token,debt_balance_amount,ticket_id,engineer_id,date_assigned,work_date) values (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)";
                 PreparedStatement ps1 = emcc.prepareStatement(createWorkOrderPstmt);
                 ps1.setString(1, r.getAddress());
                 ps1.setString(2, r.getBusinessUnit());
@@ -1061,9 +1059,8 @@ public class WorkOrderDao extends AbstractDao<Integer, WorkOrder> {
                 if (found != null) {
                     ps1.setInt(26, 1);
                     ps1.setInt(31, found);
-                    ps1.setInt(32, 1);
+                    ps1.setDate(32, new java.sql.Date(System.currentTimeMillis()));
                     ps1.setDate(33, new java.sql.Date(System.currentTimeMillis()));
-                    ps1.setDate(34, new java.sql.Date(System.currentTimeMillis()));
                 }
                 ps1.setInt(27, qt.getQueueId().getId());
                 ps1.setString(28, RandomStringUtils.randomAlphanumeric(30));
