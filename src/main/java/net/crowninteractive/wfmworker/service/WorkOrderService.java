@@ -219,9 +219,10 @@ public class WorkOrderService {
 
                 ResultSet lastQueryStmt = lastWorkOrderStmt.executeQuery(sql);
 
-                 Integer found = null;
-                 
+                Integer found = null;
+
                 String query = "select id as engineerId from engineer where user_id in (select id from users where staff_id = ?) ";
+                query = String.format(query, r.getStaffId());
                 if (Optional.fromNullable(r.getStaffId()).isPresent()) {
                     ResultSet executeQuery = engineerStmt.executeQuery(query);
 
@@ -229,9 +230,9 @@ public class WorkOrderService {
                         found = executeQuery.getInt("engineerId");
                     }
                 }
-                
+
                 if (lastQueryStmt.next() == false) {
-                    ticketId = createWorkOrder(queueTypeId, queueId, r,found);
+                    ticketId = createWorkOrder(queueTypeId, queueId, r, found);
                     return StandardResponse.ok(ticketId);
                 }
                 Integer workOrderId = null;
@@ -241,8 +242,6 @@ public class WorkOrderService {
                 }
 
                 addRemark("Emcc", workOrderId, r.getDescription(), 1, Double.valueOf(r.getAmount()));
-
-               
 
                 if (found != null) {
 
@@ -269,7 +268,7 @@ public class WorkOrderService {
         }
     }
 
-    public Integer createWorkOrder(Integer queueTypeId, Integer queueId, RequestObj r,Integer found ) {
+    public Integer createWorkOrder(Integer queueTypeId, Integer queueId, RequestObj r, Integer found) {
 
         reentrantLock.lock();
         int ticketId = 0;
@@ -277,7 +276,6 @@ public class WorkOrderService {
         try {
 
             String createWorkOrderPstmt = "insert into work_order (address_line_1,business_unit,amount,city,contact_number,current_bill,description,due_date,last_payment_amount,last_payment_date,previous_outstanding,is_closed,is_active,purpose,reported_by,summary,queue_type_id,create_time,current_status,priority,reference_type,state,channel,customer_tariff,reference_type_data,is_assigned,queue_id,token,debt_balance_amount,ticket_id,engineer_id,date_assigned,work_date,owner_id) values (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)";
-
 
             try (Connection emcc = DriverManager.getConnection(
                     "jdbc:mysql://172.29.12.3/wfm_new?useSSL=false", "wfm", "tombraider");
