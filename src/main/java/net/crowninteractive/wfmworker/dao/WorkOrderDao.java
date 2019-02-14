@@ -1024,7 +1024,7 @@ public class WorkOrderDao extends AbstractDao<Integer, WorkOrder> {
             Integer found = Optional.fromNullable(r.getStaffId()).isPresent() ? getEngineerIdByStaffId(r.getStaffId()) : getEngineerIdByBook(r.getAccountNumber(), qt.getId());
 
             try (Connection emcc = DriverManager.getConnection(
-                    "jdbc:mysql://172.29.12.3/wfm_new?useSSL=false", "troot", "tombraider");
+                    "jdbc:mysql://172.29.12.3/wfm_new?useSSL=false", "wfm", "tombraider");
                     Statement stmt = emcc.createStatement();) {
 
                 String createWorkOrderPstmt = "insert into work_order (address_line_1,business_unit,amount,city,contact_number,current_bill,description,due_date,last_payment_amount,last_payment_date,previous_outstanding,is_closed,is_active,purpose,reported_by,summary,queue_type_id,create_time,current_status,priority,reference_type,state,channel,customer_tariff,reference_type_data,is_assignedqueue_id,token,debt_balance_amount,ticket_id,engineer_id,date_assigned,work_date) values (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)";
@@ -1037,10 +1037,8 @@ public class WorkOrderDao extends AbstractDao<Integer, WorkOrder> {
                 ps1.setDouble(6, r.getCurrentBill() == null ? Double.valueOf(0.00) : Double.valueOf(r.getCurrentBill()));
                 ps1.setString(7, r.getDescription());
                 ps1.setDate(8, new java.sql.Date(r.getDueDate().getTime()));
-                if (r.getLastPaidAmount() != null) {
-                    ps1.setDouble(9, new Double(r.getLastPaidAmount()));
-                    ps1.setDate(10, new java.sql.Date(r.getLastPaymentDate().getTime()));
-                }
+                ps1.setDouble(9, r.getLastPaidAmount() != null ? new Double(r.getLastPaidAmount()) : null);
+                ps1.setDate(10, r.getLastPaidAmount() != null ? new java.sql.Date(r.getLastPaymentDate().getTime()) : null);
                 ps1.setDouble(11, r.getPreviousOutstanding());
                 ps1.setInt(12, 0);
                 ps1.setInt(13, 1);
@@ -1056,16 +1054,14 @@ public class WorkOrderDao extends AbstractDao<Integer, WorkOrder> {
                 ps1.setString(23, "Emcc");
                 ps1.setString(24, r.getTariff());
                 ps1.setString(25, r.getBillingId());
-                if (found != null) {
-                    ps1.setInt(26, 1);
-                    ps1.setInt(31, found);
-                    ps1.setDate(32, new java.sql.Date(System.currentTimeMillis()));
-                    ps1.setDate(33, new java.sql.Date(System.currentTimeMillis()));
-                }
+                ps1.setInt(26, found != null ? 1 : 0);
                 ps1.setInt(27, qt.getQueueId().getId());
                 ps1.setString(28, RandomStringUtils.randomAlphanumeric(30));
                 ps1.setDouble(29, 0.0);
                 ps1.setInt(30, ticketId);
+                ps1.setInt(31, found != null ? found : null);
+                ps1.setDate(32, found != null ? new java.sql.Date(System.currentTimeMillis()) : null);
+                ps1.setDate(33, found != null ? new java.sql.Date(System.currentTimeMillis()) : null);
 
                 ps1.executeUpdate();
 
