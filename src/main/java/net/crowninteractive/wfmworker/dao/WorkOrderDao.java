@@ -1021,14 +1021,14 @@ public class WorkOrderDao extends AbstractDao<Integer, WorkOrder> {
         System.out.println(":::::: Waiting Threads to create work order :::::::" + reentrantLock.getQueueLength());
         try {
 
+            String createWorkOrderPstmt = "insert into work_order (address_line_1,business_unit,amount,city,contact_number,current_bill,description,due_date,last_payment_amount,last_payment_date,previous_outstanding,is_closed,is_active,purpose,reported_by,summary,queue_type_id,create_time,current_status,priority,reference_type,state,channel,customer_tariff,reference_type_data,is_assigned,queue_id,token,debt_balance_amount,ticket_id,engineer_id,date_assigned,work_date) values (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)";
+            
             Integer found = Optional.fromNullable(r.getStaffId()).isPresent() ? getEngineerIdByStaffId(r.getStaffId()) : getEngineerIdByBook(r.getAccountNumber(), qt.getId());
 
             try (Connection emcc = DriverManager.getConnection(
                     "jdbc:mysql://172.29.12.3/wfm_new?useSSL=false", "wfm", "tombraider");
-                    Statement stmt = emcc.createStatement();) {
+                    PreparedStatement ps1 = emcc.prepareStatement(createWorkOrderPstmt);) {
 
-                String createWorkOrderPstmt = "insert into work_order (address_line_1,business_unit,amount,city,contact_number,current_bill,description,due_date,last_payment_amount,last_payment_date,previous_outstanding,is_closed,is_active,purpose,reported_by,summary,queue_type_id,create_time,current_status,priority,reference_type,state,channel,customer_tariff,reference_type_data,is_assignedqueue_id,token,debt_balance_amount,ticket_id,engineer_id,date_assigned,work_date) values (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)";
-                PreparedStatement ps1 = emcc.prepareStatement(createWorkOrderPstmt);
                 ps1.setString(1, r.getAddress());
                 ps1.setString(2, r.getBusinessUnit());
                 ps1.setDouble(3, r.getAmount() == null ? Double.valueOf(0.00) : Double.valueOf(r.getAmount()));
