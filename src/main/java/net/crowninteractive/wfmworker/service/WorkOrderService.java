@@ -8,10 +8,15 @@ package net.crowninteractive.wfmworker.service;
 import com.google.common.base.Optional;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.Statement;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
-import net.crowninteractive.wfmworker.ExecutorServiceConfig;
+import java.util.concurrent.locks.ReentrantLock;
 import net.crowninteractive.wfmworker.dao.RequestObj;
 import net.crowninteractive.wfmworker.dao.WorkOrderDao;
 import net.crowninteractive.wfmworker.entity.Engineer;
@@ -21,8 +26,8 @@ import net.crowninteractive.wfmworker.entity.WorkOrderMessage;
 import net.crowninteractive.wfmworker.exception.WfmWorkerException;
 import net.crowninteractive.wfmworker.misc.StandardResponse;
 import net.crowninteractive.wfmworker.misc.WorkOrderEnumerationBody;
+import org.apache.commons.lang3.RandomStringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.jms.core.JmsTemplate;
 import org.springframework.stereotype.Service;
@@ -43,6 +48,9 @@ public class WorkOrderService {
 
     @Value(value = "${dev.disconnection.complete.out}")
     private String disconnectionQueue;
+
+    @Autowired
+    private ReentrantLock reentrantLock;
 
     public Awesome addToDisconnectionQueue(String amount, String billingID, String businessUnit, String tarriff, String city, String address, String phone, String summary, String description, String reportedBy, String currentBill, String lastPaidAmount, Date lastPaymentDate) {
 
@@ -182,54 +190,179 @@ public class WorkOrderService {
 
     public Awesome addToDisconnectionQueue(RequestObj r) {
         try {
-            //fetch queueTypeToken
-            QueueType qt = wdao.getEmccConfigDisconnectQueueTypeAndQueue();
-            if (qt == null) {
-                return StandardResponse.disconnectionQueueTypeNotSet();
-            }
 
-            int ticketId = 0;
-            List<WorkOrder> wo = wdao.getLastWorkOrderinQueueType(r.getBillingId(), qt.getId());
+            String queueTypeString = "select * from queue_type where token=(select config_value "
+                    + "from emcc_config where config_key='disconnect_queue_type')";
 
-            if (wo.isEmpty()) {
-                ticketId = wdao.createWorkOrder(qt, r);
+            try (Connection emcc = DriverManager.getConnection(
+                    "jdbc:mysql://172.29.12.3/wfm_new?useSSL=false", "wfm", "tombraider");
+                    Statement queueStmt = emcc.createStatement();
+                    Statement lastWorkOrderStmt = emcc.createStatement();
+                    Statement engineerStmt = emcc.createStatement();) {
+
+                ResultSet queueStmtQuery = queueStmt.executeQuery(queueTypeString);
+
+                if (queueStmtQuery.next() == false) {
+                    return StandardResponse.disconnectionQueueTypeNotSet();
+                }
+
+                Integer queueTypeId = null, queueId = null;
+
+                while (queueStmtQuery.next()) {
+                    queueTypeId = queueStmtQuery.getInt("id");
+                    queueId = queueStmtQuery.getInt("queue_id");
+                }
+
+                int ticketId = 0;
+                String sql = String.format("select * from work_order where reference_type_data = '%s'  and (current_status != '%s' or is_closed = %d) and queue_type_id = %d order by id desc limit 1", r.getBillingId(),
+                        "CLOSED", 0, queueTypeId);
+
+                ResultSet lastQueryStmt = lastWorkOrderStmt.executeQuery(sql);
+
+                if (lastQueryStmt.next() == false) {
+                    ticketId = createWorkOrder(queueTypeId, queueId, r);
+                    return StandardResponse.ok(ticketId);
+                }
+                Integer workOrderId = null;
+                while (lastQueryStmt.next()) {
+                    ticketId = lastQueryStmt.getInt("ticket_id");
+                    workOrderId = lastQueryStmt.getInt("id");
+                }
+
+                addRemark("Emcc", workOrderId, r.getDescription(), 1, Double.valueOf(r.getAmount()));
+
+                String query = "select id as engineerId from engineer where user_id in (select id from users where staff_id = ?) ";
+                Integer found = null;
+                if (Optional.fromNullable(r.getStaffId()).isPresent()) {
+                    ResultSet executeQuery = engineerStmt.executeQuery(query);
+
+                    while (executeQuery.next()) {
+                        found = executeQuery.getInt("engineerId");
+                    }
+                }
+
+                if (found != null) {
+
+//                    wor.setEngineerId(new Engineer(found));
+//                    wor.setIsAssigned(Short.valueOf("1"));
+//                    wor.setDateAssigned(new Date());
+//                    wor.setLastPaymentAmount(Double.valueOf(r.getLastPaidAmount() == null ? "0.00" : r.getLastPaidAmount()));
+//                    wor.setLastPaymentDate(r.getLastPaymentDate());
+//                    wor.setCurrentBill(Double.valueOf(r.getCurrentBill() == null ? "0.00" : r.getCurrentBill()));
+//                    wor.setPreviousOutstanding(r.getPreviousOutstanding());
+//                    wor.setDueDate(r.getDueDate());
+//                    wor.setUpdateTime(new Date());
+//                    wor.setAmount(Double.valueOf(r.getAmount() == null ? "0.00" : r.getAmount()));
+//                    wor.setDescription(r.getDescription());
+//
+//                    wdao.edit(wor);
+                }
+                System.out.println(":::::: Ticket updated in disconnection queue :::::::::: " + ticketId);
                 return StandardResponse.ok(ticketId);
             }
-            WorkOrder wor = wo.get(0);
-            wdao.addRemark("Emcc", String.valueOf(wor.getTicketId()), r.getDescription(), "1", Double.valueOf(r.getAmount()));
-
-            Integer found = null;
-            if (Optional.fromNullable(r.getStaffId()).isPresent()) {
-                found = wdao.getEngineerIdByStaffId(r.getStaffId());
-            }
-//            else {
-//                found = wdao.getEngineerIdByBook(r.getBillingId(), qt.getId());
-//            }
-
-            if (found != null) {
-
-                wor.setEngineerId(new Engineer(found));
-                wor.setIsAssigned(Short.valueOf("1"));
-                wor.setDateAssigned(new Date());
-                wor.setLastPaymentAmount(Double.valueOf(r.getLastPaidAmount() == null ? "0.00" : r.getLastPaidAmount()));
-                wor.setLastPaymentDate(r.getLastPaymentDate());
-                wor.setCurrentBill(Double.valueOf(r.getCurrentBill() == null ? "0.00" : r.getCurrentBill()));
-                wor.setPreviousOutstanding(r.getPreviousOutstanding());
-                wor.setDueDate(r.getDueDate());
-                wor.setUpdateTime(new Date());
-                wor.setAmount(Double.valueOf(r.getAmount() == null ? "0.00" : r.getAmount()));
-                wor.setDescription(r.getDescription());
-
-                wdao.edit(wor);
-            }
-            wor.setDateAssigned(new Date());
-            ticketId = wor.getTicketId();
-            System.out.println(":::::: Ticket updated in disconnection queue :::::::::: " + ticketId);
-            return StandardResponse.ok(ticketId);
-
         } catch (Exception ex) {
             ex.printStackTrace();
             return null;
+        }
+    }
+
+    public Integer createWorkOrder(Integer queueTypeId, Integer queueId, RequestObj r) {
+
+        reentrantLock.lock();
+        int ticketId = 0;
+        System.out.println(":::::: Waiting Threads to create work order :::::::" + reentrantLock.getQueueLength());
+        try {
+
+            String createWorkOrderPstmt = "insert into work_order (address_line_1,business_unit,amount,city,contact_number,current_bill,description,due_date,last_payment_amount,last_payment_date,previous_outstanding,is_closed,is_active,purpose,reported_by,summary,queue_type_id,create_time,current_status,priority,reference_type,state,channel,customer_tariff,reference_type_data,is_assigned,queue_id,token,debt_balance_amount,ticket_id,engineer_id,date_assigned,work_date,owner_id) values (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)";
+
+            Integer found = Optional.fromNullable(r.getStaffId()).isPresent() ? getEngineerIdByStaffId(r.getStaffId()) : null;
+
+            try (Connection emcc = DriverManager.getConnection(
+                    "jdbc:mysql://172.29.12.3/wfm_new?useSSL=false", "wfm", "tombraider");
+                    PreparedStatement ps1 = emcc.prepareStatement(createWorkOrderPstmt);
+                    Statement findNextTicketStmt = emcc.createStatement();) {
+
+                ResultSet executeQuery = findNextTicketStmt.executeQuery("select max(ticket_id) as maxTicket from work_order ");
+                while (executeQuery.next()) {
+                    ticketId = executeQuery.getInt("maxTicket") + 1;
+                }
+
+                ps1.setString(1, r.getAddress());
+                ps1.setString(2, r.getBusinessUnit());
+                ps1.setDouble(3, r.getAmount() == null ? Double.valueOf(0.00) : Double.valueOf(r.getAmount()));
+                ps1.setString(4, r.getCity());
+                ps1.setString(5, r.getPhone() == null ? "-" : r.getPhone());
+                ps1.setDouble(6, r.getCurrentBill() == null ? Double.valueOf(0.00) : Double.valueOf(r.getCurrentBill()));
+                ps1.setString(7, r.getDescription());
+                ps1.setDate(8, new java.sql.Date(r.getDueDate().getTime()));
+                ps1.setDouble(9, r.getLastPaidAmount() != null ? new Double(r.getLastPaidAmount()) : null);
+                ps1.setDate(10, r.getLastPaidAmount() != null ? new java.sql.Date(r.getLastPaymentDate().getTime()) : null);
+                ps1.setDouble(11, r.getPreviousOutstanding());
+                ps1.setInt(12, 0);
+                ps1.setInt(13, 1);
+                ps1.setString(14, r.getPurpose());
+                ps1.setString(15, r.getReportedBy());
+                ps1.setString(16, r.getSummary());
+                ps1.setInt(17, queueTypeId);
+                ps1.setDate(18, new java.sql.Date(System.currentTimeMillis()));
+                ps1.setString(19, "OPEN");
+                ps1.setString(20, "Low");
+                ps1.setString(21, "Billing ID");
+                ps1.setString(22, "Lagos");
+                ps1.setString(23, "Emcc");
+                ps1.setString(24, r.getTariff());
+                ps1.setString(25, r.getBillingId());
+                ps1.setInt(26, found != null ? 1 : 0);
+                ps1.setInt(27, queueId);
+                ps1.setString(28, RandomStringUtils.randomAlphanumeric(30));
+                ps1.setDouble(29, 0.0);
+                ps1.setInt(30, ticketId);
+                ps1.setInt(31, found != null ? found : null);
+                ps1.setDate(32, found != null ? new java.sql.Date(System.currentTimeMillis()) : null);
+                ps1.setDate(33, found != null ? new java.sql.Date(System.currentTimeMillis()) : null);
+                ps1.setInt(34, 1);
+
+                ps1.executeUpdate();
+
+            }
+
+            return ticketId;
+
+        } catch (Exception e) {
+            e.printStackTrace();
+            return null;
+        } finally {
+            reentrantLock.unlock();
+        }
+
+    }
+
+    private Integer getEngineerIdByStaffId(String staffId) {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
+
+    private void addRemark(String emcc, Integer workOrderId, String description, Integer ownerId, Double amount) {
+
+        String createRemarkStmt = "insert into work_order_remark (work_order_id,token,owner_id,comment,create_time,channel) values (?,?,?,?,?,?)";
+        try {
+            try (Connection conn = DriverManager.getConnection(
+                    "jdbc:mysql://172.29.12.3/wfm_new?useSSL=false", "wfm", "tombraider");
+                    PreparedStatement ps1 = conn.prepareStatement(createRemarkStmt);) {
+
+                ps1.setInt(1, workOrderId);
+                ps1.setString(2, RandomStringUtils.random(30));
+                ps1.setInt(3, ownerId);
+                ps1.setString(4, description);
+                ps1.setDate(5, new java.sql.Date(System.currentTimeMillis()));
+                ps1.setString(6, emcc);
+
+                ps1.executeUpdate();
+            }
+
+        } catch (Exception ex) {
+            ex.printStackTrace();
+        } finally {
+
         }
     }
 

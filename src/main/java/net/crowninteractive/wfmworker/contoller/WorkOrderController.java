@@ -10,6 +10,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.TimeUnit;
+import java.util.stream.Stream;
 import javax.annotation.PreDestroy;
 import javax.servlet.http.HttpServletRequest;
 import javax.ws.rs.core.Context;
@@ -86,6 +87,7 @@ public class WorkOrderController extends Extension {
             List<CompletedDeliquency> compeletedDeliquencies = null;
 
             Awesome awe = null;
+           
             for (RequestObj obj : reqList) {
 
                 compeletedDeliquencies = new ArrayList();
