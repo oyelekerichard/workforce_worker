@@ -221,7 +221,7 @@ public class WorkOrderService {
 
                 Integer found = null;
 
-                String query = "select id as engineerId from engineer where user_id in (select id from users where staff_id = ?) ";
+                String query = "select id as engineerId from engineer where user_id in (select id from users where staff_id = '%d') ";
                 query = String.format(query, r.getStaffId());
                 if (Optional.fromNullable(r.getStaffId()).isPresent()) {
                     ResultSet executeQuery = engineerStmt.executeQuery(query);
