@@ -202,9 +202,9 @@ public class WorkOrderService {
 
                 ResultSet queueStmtQuery = queueStmt.executeQuery(queueTypeString);
 
-                if (queueStmtQuery.next() == false) {
-                    return StandardResponse.disconnectionQueueTypeNotSet();
-                }
+//                if (queueStmtQuery.next() == false) {
+//                    return StandardResponse.disconnectionQueueTypeNotSet();
+//                }
 
                 Integer queueTypeId = null, queueId = null;
 
