@@ -232,6 +232,7 @@ public class WorkOrderService {
                 }
 
                 if (lastQueryStmt.next() == false) {
+                    System.out.println("::::::::::::::::::::::::::::::::::::::;:Queue Type ID :::"+queueTypeId);
                     ticketId = createWorkOrder(queueTypeId, queueId, r, found);
                     return StandardResponse.ok(ticketId);
                 }
