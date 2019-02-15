@@ -317,7 +317,7 @@ public class WorkOrderService {
                 ps1.setString(28, RandomStringUtils.randomAlphanumeric(30));
                 ps1.setDouble(29, 0.0);
                 ps1.setInt(30, ticketId);
-                if (found != null) {
+                if (found == null) {
                     ps1.setNull(31, java.sql.Types.INTEGER);
                     ps1.setDate(32, null);
                     ps1.setDate(33, null);
