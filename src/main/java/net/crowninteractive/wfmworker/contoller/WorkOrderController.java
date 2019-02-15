@@ -89,11 +89,14 @@ public class WorkOrderController extends Extension {
 " |______|_| |_|\\__\\___|_|  |_|_| |_|\\__, | |______/_/\\_\\___|\\___|\\__,_|\\__\\___/|_|     \n" +
 "                                     __/ |                                             \n" +
 "                                    |___/                                              ::::::::::::::::::::::::");
+    
         
         Runnable runnable = () -> {
 
             List<CompletedDeliquency> compeletedDeliquencies = null;
-
+            
+            System.out.println(":::::::: Partition Size ::::::::"+reqList.length);
+            
             Awesome awe = null;
             for (RequestObj obj : reqList) {
 
