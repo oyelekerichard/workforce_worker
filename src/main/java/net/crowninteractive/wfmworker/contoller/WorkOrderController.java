@@ -81,6 +81,15 @@ public class WorkOrderController extends Extension {
     @RequestMapping(method = RequestMethod.POST, value = "bulk_emcc_disconnect")
     public String addToDisconnectQueueV2(@RequestBody RequestObj[] reqList, @Context HttpServletRequest request) {
 
+        System.out.println("::::::::::::::::::::::  ______       _            _               ______                     _               \n" +
+" |  ____|     | |          (_)             |  ____|                   | |              \n" +
+" | |__   _ __ | |_ ___ _ __ _ _ __   __ _  | |__  __  _____  ___ _   _| |_ ___  _ __   \n" +
+" |  __| | '_ \\| __/ _ \\ '__| | '_ \\ / _` | |  __| \\ \\/ / _ \\/ __| | | | __/ _ \\| '__|  \n" +
+" | |____| | | | ||  __/ |  | | | | | (_| | | |____ >  <  __/ (__| |_| | || (_) | |     \n" +
+" |______|_| |_|\\__\\___|_|  |_|_| |_|\\__, | |______/_/\\_\\___|\\___|\\__,_|\\__\\___/|_|     \n" +
+"                                     __/ |                                             \n" +
+"                                    |___/                                              ::::::::::::::::::::::::");
+        
         Runnable runnable = () -> {
 
             List<CompletedDeliquency> compeletedDeliquencies = null;
