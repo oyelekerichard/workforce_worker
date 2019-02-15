@@ -205,7 +205,6 @@ public class WorkOrderService {
 //                if (queueStmtQuery.next() == false) {
 //                    return StandardResponse.disconnectionQueueTypeNotSet();
 //                }
-
                 Integer queueTypeId = null, queueId = null;
 
                 while (queueStmtQuery.next()) {
@@ -232,7 +231,7 @@ public class WorkOrderService {
                 }
 
                 if (lastQueryStmt.next() == false) {
-                    System.out.println("::::::::::::::::::::::::::::::::::::::;:Queue Type ID :::"+queueTypeId);
+                    System.out.println("::::::::::::::::::::::::::::::::::::::;:Queue Type ID :::" + queueTypeId);
                     ticketId = createWorkOrder(queueTypeId, queueId, r, found);
                     return StandardResponse.ok(ticketId);
                 }
@@ -318,9 +317,12 @@ public class WorkOrderService {
                 ps1.setString(28, RandomStringUtils.randomAlphanumeric(30));
                 ps1.setDouble(29, 0.0);
                 ps1.setInt(30, ticketId);
-                ps1.setInt(31, found != null ? found : null);
-                ps1.setDate(32, found != null ? new java.sql.Date(System.currentTimeMillis()) : null);
-                ps1.setDate(33, found != null ? new java.sql.Date(System.currentTimeMillis()) : null);
+                if (found != null) {
+                    ps1.setInt(31, found);
+                    ps1.setDate(32, new java.sql.Date(System.currentTimeMillis()));
+                    ps1.setDate(33, new java.sql.Date(System.currentTimeMillis()));
+                }
+
                 ps1.setInt(34, 1);
 
                 ps1.executeUpdate();
