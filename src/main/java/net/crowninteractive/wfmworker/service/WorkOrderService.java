@@ -318,6 +318,10 @@ public class WorkOrderService {
                 ps1.setDouble(29, 0.0);
                 ps1.setInt(30, ticketId);
                 if (found != null) {
+                    ps1.setNull(31, java.sql.Types.INTEGER);
+                    ps1.setDate(32, null);
+                    ps1.setDate(33, null);
+                } else {
                     ps1.setInt(31, found);
                     ps1.setDate(32, new java.sql.Date(System.currentTimeMillis()));
                     ps1.setDate(33, new java.sql.Date(System.currentTimeMillis()));
