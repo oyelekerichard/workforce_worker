@@ -7,6 +7,7 @@ package net.crowninteractive.wfmworker;
 
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
+import java.util.concurrent.ThreadPoolExecutor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
@@ -30,5 +31,10 @@ public class ExecutorServiceConfig {
     @Bean(name = "cachedThreadPool")
     public ExecutorService cachedThreadPool() {
         return Executors.newCachedThreadPool();
+    }
+
+    @Bean(name = "threadPoolExecutor")
+    public ThreadPoolExecutor thxreadPool() {
+        return (ThreadPoolExecutor)Executors.newFixedThreadPool(8);
     }
 }

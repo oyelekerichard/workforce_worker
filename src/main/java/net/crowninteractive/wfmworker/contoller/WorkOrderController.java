@@ -9,6 +9,7 @@ import com.google.gson.Gson;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.ExecutorService;
+import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
 import javax.annotation.PreDestroy;
 import javax.servlet.http.HttpServletRequest;
@@ -44,8 +45,8 @@ public class WorkOrderController extends Extension {
     @Autowired
     private WorkOrderService service;
     @Autowired
-    @Qualifier(value = "fixedThreadPool")
-    private ExecutorService executorService;
+    @Qualifier(value = "threadPoolExecutor")
+    private ThreadPoolExecutor executorService;
     @Autowired
     private WorkOrderObserver observer;
 
@@ -81,25 +82,28 @@ public class WorkOrderController extends Extension {
     @RequestMapping(method = RequestMethod.POST, value = "bulk_emcc_disconnect")
     public String addToDisconnectQueueV2(@RequestBody RequestObj[] reqList, @Context HttpServletRequest request) {
 
-        System.out.println("::::::::::::::::::::::  ______       _            _               ______                     _               \n" +
-" |  ____|     | |          (_)             |  ____|                   | |              \n" +
-" | |__   _ __ | |_ ___ _ __ _ _ __   __ _  | |__  __  _____  ___ _   _| |_ ___  _ __   \n" +
-" |  __| | '_ \\| __/ _ \\ '__| | '_ \\ / _` | |  __| \\ \\/ / _ \\/ __| | | | __/ _ \\| '__|  \n" +
-" | |____| | | | ||  __/ |  | | | | | (_| | | |____ >  <  __/ (__| |_| | || (_) | |     \n" +
-" |______|_| |_|\\__\\___|_|  |_|_| |_|\\__, | |______/_/\\_\\___|\\___|\\__,_|\\__\\___/|_|     \n" +
-"                                     __/ |                                             \n" +
-"                                    |___/                                              ::::::::::::::::::::::::");
-    
-        
+        System.out.println("::::::::::::::::::::::  ______       _            _               ______                     _               \n"
+                + " |  ____|     | |          (_)             |  ____|                   | |              \n"
+                + " | |__   _ __ | |_ ___ _ __ _ _ __   __ _  | |__  __  _____  ___ _   _| |_ ___  _ __   \n"
+                + " |  __| | '_ \\| __/ _ \\ '__| | '_ \\ / _` | |  __| \\ \\/ / _ \\/ __| | | | __/ _ \\| '__|  \n"
+                + " | |____| | | | ||  __/ |  | | | | | (_| | | |____ >  <  __/ (__| |_| | || (_) | |     \n"
+                + " |______|_| |_|\\__\\___|_|  |_|_| |_|\\__, | |______/_/\\_\\___|\\___|\\__,_|\\__\\___/|_|     \n"
+                + "                                     __/ |                                             \n"
+                + "                                    |___/                                              ::::::::::::::::::::::::");
+
         Runnable runnable = () -> {
 
             List<CompletedDeliquency> compeletedDeliquencies = null;
-            
-            System.out.println(":::::::: Partition Size ::::::::"+reqList.length);
-            
+
+            System.out.println(":::::::: Partition Size ::::::::" + reqList.length);
+
             Awesome awe = null;
             for (RequestObj obj : reqList) {
-
+                System.out.println("::::::Active Threads Count :::::::" + executorService.getActiveCount());
+                System.out.println("::::::Completed Task Count :::::::" + executorService.getCompletedTaskCount());
+                System.out.println(":::::::::Task Count ::::::::::::::"+executorService.getTaskCount());
+                
+                
                 compeletedDeliquencies = new ArrayList();
 
                 try {
