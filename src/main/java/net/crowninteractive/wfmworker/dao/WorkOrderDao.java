@@ -526,7 +526,7 @@ public class WorkOrderDao extends AbstractDao<Integer, WorkOrder> {
     }
 
     private Object getUniqueWorkOrderToken() {
-        String token = RandomStringUtils.randomAlphanumeric(30);
+        String token = RandomStringUtils.randomAlphanumeric(5).concat(String.valueOf(System.currentTimeMillis()));
         try {
             WorkOrder o = (WorkOrder) getEntityManager().
                     createNativeQuery(String.format("select * from work_order where token='%s'", token, WorkOrder.class)).getSingleResult();

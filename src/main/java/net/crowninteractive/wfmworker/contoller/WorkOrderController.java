@@ -93,7 +93,7 @@ public class WorkOrderController extends Extension {
 
         Runnable runnable = () -> {
 
-            List<CompletedDeliquency> compeletedDeliquencies = null;
+            List<CompletedDeliquency> compeletedDeliquencies = new ArrayList();;
 
             System.out.println(":::::::: Partition Size ::::::::" + reqList.length);
 
@@ -101,10 +101,7 @@ public class WorkOrderController extends Extension {
             for (RequestObj obj : reqList) {
                 System.out.println("::::::Active Threads Count :::::::" + executorService.getActiveCount());
                 System.out.println("::::::Completed Task Count :::::::" + executorService.getCompletedTaskCount());
-                System.out.println(":::::::::Task Count ::::::::::::::"+executorService.getTaskCount());
-                
-                
-                compeletedDeliquencies = new ArrayList();
+                System.out.println(":::::::::Task Count ::::::::::::::" + executorService.getTaskCount());
 
                 try {
                     System.out.println(obj);
