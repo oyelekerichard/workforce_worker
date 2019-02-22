@@ -8,7 +8,6 @@ package net.crowninteractive.wfmworker.contoller;
 import com.google.gson.Gson;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.concurrent.ExecutorService;
 import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
 import javax.annotation.PreDestroy;

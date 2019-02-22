@@ -517,10 +517,10 @@ public class WorkOrderDao extends AbstractDao<Integer, WorkOrder> {
         wora.save(wor);
     }
 
-    public List<WorkOrder> getLastWorkOrderinQueueType(String billingId, Integer queueTypeId) {
+    public List<WorkOrder> getLastWorkOrderinQueueType(RequestObj request, Integer queueTypeId) {
 
-        String sql = String.format("select * from work_order where reference_type_data = '%s'  and (current_status != '%s' or is_closed = %d) and queue_type_id = %d order by id desc limit 1", billingId,
-                "CLOSED", 0, queueTypeId);
+        String sql = String.format("select * from work_order where reference_type_data = '%s'  and (current_status != '%s' or is_closed = %d) and queue_type_id = %d and business_unit = '%s' order by id desc limit 1", request.getBillingId(),
+                "CLOSED", 0, queueTypeId, request.getBusinessUnit());
         return getEntityManager().createNativeQuery(sql, WorkOrder.class).getResultList();
 
     }
