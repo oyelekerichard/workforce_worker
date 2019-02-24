@@ -300,30 +300,32 @@ public class WorkOrderDao extends AbstractDao<Integer, WorkOrder> {
     public int createWorkOrderV2(WorkOrderTemp wot, QueueType qt, EnumerationWorkOrder ew) {
 
         WorkOrder wo = new WorkOrder();
-        wo.setBusinessUnit(wot.getBusinessUnit());
-        wo.setAddressLine1(wot.getAddressLine1());
-        wo.setAddressLine2(wot.getAddressLine2());
+        wo.setBusinessUnit(Utils.checkNullOrEmpty(wot.getBusinessUnit()) ? wot.getBusinessUnit() : "N/A");
+        wo.setAddressLine1(Utils.checkNullOrEmpty(wot.getAddressLine1()) ? wot.getAddressLine1() : "N/A");
+        wo.setAddressLine2(Utils.checkNullOrEmpty(wot.getAddressLine2()) ? wot.getAddressLine2() : "N/A");
         wo.setQueueId(qt.getQueueId());
         wo.setQueueTypeId(qt);
         wo.setTicketId(ticketCount());
         wo.setContactNumber(Utils.checkNullOrEmpty(wot.getContactNumber()) ? wot.getContactNumber() : "N/A");
-        wo.setCustomerName(wot.getCustomerName());
-        wo.setReportedBy(wot.getReportedBy());
+        wo.setCustomerName(Utils.checkNullOrEmpty(wot.getCustomerName()) ? wot.getCustomerName() : "N/A");
+        wo.setReportedBy(Utils.checkNullOrEmpty(wot.getReportedBy()) ? wot.getReportedBy() : "N/A");
         wo.setCreateTime(new Date());
         wo.setCurrentStatus("OPEN");
-        wo.setCustomerTariff(ew.getTariff());
-        wo.setCity(wot.getCity());
+        wo.setCustomerTariff(Utils.checkNullOrEmpty(wot.getCustomerTariff()) ? wot.getCustomerTariff() : "N/A");
+        wo.setCity(Utils.checkNullOrEmpty(wot.getCity()) ? wot.getCity() : "N/A");
         wo.setPriority(Utils.checkNullOrEmpty(wot.getPriority()) ? wot.getPriority() : "LOW");
         wo.setReferenceType("ACCOUNT NUMBER".equals(wot.getReferenceType().trim()) ? "Billing ID" : wot.getReferenceType());
-        wo.setReferenceTypeData(wot.getReferenceTypeData());
-        wo.setState(wot.getState());
-        wo.setSummary(wot.getSummary());
+        wo.setReferenceTypeData(Utils.checkNullOrEmpty(wot.getReferenceTypeData()) ? wot.getReferenceTypeData() : "N/A");
+        wo.setState(Utils.checkNullOrEmpty(wot.getState()) ? wot.getState() : "N/A");
+        wo.setSummary(Utils.checkNullOrEmpty(wot.getSummary()) ? wot.getSummary() : "N/A");
+        wo.setDescription(Utils.checkNullOrEmpty(wot.getDescription()) ? wot.getDescription() : "N/A");
         wo.setToken(wot.getToken());
         wo.setSlot(wot.getSlot());
         wo.setDebtBalanceAmount(Double.valueOf(0));
         wo.setIsAssigned((short)0);
         wo.setDebtBalanceAmount(0.0);
         wo.setIsClosed((short)0);
+        wo.setChannel(wot.getChannel());
         
         // add is_active and owner_id
         wo.setIsActive(1);
