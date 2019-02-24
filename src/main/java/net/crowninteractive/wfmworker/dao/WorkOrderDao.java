@@ -15,6 +15,7 @@ import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
+import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.persistence.NoResultException;
 import javax.persistence.Query;
@@ -222,11 +223,11 @@ public class WorkOrderDao extends AbstractDao<Integer, WorkOrder> {
     public void approveEnumWorkOrder(WorkOrderTemp wot) {
         QueueType qt = getQueueTypeByID(wot.getQueueTypeId());
         EnumerationWorkOrder enumerationWorkOrder = getEnumerationWorkOrder(wot.getToken());
-        int ticketId = this.createWorkOrder(wot, qt);
+        int ticketId = this.createWorkOrderV2(wot, qt, enumerationWorkOrder);
 
         //update work_order
         if (ticketId != 0) {
-            logger.info("-----------Ticket Id Generated for Record -----------------" + ticketId);
+            logger.log(Level.INFO, "-----------Ticket Id Generated for Record -----------------{0}", ticketId);
             wot.setTicketId(ticketId);
             wot.setCurrentStatus("OPEN");
             wot.setToken(wot.getToken());
@@ -234,16 +235,13 @@ public class WorkOrderDao extends AbstractDao<Integer, WorkOrder> {
             enumerationWorkOrder.setWork_order_temp_token(wot.getToken());
             ewod.edit(enumerationWorkOrder);
             temp.delete(wot);
-            logger.info("-----------deleting enumeration record -----------------" + wot.getId());
-            logger.info("-----------Ticket Id set for Records -----------------" + enumerationWorkOrder.getWork_order_id());
+            logger.log(Level.INFO, "-----------deleting enumeration record -----------------{0}", wot.getId());
         }
     }
 
     @Transactional
     public int createWorkOrder(WorkOrderTemp wot, QueueType qt) {
 
-        logger.info("-----------Queue-----------------" + qt.getQueueId());
-        logger.info("-----------Queue Type -----------------" + qt.getId());
         WorkOrder wo = new WorkOrder();
         wo.setBusinessUnit(wot.getBusinessUnit());
         wo.setAddressLine1(wot.getAddressLine1());
