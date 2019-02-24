@@ -296,6 +296,66 @@ public class WorkOrderDao extends AbstractDao<Integer, WorkOrder> {
         wdao.save(woe);
         return w.getTicketId();
     }
+    
+    @Transactional
+    public int createWorkOrderV2(WorkOrderTemp wot, QueueType qt, EnumerationWorkOrder ew) {
+
+        WorkOrder wo = new WorkOrder();
+        wo.setBusinessUnit(wot.getBusinessUnit());
+        wo.setAddressLine1(wot.getAddressLine1());
+        wo.setAddressLine2(wot.getAddressLine2());
+        wo.setQueueId(qt.getQueueId());
+        wo.setQueueTypeId(qt);
+        wo.setTicketId(ticketCount());
+        wo.setContactNumber(wot.getContactNumber());
+        wo.setCustomerName(wot.getCustomerName());
+        wo.setOwnerId(1);
+        wo.setReportedBy(wot.getReportedBy());
+        wo.setCreateTime(new Date());
+        wo.setCurrentStatus("OPEN");
+        wo.setCustomerTariff(ew.getTariff());
+        wo.setCity(wot.getCity());
+        wo.setPriority(wot.getPriority());
+        wo.setReferenceType("ACCOUNT NUMBER".equals(wot.getReferenceType().trim()) ? "Billing ID" : wot.getReferenceType());
+        wo.setReferenceTypeData(wot.getReferenceTypeData());
+        wo.setState(wot.getState());
+        wo.setSummary(wot.getSummary());
+        wo.setToken(wot.getToken());
+        wo.setSlot(wot.getSlot());
+        wo.setDebtBalanceAmount(Double.valueOf(0));
+        wo.setIsAssigned((short)0);
+        wo.setDebtBalanceAmount(0.0);
+        wo.setIsClosed((short)0);
+        
+        // add is_active and owner_id
+        wo.setIsActive(1);
+        wo.setOwnerId(1);
+
+        WorkOrder w = save(wo);
+        WorkOrderExtra woe = new WorkOrderExtra();
+        woe.setConnectionType(wot.getConnectionType());
+        woe.setTransformer(wot.getTransformer());
+        woe.setDisco(wot.getDisco());
+        woe.setDistributionSubstation(wot.getDistributionSubstation());
+        woe.setDistributionSubstationName(wot.getDistributionSubstationName());
+        woe.setFeeder(wot.getFeeder());
+        woe.setFeederName(wot.getFeederName());
+        woe.setHighTensionPhysicalId(wot.getHighTensionPhysicalId());
+        woe.setHtPole(wot.getHtPole());
+        woe.setInjectionSubstation(wot.getInjectionSubstation());
+        woe.setInjectionSubstationName(wot.getInjectionSubstationName());
+        woe.setNercId(wot.getNercId());
+        woe.setPowerTransformer(wot.getPowerTransformer());
+        woe.setPowerTransformerName(wot.getPowerTransformerName());
+        woe.setServicePole(wot.getServicePole());
+        woe.setServiceWire(wot.getServiceWire());
+        woe.setSubDisco(wot.getSubDisco());
+        woe.setUpriser(wot.getUpriser());
+
+        woe.setId(w);
+        wdao.save(woe);
+        return w.getTicketId();
+    }
 
     public BigInteger getWorkOrderByStatusAndDistrict(String status, String district, String reportedBy) {
         StringBuilder sb = new StringBuilder("select ifnull(count(*),0) from work_order where queue_id =  17");
