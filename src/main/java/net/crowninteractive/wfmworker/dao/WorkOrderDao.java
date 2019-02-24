@@ -15,6 +15,7 @@ import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
+import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.persistence.NoResultException;
 import javax.persistence.Query;
@@ -222,11 +223,11 @@ public class WorkOrderDao extends AbstractDao<Integer, WorkOrder> {
     public void approveEnumWorkOrder(WorkOrderTemp wot) {
         QueueType qt = getQueueTypeByID(wot.getQueueTypeId());
         EnumerationWorkOrder enumerationWorkOrder = getEnumerationWorkOrder(wot.getToken());
-        int ticketId = this.createWorkOrder(wot, qt);
+        int ticketId = this.createWorkOrderV2(wot, qt, enumerationWorkOrder);
 
         //update work_order
         if (ticketId != 0) {
-            logger.info("-----------Ticket Id Generated for Record -----------------" + ticketId);
+            logger.log(Level.INFO, "-----------Ticket Id Generated for Record -----------------{0}", ticketId);
             wot.setTicketId(ticketId);
             wot.setCurrentStatus("OPEN");
             wot.setToken(wot.getToken());
@@ -234,16 +235,13 @@ public class WorkOrderDao extends AbstractDao<Integer, WorkOrder> {
             enumerationWorkOrder.setWork_order_temp_token(wot.getToken());
             ewod.edit(enumerationWorkOrder);
             temp.delete(wot);
-            logger.info("-----------deleting enumeration record -----------------" + wot.getId());
-            logger.info("-----------Ticket Id set for Records -----------------" + enumerationWorkOrder.getWork_order_id());
+            logger.log(Level.INFO, "-----------deleting enumeration record -----------------{0}", wot.getId());
         }
     }
 
     @Transactional
     public int createWorkOrder(WorkOrderTemp wot, QueueType qt) {
 
-        logger.info("-----------Queue-----------------" + qt.getQueueId());
-        logger.info("-----------Queue Type -----------------" + qt.getId());
         WorkOrder wo = new WorkOrder();
         wo.setBusinessUnit(wot.getBusinessUnit());
         wo.setAddressLine1(wot.getAddressLine1());
@@ -271,6 +269,65 @@ public class WorkOrderDao extends AbstractDao<Integer, WorkOrder> {
 //        wo.setCurrentBill(wot.getCurrentBill());
 //        wo.setLastPaymentAmount(wot.getLastPaymentAmount());
 //        wo.setLastPaymentDate(wot.getLastPaymentDate());
+        WorkOrder w = save(wo);
+        WorkOrderExtra woe = new WorkOrderExtra();
+        woe.setConnectionType(wot.getConnectionType());
+        woe.setTransformer(wot.getTransformer());
+        woe.setDisco(wot.getDisco());
+        woe.setDistributionSubstation(wot.getDistributionSubstation());
+        woe.setDistributionSubstationName(wot.getDistributionSubstationName());
+        woe.setFeeder(wot.getFeeder());
+        woe.setFeederName(wot.getFeederName());
+        woe.setHighTensionPhysicalId(wot.getHighTensionPhysicalId());
+        woe.setHtPole(wot.getHtPole());
+        woe.setInjectionSubstation(wot.getInjectionSubstation());
+        woe.setInjectionSubstationName(wot.getInjectionSubstationName());
+        woe.setNercId(wot.getNercId());
+        woe.setPowerTransformer(wot.getPowerTransformer());
+        woe.setPowerTransformerName(wot.getPowerTransformerName());
+        woe.setServicePole(wot.getServicePole());
+        woe.setServiceWire(wot.getServiceWire());
+        woe.setSubDisco(wot.getSubDisco());
+        woe.setUpriser(wot.getUpriser());
+
+        woe.setId(w);
+        wdao.save(woe);
+        return w.getTicketId();
+    }
+    
+    @Transactional
+    public int createWorkOrderV2(WorkOrderTemp wot, QueueType qt, EnumerationWorkOrder ew) {
+
+        WorkOrder wo = new WorkOrder();
+        wo.setBusinessUnit(wot.getBusinessUnit());
+        wo.setAddressLine1(wot.getAddressLine1());
+        wo.setAddressLine2(wot.getAddressLine2());
+        wo.setQueueId(qt.getQueueId());
+        wo.setQueueTypeId(qt);
+        wo.setTicketId(ticketCount());
+        wo.setContactNumber(wot.getContactNumber());
+        wo.setCustomerName(wot.getCustomerName());
+        wo.setReportedBy(wot.getReportedBy());
+        wo.setCreateTime(new Date());
+        wo.setCurrentStatus("OPEN");
+        wo.setCustomerTariff(ew.getTariff());
+        wo.setCity(wot.getCity());
+        wo.setPriority(wot.getPriority());
+        wo.setReferenceType("ACCOUNT NUMBER".equals(wot.getReferenceType().trim()) ? "Billing ID" : wot.getReferenceType());
+        wo.setReferenceTypeData(wot.getReferenceTypeData());
+        wo.setState(wot.getState());
+        wo.setSummary(wot.getSummary());
+        wo.setToken(wot.getToken());
+        wo.setSlot(wot.getSlot());
+        wo.setDebtBalanceAmount(Double.valueOf(0));
+        wo.setIsAssigned((short)0);
+        wo.setDebtBalanceAmount(0.0);
+        wo.setIsClosed((short)0);
+        
+        // add is_active and owner_id
+        wo.setIsActive(1);
+        wo.setOwnerId(1);
+
         WorkOrder w = save(wo);
         WorkOrderExtra woe = new WorkOrderExtra();
         woe.setConnectionType(wot.getConnectionType());
