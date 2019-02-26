@@ -52,7 +52,7 @@ public class WorkOrderTempDao extends AbstractDao<Integer, WorkOrderTemp> {
             wot.setChannel("ENUMERATION");
             wot.setReportedBy(workOrderJson.getReportedBy());
             wot.setCreatedBy(0);
-            wot.setCustomerName(workOrderJson.getCustomerName());
+            wot.setCustomerName(ed.getCustomer_name_on_bill());
             wot.setReferenceType(workOrderJson.getReferenceType());
             wot.setReferenceTypeData(workOrderJson.getReferenceTypeData());
             wot.setToken(token);
@@ -74,6 +74,8 @@ public class WorkOrderTempDao extends AbstractDao<Integer, WorkOrderTemp> {
             wot.setNercId(workOrderJson.getNercId());
             wot.setConnectionType(workOrderJson.getConnectionType());
             wot.setTransformer(workOrderJson.getTransformer());
+            wot.setCustomerTariff(ed.getTariff());
+            wot.setCurrentStatus("SUBMITTED");
 
             if (ed != null) {
                 WorkOrderTemp wotSave = save(wot);
