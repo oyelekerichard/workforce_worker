@@ -466,14 +466,14 @@ public class EnumService {
             String ticketId = null;
             if (err.isEmpty()) {
                 
-                 String sql = "SELECT wt.`id` as id, "
+                String sql = "SELECT wt.`id` as id, "
                     + "(select name from queue where id=wt.queue_id) as queue_id,"
                     + "(select name from queue_type where id=wt.queue_type_id) "
                     + "as queue_type_id,wt.ticket_id as ticket_id, wt.`reference_type` as reference_type, wt.`reference_type_data` as reference_type_data, "
-                    + "wt.`business_unit` as business_unit, wt.`priority` as priority, wt.`create_time` as create_time,  wt.`current_status` as current_status, wt.`reported_by` as reported_by,  wt.`token` as token, wt.address_line_1 as address_line_1, wt.city as city "
+                    + "wt.`business_unit` as business_unit, wt.`priority` as priority, wt.`create_time` as create_time,  wt.`current_status` as current_status, wt.`reported_by` as reported_by,  wt.`token` as token, wt.address_line_1 as address_line_1, wt.city as city, e.is_migrated as is_migrated "
                     + "FROM `work_order_temp` wt, enumeration_work_order e where wt.token= e.work_order_temp_token and business_unit like {unit} and cast(create_time as date) >= cast({from} as date) and cast(create_time as date) <= cast({to} as date )";
                 
-                 workOrders = wdao.getEnumerationList(sql, district, from, to, page, queue, queueType, priority, status, billingId, ticketId, reportedBy);
+                workOrders = wdao.getEnumerationList(sql, district, from, to, page, queue, queueType, priority, status, billingId, ticketId, reportedBy);
             } else {
                 return StandardResponse.validationErrors("Invalid Date Format");
             }
@@ -490,7 +490,7 @@ public class EnumService {
     }
     
     public Awesome getEnumWorkOrderList(String district, String from, String to, Integer page, String queue, 
-                                String queueType, String priority, String status, String billingId, String ticketId, String reportedBy) {
+                                String queueType, String priority, String status, String billingId, String ticketId, String reportedBy) { 
         try {
 
             Entry<BigInteger, List<RequestListModel>> workOrders;
@@ -501,7 +501,7 @@ public class EnumService {
                     + "(select name from queue where id=wt.queue_id) as queue_id,"
                     + "(select name from queue_type where id=wt.queue_type_id) "
                     + "as queue_type_id, wt.ticket_id as ticketId, wt.reference_type as reference_type, wt.reference_type_data as reference_type_data, "
-                    + "wt.business_unit as business_unit, wt.priority as priority, wt.create_time as create_time,  wt.current_status as current_status, wt.reported_by as reported_by, wt.token as token, wt.address_line_1 as address_line_1, wt.city as city "
+                    + "wt.business_unit as business_unit, wt.priority as priority, wt.create_time as create_time,  wt.current_status as current_status, wt.reported_by as reported_by, wt.token as token, wt.address_line_1 as address_line_1, wt.city as city, e.is_migrated as is_migrated "
                     + "FROM `work_order` wt join enumeration_work_order e on wt.ticket_id = e.work_order_id where business_unit like business_unit "
                     + "and wt.current_status != 'Obsolete' and cast(create_time as date) >= cast(create_time as date) and cast(create_time as date) <= cast(create_time as date)"
                     + "and wt.queue_id = (select id from queue where name like '%enumeration%') ";
