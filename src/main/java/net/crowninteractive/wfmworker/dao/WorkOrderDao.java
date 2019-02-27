@@ -329,7 +329,7 @@ public class WorkOrderDao extends AbstractDao<Integer, WorkOrder> {
         wdao.save(woe);
         return w.getTicketId();
     }
-    
+
     @Transactional
     public int createWorkOrderV2(WorkOrderTemp wot, QueueType qt, EnumerationWorkOrder ew) {
 
@@ -356,11 +356,11 @@ public class WorkOrderDao extends AbstractDao<Integer, WorkOrder> {
         wo.setToken(wot.getToken());
         wo.setSlot(wot.getSlot());
         wo.setDebtBalanceAmount(Double.valueOf(0));
-        wo.setIsAssigned((short)0);
+        wo.setIsAssigned((short) 0);
         wo.setDebtBalanceAmount(0.0);
-        wo.setIsClosed((short)0);
+        wo.setIsClosed((short) 0);
         wo.setChannel(wot.getChannel());
-        
+
         // add is_active and owner_id
         wo.setIsActive(1);
         wo.setOwnerId(1);
@@ -390,7 +390,6 @@ public class WorkOrderDao extends AbstractDao<Integer, WorkOrder> {
         wdao.save(woe);
         return w.getTicketId();
     }
-
 
     public BigInteger getWorkOrderByStatusAndDistrict(String status, String district, String reportedBy) {
         StringBuilder sb = new StringBuilder("select ifnull(count(*),0) from work_order where queue_id =  17");
@@ -1092,7 +1091,7 @@ public class WorkOrderDao extends AbstractDao<Integer, WorkOrder> {
                     .setState("Lagos").setChannel("EMCC").setTariff(r.getTariff()).setBillingId(r.getBillingId()).setName(r.getName()).setAssigned(Short.valueOf("0"))
                     .setQueue(qt.getQueueId()).setToken(RandomStringUtils.randomAlphanumeric(30)).setDebtBalanceAmount(0.0).setTicketId(ticketCount());
 
-            Integer found = Optional.fromNullable(r.getStaffId()).isPresent() ? getEngineerIdByStaffId(r.getStaffId()) : getEngineerIdByBook(r.getAccountNumber(), qt.getId());
+            Integer found = Optional.fromNullable(r.getStaffId()).isPresent() ? getEngineerIdByStaffId(r.getStaffId()) : null;
 
             if (r.getLastPaidAmount() != null) {
                 builder.setLastPaymentDate(r.getLastPaymentDate());
@@ -1112,8 +1111,9 @@ public class WorkOrderDao extends AbstractDao<Integer, WorkOrder> {
             return save(build).getTicketId();
 
         } catch (Exception e) {
-            e.printStackTrace();
-            return null;
+            System.out.println(":::::: Re ::Trying :::::::::::::::::");
+            return createWorkOrder(qt, r);
+
         } finally {
             reentrantLock.unlock();
         }
@@ -1132,7 +1132,7 @@ public class WorkOrderDao extends AbstractDao<Integer, WorkOrder> {
     public Integer getEngineerIdByStaffId(String staffId) {
         String query = "select id from engineer where user_id in (select id from users where staff_id = ?) ";
         List<Integer> engineerId = getEntityManager().createNativeQuery(query).setParameter(1,
-                Integer.parseInt(staffId)).getResultList();
+                staffId).getResultList();
         return engineerId.isEmpty() ? null : engineerId.get(0);
 
     }

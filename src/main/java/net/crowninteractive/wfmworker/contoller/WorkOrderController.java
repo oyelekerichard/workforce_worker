@@ -104,8 +104,6 @@ public class WorkOrderController extends Extension {
 
                 try {
                     System.out.println(obj);
-
-                    String desc = obj.getDescription().concat(String.format(" | Debt amount is %s Naira", obj.getAmount()));
                     awe = service.addToDisconnectionQueue(obj);
                     System.out.println(awe);
                     compeletedDeliquencies.add(new CompletedDeliquency(obj.getBillingId(), (Integer) awe.getObject(), obj.getDeliquencyReportRecordId()));
