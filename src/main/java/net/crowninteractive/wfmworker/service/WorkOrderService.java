@@ -109,9 +109,7 @@ public class WorkOrderService {
             if (Optional.fromNullable(r.getStaffId()).isPresent()) {
                 found = wdao.getEngineerIdByStaffId(r.getStaffId());
             }
-//            else {
-//                found = wdao.getEngineerIdByBook(r.getBillingId(), qt.getId());
-//            }
+
 
             if (found != null) {
 

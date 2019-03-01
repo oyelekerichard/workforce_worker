@@ -11,7 +11,6 @@ import java.nio.file.Paths;
 import java.util.stream.Stream;
 import net.crowninteractive.wfmworker.dao.WorkOrderDao;
 import net.crowninteractive.wfmworker.dao.WorkOrderRemarkDao;
-import net.crowninteractive.wfmworker.entity.WorkOrder;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -40,15 +39,20 @@ public class MORTest {
             stream.forEach(line -> {
                 String orderId = line.split(",")[1];
                 Integer amount = Integer.parseInt(line.split(",")[2]);
-                String ticketId =line.split(",")[3];
+                String ticketId = line.split(",")[3];
                 String msg = String.format("A ADMINISTRATIVE CHARGE charge of %.2f with order ID %s has been charged to this account.", new Double(-amount), orderId);
                 dao.addRemarkV2("1", ticketId, msg);
-                
+
             });
 
         } catch (IOException e) {
             e.printStackTrace();
         }
 
+    }
+
+    @Test
+    public void test() {
+        RunWith annotation = WorkOrderDao.class.getAnnotation(RunWith.class);
     }
 }

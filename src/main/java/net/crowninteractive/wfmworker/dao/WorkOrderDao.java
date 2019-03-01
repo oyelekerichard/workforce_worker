@@ -1111,9 +1111,8 @@ public class WorkOrderDao extends AbstractDao<Integer, WorkOrder> {
             return save(build).getTicketId();
 
         } catch (Exception e) {
-            System.out.println(":::::: Re ::Trying :::::::::::::::::");
-            return createWorkOrder(qt, r);
-
+            e.printStackTrace();
+            return null;
         } finally {
             reentrantLock.unlock();
         }
