@@ -503,8 +503,7 @@ public class EnumService {
                     + "as queue_type_id, wt.ticket_id as ticketId, wt.reference_type as reference_type, wt.reference_type_data as reference_type_data, "
                     + "wt.business_unit as business_unit, wt.priority as priority, wt.create_time as create_time,  wt.current_status as current_status, wt.reported_by as reported_by, wt.token as token, wt.address_line_1 as address_line_1, wt.city as city, e.is_migrated as is_migrated "
                     + "FROM `work_order` wt join enumeration_work_order e on wt.ticket_id = e.work_order_id where business_unit like business_unit "
-                    + "and wt.current_status != 'Obsolete' and cast(create_time as date) >= cast(create_time as date) and cast(create_time as date) <= cast(create_time as date)"
-                    + "and wt.queue_id = (select id from queue where name like '%enumeration%') ";
+                    + "and wt.current_status != 'Obsolete' and wt.queue_id = (select id from queue where name like '%enumeration%') ";
     
                 workOrders = wdao.getEnumerationList(sql, district, from, to, page, queue, queueType, priority, status, billingId, ticketId, reportedBy);
             } else {

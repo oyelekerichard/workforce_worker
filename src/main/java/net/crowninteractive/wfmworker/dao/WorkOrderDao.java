@@ -679,44 +679,37 @@ public class WorkOrderDao extends AbstractDao<Integer, WorkOrder> {
 
     public List<EnumerationWorkOrderDownloadModel> getEnumerationDownloadList(String sql, String district, String from, String to, String queue, String queueType, String priority, String status, String billingId, String ticketId, String reportedBy) {
 
-        if (to.equals("create_time")) {
-            sql = sql.replace("{to}", "create_time");
+        if (from != null && to != null) {
+            sql = sql.concat(String.format(" and create_time between '%s' and '%s' ", from, to));
         }
-        if (!to.equals("create_time")) {
-            sql = sql.replace("{to}", String.format("'%s'", to));
+        
+        if (district != null) {
+            sql = sql.concat(String.format(" and business_unit = '%s'", district));
         }
-        if (from.equals("create_time")) {
-            sql = sql.replace("{from}", "create_time");
-        }
-        if (!from.equals("create_time")) {
-            sql = sql.replace("{from}", String.format("'%s'", from));
-        }
-        if (district.equals("business_unit")) {
-            sql = sql.replace("{unit}", district);
-        }
-        if (!district.equals("business_unit")) {
-            sql = sql.replace("{unit}", "'district%'".replace("district", district));
-        }
+        
         if (queue != null) {
-            sql += "and queue_id=(select id from queue where name like 'quet%')".replace("quet", queue);
+            sql += " and queue_id=(select id from queue where name like 'quet%')".replace("quet", queue);
 
         }
         if (queueType != null) {
-            sql += ("and queue_type_id=(select qt.id from queue_type qt, queue q where qt.name like 'queueName%' and q.name like 'enumeration' and qt.queue_id = q.id)")
+            sql += (" and queue_type_id=(select qt.id from queue_type qt, queue q where qt.name like 'queueName%' and q.name like 'enumeration' and qt.queue_id = q.id)")
                     .replace("queueName", queueType);
 
         }
         if (status != null) {
-            sql += "and current_status like 'statuss%'".replace("statuss", status);
+            sql += " and current_status like 'statuss%'".replace("statuss", status);
         }
         if (priority != null) {
-            sql += "and priority like 'prioritys%'".replace("prioritys", priority);
+            sql += " and priority like 'prioritys%'".replace("prioritys", priority);
         }
         if (billingId != null) {
-            sql += "and reference_type_data like 'billing%'".replace("billing", billingId);
+            sql += " and reference_type_data like 'billing%'".replace("billing", billingId);
+        }
+        if (ticketId != null) {
+            sql += String.format(" and ticket_id =%s", ticketId);
         }
         if (reportedBy != null) {
-            sql += String.format("and reported_by ='%s'", reportedBy);
+            sql += String.format(" and reported_by ='%s'", reportedBy);
         }
 
         logger.info("Compiled SQL " + sql);
@@ -736,50 +729,39 @@ public class WorkOrderDao extends AbstractDao<Integer, WorkOrder> {
     public Map.Entry<BigInteger, List<RequestListModel>> getEnumerationList(String sql, String district, String from, String to, Integer page, String queue, String queueType, String priority, String status, String billingId, String ticketId, String reportedBy) {
         page = (page - 1) * 1000;
            
-        if (to.equals("create_time")) {
-            sql = sql.replace("{to}", "create_time");
+        if (from != null && to != null) {
+            sql = sql.concat(String.format(" and create_time between '%s' and '%s' ", from, to));
         }
-        if (!to.equals("create_time")) {
-            sql = sql.replace("{to}", String.format("'%s'", to));
+        
+        if (district != null) {
+            sql = sql.concat(String.format(" and business_unit = '%s'", district));
         }
-        if (from.equals("create_time")) {
-            sql = sql.replace("{from}", "create_time");
-        }
-        if (!from.equals("create_time")) {
-            sql = sql.replace("{from}", String.format("'%s'", from));
-        }
-        if (district.equals("business_unit")) {
-            sql = sql.replace("{unit}", district);
-        }
-        if (!district.equals("business_unit")) {
-            sql = sql.replace("{unit}", "'district%'".replace("district", district));
-        }
+        
         if (queue != null) {
-            sql += "and queue_id=(select id from queue where name like 'quet%')".replace("quet", queue);
+            sql += " and queue_id=(select id from queue where name like 'quet%')".replace("quet", queue);
 
         }
         if (queueType != null) {
-            sql += ("and queue_type_id=(select qt.id from queue_type qt, queue q where qt.name like 'queueName%' and q.name like 'enumeration' and qt.queue_id = q.id)")
+            sql += (" and queue_type_id=(select qt.id from queue_type qt, queue q where qt.name like 'queueName%' and q.name like 'enumeration' and qt.queue_id = q.id)")
                     .replace("queueName", queueType);
-
         }
         if (status != null) {
-            sql += "and current_status like 'statuss%'".replace("statuss", status);
+            sql += " and current_status like 'statuss%'".replace("statuss", status);
         }
         if (priority != null) {
-            sql += "and priority like 'prioritys%'".replace("prioritys", priority);
+            sql += " and priority like 'prioritys%'".replace("prioritys", priority);
         }
         if (billingId != null) {
-            sql += "and reference_type_data like 'billing%'".replace("billing", billingId);
+            sql += " and reference_type_data like 'billing%'".replace("billing", billingId);
         }
         if (ticketId != null) {
-            sql += String.format("and ticket_id =%s", ticketId);
+            sql += String.format(" and ticket_id =%s", ticketId);
         }
         if (reportedBy != null) {
-            sql += String.format("and reported_by ='%s'", reportedBy);
+            sql += String.format(" and reported_by ='%s'", reportedBy);
         }
         
-         final String sql2 = sql + " ORDER BY wt.create_time DESC limit 1000 offset " + page;
+        final String sql2 = sql + " ORDER BY wt.create_time DESC limit 1000 offset " + page;
         
         logger.info("Compiled SQL " + sql2);
         List<RequestListModel> model = new ArrayList();
