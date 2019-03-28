@@ -75,24 +75,7 @@ public class WorkOrderDao extends AbstractDao<Integer, WorkOrder> {
     private ReentrantLock reentrantLock;
     private Connection conn;
 
-    @PostConstruct
-    public void initDataSource() throws ClassNotFoundException, SQLException {
-        final String JDBC_DRIVER = "com.mysql.jdbc.Driver";
-        final String DB_URL = "jdbc:mysql://172.29.11.11/wfm_new";
-        final String USER = "troot";
-        final String PASS = "tombraider";
-
-        conn = null;
-        Statement stmt = null;
-        try {
-            Class.forName("com.mysql.jdbc.Driver");
-            conn = DriverManager.getConnection(DB_URL, USER, PASS);
-
-        } finally {
-
-        }
-
-    }
+ 
 
     public int ticketCount() {
         Integer max = (Integer) getEntityManager()
