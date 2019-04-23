@@ -22,17 +22,23 @@ import org.springframework.jms.core.JmsTemplate;
 @Configuration
 @EnableJms
 public class ActiveMQConfig {
-
-    @Value(value = "${activemq.url}")
+    
+    @Value(value = "${ucg.jms.broker.url}")
     private String activeMqURL;
-
+    @Value(value = "${ucg.jms.broker.username}")
+    private String activeMqUsername;
+    @Value(value = "${ucg.jms.broker.password}")
+    private String activeMqPassword;
+    
     @Bean
-    public ConnectionFactory connectionFactory() {
-        ConnectionFactory connectionFactory
+    public ActiveMQConnectionFactory connectionFactory() {
+        ActiveMQConnectionFactory connectionFactory
                 = new ActiveMQConnectionFactory(activeMqURL);
+        connectionFactory.setUserName(activeMqUsername);
+        connectionFactory.setPassword(activeMqPassword);
         return connectionFactory;
     }
-
+    
     @Bean
     public JmsListenerContainerFactory jmsListenerContainerFactory() {
         DefaultJmsListenerContainerFactory factory
@@ -41,12 +47,12 @@ public class ActiveMQConfig {
         factory.setConcurrency("4-8");
         return factory;
     }
-
+    
     @Bean
     public JmsTemplate jmsTemplate() {
         JmsTemplate template = new JmsTemplate();
         template.setConnectionFactory(connectionFactory());
         return template;
     }
-
+    
 }
