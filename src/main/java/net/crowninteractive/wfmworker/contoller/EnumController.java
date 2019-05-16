@@ -341,10 +341,8 @@ public class EnumController {
     }
     
     @RequestMapping(method = RequestMethod.POST, value = "create_enumeration_report")
-    public ResponseEntity createEnumerationReport(@RequestBody EnumReportObj obj) {
-        //String message = enumService.approveWorkOrders(tokens);
-        String message = "Testing generate report";
-        return new ResponseEntity<>(new Awesome(0, message), HttpStatus.OK);
+    public Awesome createEnumerationReport(@RequestBody EnumReportObj obj) {
+        return enumService.createEnumerationReportFile(obj);
     }
 
 }

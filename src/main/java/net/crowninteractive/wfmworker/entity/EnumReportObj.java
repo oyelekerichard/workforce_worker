@@ -17,6 +17,7 @@ public class EnumReportObj implements java.io.Serializable {
     private String district;
     private String fromDate;
     private String toDate;
+    private String fileName;
 
     public String getType() {
         return type;
@@ -64,5 +65,13 @@ public class EnumReportObj implements java.io.Serializable {
 
     public void setToDate(String toDate) {
         this.toDate = toDate;
+    }
+
+    public String getFileName() {
+        return fileName;
+    }
+
+    public void setFileName(String fileName) {
+        this.fileName = fileName;
     }
 }
