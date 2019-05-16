@@ -13,26 +13,28 @@ import com.google.gson.annotations.SerializedName;
  *
  * @author Isaac A.
  */
-public class EnumReportObj implements java.io.Serializable {
-    
+public class EnumReportObj {
+    @SerializedName("type")
+    @Expose
     private String type;
+    @SerializedName("fileName")
+    @Expose
     private String fileName;
+    @SerializedName("tokens")
+    @Expose
     private String[]tokens;
+    @SerializedName("email")
+    @Expose
     private String email;
+    @SerializedName("district")
+    @Expose
     private String district;
+    @SerializedName("fromDate")
+    @Expose
     private String fromDate;
+    @SerializedName("toDate")
+    @Expose
     private String toDate;
-
-    public EnumReportObj(String type, String fileName, String[] tokens) {
-        this.type = type;
-        this.fileName = fileName;
-        this.tokens = tokens;
-    }
-
-    public EnumReportObj(String type, String fileName) {
-        this.type = type;
-        this.fileName = fileName;
-    }
 
     
     public String getType() {
