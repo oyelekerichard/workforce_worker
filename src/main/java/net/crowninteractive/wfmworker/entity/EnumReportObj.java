@@ -10,7 +10,7 @@ package net.crowninteractive.wfmworker.entity;
  *
  * @author Isaac A.
  */
-public class EnumReportObj {
+public class EnumReportObj implements java.io.Serializable {
     private String type;
     private String[]tokens;
     private String email;
