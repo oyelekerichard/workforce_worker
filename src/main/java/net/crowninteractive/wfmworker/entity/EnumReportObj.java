@@ -1,7 +1,6 @@
 package net.crowninteractive.wfmworker.entity;
 
-import com.google.gson.annotations.Expose;
-import com.google.gson.annotations.SerializedName;
+import com.dyfferential.vyral.db.annotations.NoTable;
 
 /*
  * To change this license header, choose License Headers in Project Properties.
@@ -13,25 +12,14 @@ import com.google.gson.annotations.SerializedName;
  *
  * @author Isaac A.
  */
-public class EnumReportObj {
-    @SerializedName("type")
-    @Expose
+@NoTable
+public class EnumReportObj implements java.io.Serializable {
     private String type;
-    @SerializedName("fileName")
-    @Expose
     private String fileName;
     private String[]tokens;
-    @SerializedName("email")
-    @Expose
     private String email;
-    @SerializedName("district")
-    @Expose
     private String district;
-    @SerializedName("fromDate")
-    @Expose
     private String fromDate;
-    @SerializedName("toDate")
-    @Expose
     private String toDate;
 
     
