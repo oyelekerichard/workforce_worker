@@ -20,8 +20,6 @@ public class EnumReportObj {
     @SerializedName("fileName")
     @Expose
     private String fileName;
-    @SerializedName("tokens")
-    @Expose
     private String[]tokens;
     @SerializedName("email")
     @Expose
