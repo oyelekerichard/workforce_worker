@@ -347,6 +347,7 @@ public class EnumController {
         Awesome awe;
         try {
             EnumReportObj repObj = new Gson().fromJson(json, EnumReportObj.class);
+            System.out.println(repObj.getTokens().length);
             awe = enumService.createEnumerationReportFile(repObj);
 
         } catch (Exception ex) {
