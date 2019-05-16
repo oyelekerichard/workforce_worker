@@ -575,67 +575,62 @@ public class EnumService {
     }
     
     public Awesome createEnumerationReportFile(EnumReportObj obj) {
-        if (null == obj.getType()) {
+        System.out.println(obj.getType());
+        if ("WORK_ORDERS_all".equals(obj.getType()) || "REQUESTS_all".equals(obj.getType())) {
+            if ("WORK_ORDERS_all".equals(obj.getType())) {
+                final List<EnumerationWorkOrderDownloadModel> workOrders = wdao.getEnumerationDownloadList(EnumerationWorkOrderDownloadModel.workOrderQuery(), null, null, null, null, null, null,null, null, null, null);
+                if (!workOrders.isEmpty()) {
+                    File excelFileForWorkOrder = createReportExcel(EnumerationWorkOrderDownloadModel.class,workOrders, obj.getFileName());
+                    if (excelFileForWorkOrder.exists()) {
+                        return new Awesome(0, "Successful");
+                    } else {
+                        return new Awesome(400, "File generation failed");
+                    }
+                } else {
+                    return new Awesome(100, "No data retrieved for report");
+                }
+            } else {
+                final List<EnumerationWorkOrderDownloadModel> requests = wdao.getEnumerationDownloadList(EnumerationWorkOrderDownloadModel.requestQuery(), null, null, null, null, null, null,null, null, null, null);
+                if (!requests.isEmpty()) {
+                    File excelFileForWorkOrder = createReportExcel(EnumerationWorkOrderDownloadModel.class,requests, obj.getFileName());
+                    if (excelFileForWorkOrder.exists()) {
+                        return new Awesome(0, "Successful");
+                    } else {
+                        return new Awesome(400, "File generation failed");
+                    }
+                } else {
+                    return new Awesome(100, "No data retrieved for report");
+                }
+            }
+        } else if ("WORK_ORDERS_with_select_customers".equals(obj.getType()) || "REQUESTS_with_select_customers".equals(obj.getType())) {
+            if ("WORK_ORDERS_with_select_customers".equals(obj.getType())) {
+                final List<EnumerationWorkOrderDownloadModel> workOrders = wdao.getWorkOrderEnumerationByTokens(obj.getTokens());
+                if (workOrders != null) {
+                    File excelFileForWorkOrder = createReportExcel(EnumerationWorkOrderDownloadModel.class,workOrders, obj.getFileName());
+                    if (excelFileForWorkOrder.exists()) {
+                        return new Awesome(0, "Successful");
+                    } else {
+                        return new Awesome(400, "File generation failed");
+                    }
+                } else {
+                    return new Awesome(100, "No data retrieved for report");
+                }
+            } else {
+                final List<EnumerationWorkOrderDownloadModel> requests = wdao.getWorkOrderEnumerationTempByTokens(obj.getTokens());
+                if (requests != null) {
+                    File excelFileForWorkOrder = createReportExcel(EnumerationWorkOrderDownloadModel.class,requests, obj.getFileName());
+                    if (excelFileForWorkOrder.exists()) {
+                        return new Awesome(0, "Successful");
+                    } else {
+                        return new Awesome(400, "File generation failed");
+                    }
+                } else {
+                    return new Awesome(100, "No data retrieved for report");
+                }
+            }
+        } else {
             return new Awesome(100, "Invalid Report Type");
-        } else switch (obj.getType()) {
-            case "WORK_ORDERS_all":
-            case "REQUESTS_all":
-                if ("WORK_ORDERS_all".equals(obj.getType())) {
-                    final List<EnumerationWorkOrderDownloadModel> workOrders = wdao.getEnumerationDownloadList(EnumerationWorkOrderDownloadModel.workOrderQuery(), "business_unit", "create_time", "create_time", null, null, null,null, null, null, null);
-                    if (workOrders != null) {
-                        File excelFileForWorkOrder = createReportExcel(EnumerationWorkOrderDownloadModel.class,workOrders, obj.getFileName());
-                        if (excelFileForWorkOrder.exists()) {
-                            return new Awesome(0, "Successful");
-                        } else {
-                            return new Awesome(400, "File generation failed");
-                        }
-                    } else {
-                        return new Awesome(100, "No data retrieved for report");
-                    }
-                } else if ("REQUESTS_all".equals(obj.getType())) {
-                    final List<EnumerationWorkOrderDownloadModel> requests = wdao.getEnumerationDownloadList(EnumerationWorkOrderDownloadModel.requestQuery(), "business_unit", "create_time", "create_time", null, null, null,null, null, null, null);
-                    if (requests != null) {
-                        File excelFileForWorkOrder = createReportExcel(EnumerationWorkOrderDownloadModel.class,requests, obj.getFileName());
-                        if (excelFileForWorkOrder.exists()) {
-                            return new Awesome(0, "Successful");
-                        } else {
-                            return new Awesome(400, "File generation failed");
-                        }
-                    } else {
-                        return new Awesome(100, "No data retrieved for report");
-                    }
-                }   break;
-            case "WORK_ORDERS_with_select_customers":
-            case "REQUESTS_with_select_customers":
-                if ("WORK_ORDERS_with_select_customers".equals(obj.getType())) {
-                    final List<EnumerationWorkOrderDownloadModel> workOrders = wdao.getWorkOrderEnumerationByTokens(obj.getTokens());
-                    if (!workOrders.isEmpty()) {
-                        File excelFileForWorkOrder = createReportExcel(EnumerationWorkOrderDownloadModel.class,workOrders, obj.getFileName());
-                        if (excelFileForWorkOrder.exists()) {
-                            return new Awesome(0, "Successful");
-                        } else {
-                            return new Awesome(400, "File generation failed");
-                        }
-                    } else {
-                        return new Awesome(100, "No data retrieved for report");
-                    }
-                } else if ("REQUESTS_all".equals(obj.getType())) {
-                    final List<EnumerationWorkOrderDownloadModel> requests = wdao.getWorkOrderEnumerationTempByTokens(obj.getTokens());
-                    if (!requests.isEmpty()) {
-                        File excelFileForWorkOrder = createReportExcel(EnumerationWorkOrderDownloadModel.class,requests, obj.getFileName());
-                        if (excelFileForWorkOrder.exists()) {
-                            return new Awesome(0, "Successful");
-                        } else {
-                            return new Awesome(400, "File generation failed");
-                        }
-                    } else {
-                        return new Awesome(100, "No data retrieved for report");
-                    }
-                }   break;
-            default:
-                return new Awesome(100, "Invalid Report Type");
         }
-        return null;
     }
     
      private <T> File createReportExcel(Class<T> clazz, List<T> data, String fileName) {
