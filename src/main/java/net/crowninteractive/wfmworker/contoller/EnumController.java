@@ -342,9 +342,11 @@ public class EnumController {
     }
     
     @RequestMapping(method = RequestMethod.POST, value = "create_enumeration_report")
-    public Awesome createEnumerationReport(@RequestBody EnumReportObj repObj) {
+    public Awesome createEnumerationReport(@RequestBody String json) {
+        
         Awesome awe;
         try {
+            EnumReportObj repObj = new Gson().fromJson(json, EnumReportObj.class);
             awe = enumService.createEnumerationReportFile(repObj);
 
         } catch (Exception ex) {
