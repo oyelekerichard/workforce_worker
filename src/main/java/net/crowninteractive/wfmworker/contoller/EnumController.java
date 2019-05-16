@@ -5,6 +5,7 @@
  */
 package net.crowninteractive.wfmworker.contoller;
 
+import com.google.gson.Gson;
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
@@ -341,8 +342,9 @@ public class EnumController {
     }
     
     @RequestMapping(method = RequestMethod.POST, value = "create_enumeration_report")
-    public Awesome createEnumerationReport(@RequestBody EnumReportObj obj) {
-        return enumService.createEnumerationReportFile(obj);
+    public Awesome createEnumerationReport(@RequestBody String json) {
+        EnumReportObj repObj = new Gson().fromJson(json, EnumReportObj.class);
+        return enumService.createEnumerationReportFile(repObj);
     }
 
 }
