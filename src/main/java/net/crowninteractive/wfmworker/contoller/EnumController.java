@@ -17,6 +17,7 @@ import java.util.logging.Logger;
 import javax.servlet.http.HttpServletRequest;
 import javax.ws.rs.core.Context;
 import net.crowninteractive.wfmworker.entity.Dashboard;
+import net.crowninteractive.wfmworker.entity.EnumReportObj;
 import net.crowninteractive.wfmworker.entity.Queue;
 import net.crowninteractive.wfmworker.entity.WorkOrder;
 import net.crowninteractive.wfmworker.misc.StandardResponse;
@@ -337,6 +338,13 @@ public class EnumController {
                     .contentType(MediaType.APPLICATION_JSON)
                     .body(StandardResponse.validationErrors("File name should be passed as a parameter"));
         }
+    }
+    
+    @RequestMapping(method = RequestMethod.POST, value = "create_enumeration_report")
+    public ResponseEntity createEnumerationReport(@RequestBody EnumReportObj obj) {
+        //String message = enumService.approveWorkOrders(tokens);
+        String message = "Testing generate report";
+        return new ResponseEntity<>(new Awesome(0, message), HttpStatus.OK);
     }
 
 }
