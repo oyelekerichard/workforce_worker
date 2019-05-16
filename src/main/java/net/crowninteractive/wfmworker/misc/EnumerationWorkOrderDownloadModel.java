@@ -142,7 +142,7 @@ public class EnumerationWorkOrderDownloadModel {
         return "SELECT " + enumerationWorkOrderDataCols() + ",wt.ticket_id, "
              + "(select name from queue where id=wt.queue_id) as queue_name,"
              + "(select name from queue_type where id=wt.queue_type_id) as queue_type_name "
-             + ", wt.current_status "
+             + ", wt.current_status, wt.business_unit "
              + "FROM `work_order_temp` wt, enumeration_work_order e where wt.token = e.work_order_temp_token "
              + "and wt.business_unit like {unit} and cast(wt.create_time as date) >= cast({from} as date) and cast(wt.create_time as date) <= cast({to} as date ) ORDER BY wt.create_time";
     }
@@ -151,7 +151,7 @@ public class EnumerationWorkOrderDownloadModel {
          return "SELECT " + enumerationWorkOrderDataCols() + ",wt.ticket_id, "
                 + "(select name from queue where id=wt.queue_id) as queue_name,"
                 + "(select name from queue_type where id=wt.queue_type_id) as queue_type_name "
-                + " ,wt.current_status "
+                + " ,wt.current_status, wt.business_unit "
                 + "FROM `work_order` wt, enumeration_work_order e where wt.ticket_id = e.work_order_id and business_unit like {unit} and cast(create_time as date) >= cast({from} as date) and cast(create_time as date) <= cast({to} as date )";
     }
 
