@@ -582,7 +582,7 @@ public class EnumService {
             case "REQUESTS_all":
                 if ("WORK_ORDERS_all".equals(obj.getType())) {
                     final List<EnumerationWorkOrderDownloadModel> workOrders = wdao.getEnumerationDownloadList(EnumerationWorkOrderDownloadModel.workOrderQuery(), null, null, null, null, null, null,null, null, null, null);
-                    if (!workOrders.isEmpty()) {
+                    if (workOrders != null) {
                         File excelFileForWorkOrder = createReportExcel(EnumerationWorkOrderDownloadModel.class,workOrders, obj.getFileName());
                         if (excelFileForWorkOrder.exists()) {
                             return new Awesome(0, "Successful");
@@ -594,7 +594,7 @@ public class EnumService {
                     }
                 } else if ("REQUESTS_all".equals(obj.getType())) {
                     final List<EnumerationWorkOrderDownloadModel> requests = wdao.getEnumerationDownloadList(EnumerationWorkOrderDownloadModel.requestQuery(), null, null, null, null, null, null,null, null, null, null);
-                    if (!requests.isEmpty()) {
+                    if (requests != null) {
                         File excelFileForWorkOrder = createReportExcel(EnumerationWorkOrderDownloadModel.class,requests, obj.getFileName());
                         if (excelFileForWorkOrder.exists()) {
                             return new Awesome(0, "Successful");
