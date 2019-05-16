@@ -1,5 +1,8 @@
 package net.crowninteractive.wfmworker.entity;
 
+import com.google.gson.annotations.Expose;
+import com.google.gson.annotations.SerializedName;
+
 /*
  * To change this license header, choose License Headers in Project Properties.
  * To change this template file, choose Tools | Templates
@@ -11,12 +14,26 @@ package net.crowninteractive.wfmworker.entity;
  * @author Isaac A.
  */
 public class EnumReportObj {
+    @SerializedName("type")
+    @Expose
     private String type;
+    @SerializedName("tokens")
+    @Expose
     private String[]tokens;
+    @SerializedName("email")
+    @Expose
     private String email;
+    @SerializedName("district")
+    @Expose
     private String district;
+    @SerializedName("fromDate")
+    @Expose
     private String fromDate;
+    @SerializedName("toDate")
+    @Expose
     private String toDate;
+    @SerializedName("fileName")
+    @Expose
     private String fileName;
 
     public String getType() {
