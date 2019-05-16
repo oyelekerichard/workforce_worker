@@ -20,6 +20,7 @@ import net.crowninteractive.wfmworker.entity.Dashboard;
 import net.crowninteractive.wfmworker.entity.Queue;
 import net.crowninteractive.wfmworker.entity.WorkOrder;
 import net.crowninteractive.wfmworker.misc.StandardResponse;
+import net.crowninteractive.wfmworker.misc.Utils;
 import net.crowninteractive.wfmworker.misc.WorkOrderEnumerationBody;
 import net.crowninteractive.wfmworker.misc.WorkOrderJson;
 import net.crowninteractive.wfmworker.service.Awesome;
@@ -311,6 +312,31 @@ public class EnumController {
             awe = StandardResponse.invalidUser();
         }
         return awe;
+    }
+    
+    @RequestMapping(method = RequestMethod.GET, value = "download_enumeration_reports/{file_name}")
+    public ResponseEntity downloadEnumerationReport(@PathVariable("file_name") String file_name) throws IOException {
+        L.entering("getting work_orders for file_name", file_name);
+        if (!Utils.checkNullOrEmpty(file_name)) {
+            final File requestFile = new File("/var/wfm/downloads/" + file_name);
+            if (requestFile.isFile()) {
+                Path path = Paths.get(requestFile.getAbsolutePath());
+                byte[] data = Files.readAllBytes(path);
+                ByteArrayResource resource = new ByteArrayResource(data);
+                return ResponseEntity.ok()
+                    .header("Content-Disposition", "attachment; filename = "+file_name)
+                    .contentType(MediaType.APPLICATION_OCTET_STREAM)
+                    .body(resource);            
+            } else {
+                return ResponseEntity.ok()
+                    .contentType(MediaType.APPLICATION_JSON)
+                    .body(StandardResponse.validationErrors("no report found for " + file_name));
+            }
+        } else {
+            return ResponseEntity.ok()
+                    .contentType(MediaType.APPLICATION_JSON)
+                    .body(StandardResponse.validationErrors("File name should be passed as a parameter"));
+        }
     }
 
 }
