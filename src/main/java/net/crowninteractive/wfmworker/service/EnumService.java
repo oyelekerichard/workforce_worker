@@ -617,7 +617,7 @@ public class EnumService {
                 }
             } else {
                 final List<EnumerationWorkOrderDownloadModel> requests = wdao.getWorkOrderEnumerationTempByTokens(obj.getTokens());
-                if (requests != null) {
+                if (requests.size() > 0) {
                     File excelFileForWorkOrder = createReportExcel(EnumerationWorkOrderDownloadModel.class,requests, obj.getFileName());
                     if (excelFileForWorkOrder.exists()) {
                         return new Awesome(0, "Successful");
