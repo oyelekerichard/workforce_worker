@@ -579,7 +579,7 @@ public class EnumService {
         if ("WORK_ORDERS_all".equals(obj.getType()) || "REQUESTS_all".equals(obj.getType())) {
             if ("WORK_ORDERS_all".equals(obj.getType())) {
                 final List<EnumerationWorkOrderDownloadModel> workOrders = wdao.getEnumerationDownloadList(EnumerationWorkOrderDownloadModel.workOrderQuery(), null, null, null, null, null, null,null, null, null, null);
-                if (workOrders != null) {
+                if (workOrders.size() > 0) {
                     File excelFileForWorkOrder = createReportExcel(EnumerationWorkOrderDownloadModel.class,workOrders, obj.getFileName());
                     if (excelFileForWorkOrder.exists()) {
                         return new Awesome(0, "Successful");
@@ -591,7 +591,7 @@ public class EnumService {
                 }
             } else {
                 final List<EnumerationWorkOrderDownloadModel> requests = wdao.getEnumerationDownloadList(EnumerationWorkOrderDownloadModel.requestQuery(), null, null, null, null, null, null,null, null, null, null);
-                if (requests != null) {
+                if (requests.size() > 0) {
                     File excelFileForWorkOrder = createReportExcel(EnumerationWorkOrderDownloadModel.class,requests, obj.getFileName());
                     if (excelFileForWorkOrder.exists()) {
                         return new Awesome(0, "Successful");
@@ -605,7 +605,7 @@ public class EnumService {
         } else if ("WORK_ORDERS_with_select_customers".equals(obj.getType()) || "REQUESTS_with_select_customers".equals(obj.getType())) {
             if ("WORK_ORDERS_with_select_customers".equals(obj.getType())) {
                 final List<EnumerationWorkOrderDownloadModel> workOrders = wdao.getWorkOrderEnumerationByTokens(obj.getTokens());
-                if (workOrders != null) {
+                if (workOrders.size() > 0) {
                     File excelFileForWorkOrder = createReportExcel(EnumerationWorkOrderDownloadModel.class,workOrders, obj.getFileName());
                     if (excelFileForWorkOrder.exists()) {
                         return new Awesome(0, "Successful");
@@ -619,7 +619,7 @@ public class EnumService {
                 final List<EnumerationWorkOrderDownloadModel> requests = wdao.getWorkOrderEnumerationTempByTokens(obj.getTokens());
                 if (requests.size() > 0) {
                     File excelFileForWorkOrder = createReportExcel(EnumerationWorkOrderDownloadModel.class,requests, obj.getFileName());
-                    if (excelFileForWorkOrder.exists()) {
+                    if (excelFileForWorkOrder.exists) {
                         return new Awesome(0, "Successful");
                     } else {
                         return new Awesome(400, "File generation failed");
