@@ -316,7 +316,7 @@ public class EnumController {
         return awe;
     }
     
-    @RequestMapping(method = RequestMethod.GET, value = "/download_enumeration_reports/{fileName}")
+    @RequestMapping(method = RequestMethod.GET, value = "/download_enumeration_reports/{fileName:.+}")
     public ResponseEntity downloadEnumerationReport(@PathVariable("fileName") String name) throws IOException {
         System.out.println("---- -- " + name);
         if (Utils.checkNullOrEmpty(name)) {
