@@ -318,7 +318,7 @@ public class EnumController {
     
     @RequestMapping(method = RequestMethod.GET, value = "/download_enumeration_reports/{fileName}")
     public ResponseEntity downloadEnumerationReport(@PathVariable("fileName") String name) throws IOException {
-        System.out.println("---- -- " + name);;
+        System.out.println("---- -- " + name);
         if (Utils.checkNullOrEmpty(name)) {
             final File requestFile = new File("/var/wfm/downloads/" + name);
             if (requestFile.isFile()) {
@@ -326,13 +326,13 @@ public class EnumController {
                 byte[] data = Files.readAllBytes(path);
                 ByteArrayResource resource = new ByteArrayResource(data);
                 return ResponseEntity.ok()
-                    .header("Content-Disposition", "attachment; filename = "+file_name)
+                    .header("Content-Disposition", "attachment; filename = "+name)
                     .contentType(MediaType.APPLICATION_OCTET_STREAM)
                     .body(resource);            
             } else {
                 return ResponseEntity.ok()
                     .contentType(MediaType.APPLICATION_JSON)
-                    .body(StandardResponse.validationErrors("no report found for " + file_name));
+                    .body(StandardResponse.validationErrors("no report found for " + name));
             }
         } else {
             return ResponseEntity.ok()
