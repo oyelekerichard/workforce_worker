@@ -578,7 +578,7 @@ public class EnumService {
         System.out.println(obj.getType());
         if ("WORK_ORDERS_all".equals(obj.getType()) || "REQUESTS_all".equals(obj.getType())) {
             if ("WORK_ORDERS_all".equals(obj.getType())) {
-                final List<EnumerationWorkOrderDownloadModel> workOrders = wdao.getEnumerationDownloadList(EnumerationWorkOrderDownloadModel.workOrderQuery(), null, null, null, null, null, null,null, null, null, null);
+                final List<EnumerationWorkOrderDownloadModel> workOrders = wdao.getEnumerationDownloadList(EnumerationWorkOrderDownloadModel.workOrderQuery(), "business_unit","create_time", "create_time", null, null, null,null, null, null, null);
                 if (workOrders.size() > 0) {
                     File excelFileForWorkOrder = createReportExcel(EnumerationWorkOrderDownloadModel.class,workOrders, obj.getFileName());
                     if (excelFileForWorkOrder.exists()) {
@@ -590,7 +590,7 @@ public class EnumService {
                     return new Awesome(100, "No data retrieved for report");
                 }
             } else {
-                final List<EnumerationWorkOrderDownloadModel> requests = wdao.getEnumerationDownloadList(EnumerationWorkOrderDownloadModel.requestQuery(), null, null, null, null, null, null,null, null, null, null);
+                final List<EnumerationWorkOrderDownloadModel> requests = wdao.getEnumerationDownloadList(EnumerationWorkOrderDownloadModel.requestQuery(), "business_unit", "create_time", "create_time", null, null, null,null, null, null, null);
                 if (requests.size() > 0) {
                     File excelFileForWorkOrder = createReportExcel(EnumerationWorkOrderDownloadModel.class,requests, obj.getFileName());
                     if (excelFileForWorkOrder.exists()) {
