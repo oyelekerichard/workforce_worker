@@ -70,10 +70,11 @@ public class EnumerationWorkOrderDownloadModel {
     private String transformer_type;
     private String priority;
     private String provider;
-    private String current_status;
     private Integer ticket_id;
     private String queue_name;
     private String queue_type_name;
+    private String current_status;
+    private String business_unit;
     
     
     public EnumerationWorkOrderDownloadModel(Object[] e) {
@@ -130,6 +131,7 @@ public class EnumerationWorkOrderDownloadModel {
         this.queue_name = (String) e[49];
         this.queue_type_name = (String) e[50];
         this.current_status = (String) e[51];
+        this.business_unit = (String) e[52];
     }
 
     public static String enumerationWorkOrderDataCols() {
@@ -142,7 +144,7 @@ public class EnumerationWorkOrderDownloadModel {
         return "SELECT " + enumerationWorkOrderDataCols() + ",wt.ticket_id, "
              + "(select name from queue where id=wt.queue_id) as queue_name,"
              + "(select name from queue_type where id=wt.queue_type_id) as queue_type_name "
-             + ", wt.current_status, wt.business_unit "
+             + ", wt.current_status, wt.business_unit " 
              + "FROM `work_order_temp` wt, enumeration_work_order e where wt.token = e.work_order_temp_token "
              + "and wt.business_unit like {unit} and cast(wt.create_time as date) >= cast({from} as date) and cast(wt.create_time as date) <= cast({to} as date ) ORDER BY wt.create_time";
     }
