@@ -619,7 +619,7 @@ public class EnumService {
                 final List<EnumerationWorkOrderDownloadModel> requests = wdao.getWorkOrderEnumerationTempByTokens(obj.getTokens());
                 if (requests.size() > 0) {
                     File excelFileForWorkOrder = createReportExcel(EnumerationWorkOrderDownloadModel.class,requests, obj.getFileName());
-                    if (excelFileForWorkOrder.exists) {
+                    if (excelFileForWorkOrder.exists()) {
                         return new Awesome(0, "Successful");
                     } else {
                         return new Awesome(400, "File generation failed");
