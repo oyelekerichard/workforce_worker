@@ -137,24 +137,23 @@ public class EnumerationWorkOrderDownloadModel {
     public static String enumerationWorkOrderDataCols() {
         return "e.supply_type,e.connection_type,e.feederid,e.htpoleid,e.transformername,e.transformerid,e.cableupriserid,e.ltpoleid,e.servicewireno,e.customer_number,e.premises_type,e.nature_of_use_electricity,e.landlord_name,e.customer_name_on_bill,e.customer_phone_no,e.e_mail_address,e.customer_account_no,e.plot,e.house_no,e.street,e.landmark,e.city,e.tariff,e.old_tariff,e.meter_no,e.meter_by_pass,e.meter_design_type,e.meter_status,e.meter_seal_no"
                 + ",e.meter_reading,e.dials,e.multiplier_factor_on_meter,e.ct_ratio,e.pt_ratio,e.x_coordinate,e.y_coordinate,e.billing_type,e.phase_designation"
-                + ",e.cutout_size,e.number_of_air_conditioner,e.approximate_total_rating_of_ac,e.comment,e.update_stat,e.is_edservicepoint_active,e.transformer_rating,e.transformer_type,e.priority,e.provider";
+                + ",e.cutout_size,e.number_of_air_conditioner,e.approximate_total_rating_of_ac,e.comment,e.update_stat,e.is_edservicepoint_active,"
+                + "e.transformer_rating,e.transformer_type,e.priority,e.provider,wt.ticket_id, "
+                + "(select name from queue where id=wt.queue_id) as queue_name,"
+                + "(select name from queue_type where id=wt.queue_type_id) as queue_type_name "
+                + ", wt.current_status, wt.business_unit "  ;
     }
     
     public static String requestQuery() {
-        return "SELECT " + enumerationWorkOrderDataCols() + ",wt.ticket_id, "
-             + "(select name from queue where id=wt.queue_id) as queue_name,"
-             + "(select name from queue_type where id=wt.queue_type_id) as queue_type_name "
-             + ", wt.current_status, wt.business_unit " 
-             + "FROM `work_order_temp` wt, enumeration_work_order e where wt.token = e.work_order_temp_token "
-             + "and wt.business_unit like {unit} and cast(wt.create_time as date) >= cast({from} as date) and cast(wt.create_time as date) <= cast({to} as date ) ORDER BY wt.create_time";
+        return "SELECT " + enumerationWorkOrderDataCols() +" FROM `work_order_temp` wt, "
+               + "enumeration_work_order e where wt.token = e.work_order_temp_token "
+               + "and wt.business_unit like {unit} and cast(wt.create_time as date) >= cast({from} as date) and cast(wt.create_time as date) <= cast({to} as date ) ORDER BY wt.create_time";
     }
     
     public static String workOrderQuery() {
-         return "SELECT " + enumerationWorkOrderDataCols() + ",wt.ticket_id, "
-                + "(select name from queue where id=wt.queue_id) as queue_name,"
-                + "(select name from queue_type where id=wt.queue_type_id) as queue_type_name "
-                + " ,wt.current_status, wt.business_unit "
-                + "FROM `work_order` wt, enumeration_work_order e where wt.ticket_id = e.work_order_id and business_unit like {unit} and cast(create_time as date) >= cast({from} as date) and cast(create_time as date) <= cast({to} as date )";
+         return "SELECT " + enumerationWorkOrderDataCols() + " FROM `work_order` wt, "
+                + "enumeration_work_order e where wt.ticket_id = e.work_order_id and business_unit like {unit} "
+                + "and cast(create_time as date) >= cast({from} as date) and cast(create_time as date) <= cast({to} as date )";
     }
 
     public static String enumerationWorkOrderDataColsParam(String cols) {
