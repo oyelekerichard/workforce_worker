@@ -7,7 +7,6 @@
 package net.crowninteractive.wfmworker;
 
 //~--- non-JDK imports --------------------------------------------------------
-
 import net.crowninteractive.wfmworker.dao.EscalationDistrictRoleDao;
 import net.crowninteractive.wfmworker.dao.EscalationSettingsDao;
 import net.crowninteractive.wfmworker.dao.EscalationTempDao;
@@ -28,7 +27,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 //~--- JDK imports ------------------------------------------------------------
-
 import java.io.File;
 
 import java.text.SimpleDateFormat;
@@ -47,16 +45,17 @@ import javax.jws.WebParam;
  */
 @Component
 public class Worker extends TimerTask {
+
     @Autowired
-    private EscalationSettingsDao     escalationSettingsDao;
+    private EscalationSettingsDao escalationSettingsDao;
     @Autowired
-    private EscalationWorkOrderDao    escalationWorkOrderDao;
+    private EscalationWorkOrderDao escalationWorkOrderDao;
     @Autowired
-    private UsersDao                  usersDao;
+    private UsersDao usersDao;
     @Autowired
     private EscalationDistrictRoleDao escalationDistrictRoleDao;
     @Autowired
-    private EscalationTempDao         escalationTempDao;
+    private EscalationTempDao escalationTempDao;
 
     @Override
     public void run() {
@@ -67,31 +66,31 @@ public class Worker extends TimerTask {
 
             for (EscalationWorkOrder ewo : lewo) {
                 String emailtitle = String.format("WORK ORDER ESCALATION!!! (#00%s) - %s",
-                                                  ewo.getWorkOrderId().getTicketId(),
-                                                  ewo.getEscalationSettingId().getLabel());
+                        ewo.getWorkOrderId().getTicketId(),
+                        ewo.getEscalationSettingId().getLabel());
                 String recipients = ewo.getEscalatedEmails();
-                String body       =
-                    format(FileUtils.readFileToString(new File("/var/files/wfm/request.htm")),
-                           String.valueOf(ewo.getWorkOrderId().getTicketId()), ewo.getWorkOrderId().getSummary(),
-                           ewo.getWorkOrderId().getQueueId().getName(),
-                           new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(ewo.getWorkOrderId().getCreateTime()),
-                           ewo.getWorkOrderId().getCurrentStatus(), ewo.getWorkOrderId().getDescription());
+                String body
+                        = format(FileUtils.readFileToString(new File("/var/files/wfm/request.htm")),
+                                String.valueOf(ewo.getWorkOrderId().getTicketId()), ewo.getWorkOrderId().getSummary(),
+                                ewo.getWorkOrderId().getQueueId().getName(),
+                                new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(ewo.getWorkOrderId().getCreateTime()),
+                                ewo.getWorkOrderId().getCurrentStatus(), ewo.getWorkOrderId().getDescription());
 
                 sendNoReplyEmail("a12wq_minions", emailtitle, recipients, body);
                 System.out.println("Escalation email sent for work order #" + ewo.getWorkOrderId().getTicketId()
-                                   + "  - PRIORITY: " + ewo.getEscalationSettingId().getPriority());
+                        + "  - PRIORITY: " + ewo.getEscalationSettingId().getPriority());
                 ewo.setTimeEscalated(new Date());
                 escalationWorkOrderDao.edit(ewo);
 
                 // raise  escalation level
-                EscalationSettings es2 =
-                    escalationSettingsDao.getNextEscalationLevel(ewo.getEscalationSettingId().getStatusId(),
-                        ewo.getEscalationSettingId().getQueueTypeId().getId(),
-                        ewo.getEscalationSettingId().getPriority() + 1);
+                EscalationSettings es2
+                        = escalationSettingsDao.getNextEscalationLevel(ewo.getEscalationSettingId().getStatusId(),
+                                ewo.getEscalationSettingId().getQueueTypeId().getId(),
+                                ewo.getEscalationSettingId().getPriority() + 1);
 
                 if (es2 != null) {
-                    WorkOrder i   = ewo.getWorkOrderId();
-                    Calendar  cal = Calendar.getInstance();
+                    WorkOrder i = ewo.getWorkOrderId();
+                    Calendar cal = Calendar.getInstance();
 
                     cal.setTime(i.getCreateTime());
 
@@ -102,7 +101,7 @@ public class Worker extends TimerTask {
                     }
 
                     EscalationWorkOrder ew = new EscalationWorkOrder(i.getOwnerId(), es2.getStatusId(), cal.getTime(),
-                                                 emailRecipients(ewo.getWorkOrderId(), es2), es2, i);
+                            emailRecipients(ewo.getWorkOrderId(), es2), es2, i);
 
                     escalationWorkOrderDao.create(ew);
 
@@ -123,15 +122,15 @@ public class Worker extends TimerTask {
     }
 
     private String format(String filedata, String ticketId, String summary, String queueName, String simpleDateTime,
-                          String currentStatus, String description) {
+            String currentStatus, String description) {
         return filedata.replace("$ticketid", ticketId).replace("$summary", summary).replace("$queue",
-                                queueName).replace("$time", simpleDateTime).replace("$status",
-                                    currentStatus).replace("$desc", description);
+                queueName).replace("$time", simpleDateTime).replace("$status",
+                currentStatus).replace("$desc", description);
     }
 
     public void sendNoReplyEmail(@WebParam(name = "qw") String emailkey, @WebParam(name = "subject") String subject,
-                                 @WebParam(name = "to") String to, @WebParam(name = "msg") String msg,
-                                 @WebParam(name = "filename") String filename) {
+            @WebParam(name = "to") String to, @WebParam(name = "msg") String msg,
+            @WebParam(name = "filename") String filename) {
         if (emailkey.equals("a12wq_minions")) {
             HtmlEmail emailAgent = new HtmlEmail();
 
@@ -156,14 +155,14 @@ public class Worker extends TimerTask {
     }
 
     public void sendNoReplyEmail(@WebParam(name = "qw") String emailkey, @WebParam(name = "subject") String subject,
-                                 @WebParam(name = "to") String to, @WebParam(name = "msg") String msg) {
+            @WebParam(name = "to") String to, @WebParam(name = "msg") String msg) {
         sendNoReplyEmail(emailkey, subject, to, msg, null);
     }
 
     private String emailRecipients(WorkOrder i, EscalationSettings lescs) {
-        List<String>                 emailStore = new ArrayList<>();
-        List<EscalationDistrictRole> edrs       =
-            escalationDistrictRoleDao.fetchDistrictRoleEmails(i.getBusinessUnit(), lescs.getRoles());
+        List<String> emailStore = new ArrayList<>();
+        List<EscalationDistrictRole> edrs
+                = escalationDistrictRoleDao.fetchDistrictRoleEmails(i.getBusinessUnit(), lescs.getRoles());
 
         for (EscalationDistrictRole ed : edrs) {
             emailStore.add(ed.getEmails());
