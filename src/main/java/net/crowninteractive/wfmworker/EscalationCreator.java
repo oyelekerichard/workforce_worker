@@ -7,7 +7,6 @@
 package net.crowninteractive.wfmworker;
 
 //~--- non-JDK imports --------------------------------------------------------
-
 import net.crowninteractive.wfmworker.dao.EscalationDistrictRoleDao;
 import net.crowninteractive.wfmworker.dao.EscalationSettingsDao;
 import net.crowninteractive.wfmworker.dao.EscalationTempDao;
@@ -26,7 +25,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 //~--- JDK imports ------------------------------------------------------------
-
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
@@ -38,18 +36,19 @@ import java.util.TimerTask;
  */
 @Component
 public class EscalationCreator extends TimerTask {
+
     @Autowired
-    private EscalationSettingsDao     escalationSettingsDao;
+    private EscalationSettingsDao escalationSettingsDao;
     @Autowired
-    private EscalationWorkOrderDao    escalationWorkOrderDao;
+    private EscalationWorkOrderDao escalationWorkOrderDao;
     @Autowired
-    private UsersDao                  usersDao;
+    private UsersDao usersDao;
     @Autowired
-    private WorkOrderDao              workOrderDao;
+    private WorkOrderDao workOrderDao;
     @Autowired
     private EscalationDistrictRoleDao escalationDistrictRoleDao;
     @Autowired
-    private EscalationTempDao         escalationTempDao;
+    private EscalationTempDao escalationTempDao;
 
     @Override
     public void run() {
@@ -59,8 +58,8 @@ public class EscalationCreator extends TimerTask {
             List<WorkOrder> lewo = workOrderDao.findTempWorkOrders();
 
             for (WorkOrder i : lewo) {
-                EscalationSettings es2 =
-                    escalationSettingsDao.getEscalationSettingsForNewWorkOrder(i.getQueueTypeId().getId());
+                EscalationSettings es2
+                        = escalationSettingsDao.getEscalationSettingsForNewWorkOrder(i.getQueueTypeId().getId());
 
                 if (es2 != null) {
                     Calendar cal = Calendar.getInstance();
@@ -77,7 +76,7 @@ public class EscalationCreator extends TimerTask {
 
                     if (recs != null) {
                         EscalationWorkOrder ew = new EscalationWorkOrder(i.getOwnerId(), es2.getStatusId(),
-                                                     cal.getTime(), recs, es2, i);
+                                cal.getTime(), recs, es2, i);
 
                         escalationWorkOrderDao.create(ew);
 
@@ -92,7 +91,7 @@ public class EscalationCreator extends TimerTask {
                         }
                     } else {
                         System.out.println("skipping - no recipients to escalate to for work order #"
-                                           + i.getTicketId());
+                                + i.getTicketId());
                     }
                 }
             }
@@ -102,9 +101,9 @@ public class EscalationCreator extends TimerTask {
     }
 
     private String emailRecipients(WorkOrder i, EscalationSettings lescs) {
-        List<String>                 emailStore = new ArrayList<>();
-        List<EscalationDistrictRole> edrs       =
-            escalationDistrictRoleDao.fetchDistrictRoleEmails(i.getBusinessUnit(), lescs.getRoles());
+        List<String> emailStore = new ArrayList<>();
+        List<EscalationDistrictRole> edrs
+                = escalationDistrictRoleDao.fetchDistrictRoleEmails(i.getBusinessUnit(), lescs.getRoles());
 
         if (edrs != null) {
             for (EscalationDistrictRole ed : edrs) {

@@ -41,23 +41,47 @@ public class Config extends Properties {
         return INSTANCE;
     }
 
-    public String approvalEmailTemplateUrl(){
+    public String approvalEmailTemplateUrl() {
         return getProperty("email.approval");
     }
-    
-    public String rejectionEmailTemplateUrl(){
+
+    public String rejectionEmailTemplateUrl() {
         return getProperty("email.rejection");
     }
-    
-    public String wfmFrontendUrl(){
+
+    public String wfmFrontendUrl() {
         return getProperty("wfm.ui.url");
     }
 
     public String getEMCCGetCustomerDetailsURL() {
-       return getProperty("emcc.customer.detail");   
+        return getProperty("emcc.customer.detail");
     }
-    
+
     public String getEnumerationQueueName() {
         return getProperty("enumeration");
+    }
+
+    public String getEmailHostName() {
+        return getProperty("email.host.name");
+    }
+
+    public String getEmailQueueName() {
+        return getProperty("email.queue.name");
+    }
+
+    public String getEmailAddress() {
+        return getProperty("email.address");
+    }
+
+    public String getEmailPort() {
+        return getProperty("email.port");
+    }
+
+    public String getEmailPassword() {
+        return getProperty("email.password");
+    }
+
+    public String getEmailSender() {
+        return getProperty("email.sender");
     }
 }

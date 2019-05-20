@@ -18,8 +18,11 @@ import org.springframework.stereotype.Component;
 
 //~--- JDK imports ------------------------------------------------------------
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.TimerTask;
+import net.crowninteractive.wfmworker.misc.Config;
 
 /**
  *
@@ -30,6 +33,8 @@ public class EmailSender extends TimerTask {
 
     @Autowired
     private EmailSendDao emailSendDao;
+
+    private final Config CONFIG = Config.getInstance();
 
     @Override
     public void run() {
@@ -60,14 +65,15 @@ public class EmailSender extends TimerTask {
     public int sendNoReplyEmail(String subject, String to, String msg) {
         HtmlEmail emailAgent = new HtmlEmail();
 
-        emailAgent.setHostName("smtp.office365.com");
-        emailAgent.setSmtpPort(587);
-        emailAgent.setAuthentication("no-reply@ekedp.com", "CI@ekedp15");
+        emailAgent.setHostName(CONFIG.getEmailHostName());
+        emailAgent.setSmtpPort(Integer.parseInt(CONFIG.getEmailPort()));
+        emailAgent.setAuthentication(CONFIG.getEmailAddress(), CONFIG.getEmailPassword());
         emailAgent.setTLS(true);
 
         try {
-
-            emailAgent.setFrom("no-reply@ekedp.com");
+            emailAgent.setFrom(CONFIG.getEmailAddress());
+            Map<String, String> headers = new HashMap<>();
+            headers.put("Sender", CONFIG.getEmailSender());
             emailAgent.setSubject(subject);
             emailAgent.setCharset("utf8");
             emailAgent.setHtmlMsg(msg);

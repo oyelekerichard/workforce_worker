@@ -34,10 +34,13 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.TimerTask;
 
 import javax.jws.WebParam;
+import net.crowninteractive.wfmworker.misc.Config;
 
 /**
  *
@@ -56,6 +59,8 @@ public class Worker extends TimerTask {
     private EscalationDistrictRoleDao escalationDistrictRoleDao;
     @Autowired
     private EscalationTempDao escalationTempDao;
+
+    private final Config CONFIG = Config.getInstance();
 
     @Override
     public void run() {
@@ -134,13 +139,15 @@ public class Worker extends TimerTask {
         if (emailkey.equals("a12wq_minions")) {
             HtmlEmail emailAgent = new HtmlEmail();
 
-            emailAgent.setHostName("smtp.office365.com");
-            emailAgent.setSmtpPort(587);
-            emailAgent.setAuthentication("no-reply@ekedp.com", "CI@ekedp15");
+            emailAgent.setHostName(CONFIG.getEmailHostName());
+            emailAgent.setSmtpPort(Integer.parseInt(CONFIG.getEmailPort()));
+            emailAgent.setAuthentication(CONFIG.getEmailAddress(), CONFIG.getEmailPassword());
             emailAgent.setTLS(true);
 
             try {
-                emailAgent.setFrom("no-reply@ekedp.com");
+                emailAgent.setFrom(CONFIG.getEmailAddress());
+                Map<String, String> headers = new HashMap<>();
+                headers.put("Sender", CONFIG.getEmailSender());
                 emailAgent.setSubject(subject);
                 emailAgent.setCharset("utf8");
                 emailAgent.setHtmlMsg(msg);
