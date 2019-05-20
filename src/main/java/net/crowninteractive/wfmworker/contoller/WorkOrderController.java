@@ -8,7 +8,9 @@ package net.crowninteractive.wfmworker.contoller;
 import com.google.gson.Gson;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.concurrent.ExecutorService;
+import java.util.concurrent.ThreadPoolExecutor;
+import java.util.concurrent.TimeUnit;
+import javax.annotation.PreDestroy;
 import javax.servlet.http.HttpServletRequest;
 import javax.ws.rs.core.Context;
 import net.crowninteractive.wfmworker.cron.WorkOrderObserver;
@@ -41,8 +43,9 @@ public class WorkOrderController extends Extension {
 
     @Autowired
     private WorkOrderService service;
-    @Qualifier(value = "fixedThreadPool")
-    private ExecutorService executorService;
+    @Autowired
+    @Qualifier(value = "threadPoolExecutor")
+    private ThreadPoolExecutor executorService;
     @Autowired
     private WorkOrderObserver observer;
 
@@ -78,28 +81,39 @@ public class WorkOrderController extends Extension {
     @RequestMapping(method = RequestMethod.POST, value = "bulk_emcc_disconnect")
     public String addToDisconnectQueueV2(@RequestBody RequestObj[] reqList, @Context HttpServletRequest request) {
 
+        System.out.println("::::::::::::::::::::::  ______       _            _               ______                     _               \n"
+                + " |  ____|     | |          (_)             |  ____|                   | |              \n"
+                + " | |__   _ __ | |_ ___ _ __ _ _ __   __ _  | |__  __  _____  ___ _   _| |_ ___  _ __   \n"
+                + " |  __| | '_ \\| __/ _ \\ '__| | '_ \\ / _` | |  __| \\ \\/ / _ \\/ __| | | | __/ _ \\| '__|  \n"
+                + " | |____| | | | ||  __/ |  | | | | | (_| | | |____ >  <  __/ (__| |_| | || (_) | |     \n"
+                + " |______|_| |_|\\__\\___|_|  |_|_| |_|\\__, | |______/_/\\_\\___|\\___|\\__,_|\\__\\___/|_|     \n"
+                + "                                     __/ |                                             \n"
+                + "                                    |___/                                              ::::::::::::::::::::::::");
+
         Runnable runnable = () -> {
 
-            List<CompletedDeliquency> compeletedDeliquencies = null;
+            List<CompletedDeliquency> compeletedDeliquencies = new ArrayList();;
+
+            System.out.println(":::::::: Partition Size ::::::::" + reqList.length);
 
             Awesome awe = null;
             for (RequestObj obj : reqList) {
-
-                compeletedDeliquencies = new ArrayList();
+                System.out.println("::::::Active Threads Count :::::::" + executorService.getActiveCount());
+                System.out.println("::::::Completed Task Count :::::::" + executorService.getCompletedTaskCount());
+                System.out.println(":::::::::Task Count ::::::::::::::" + executorService.getTaskCount());
 
                 try {
                     System.out.println(obj);
-                    //check deliquency upload
-                    String desc = obj.getDescription().concat(String.format(" | Debt amount is %s Naira", obj.getAmount()));
                     awe = service.addToDisconnectionQueue(obj);
                     System.out.println(awe);
-                    compeletedDeliquencies.add(new CompletedDeliquency(obj.getBillingId(), (Integer) awe.getObject(),obj.getDeliquencyReportRecordId()));
-                    observer.updateDeqliquency(new Gson().toJson(compeletedDeliquencies));
+                    compeletedDeliquencies.add(new CompletedDeliquency(obj.getBillingId(), (Integer) awe.getObject(), obj.getDeliquencyReportRecordId()));
+
                 } catch (Exception ex) {
                     ex.printStackTrace();
                     awe = StandardResponse.systemError(ex.getMessage());
                 }
             }
+            observer.updateDeqliquency(new Gson().toJson(compeletedDeliquencies));
         };
 
         executorService.submit(runnable);
@@ -139,6 +153,11 @@ public class WorkOrderController extends Extension {
         return "my name is remi";
     }
 
+    @PreDestroy
+    public void terminateScheduledExecutor() throws InterruptedException {
+        this.executorService.awaitTermination(120, TimeUnit.MINUTES);
+    }
+
     class CompletedDeliquency {
 
         private String accountNumber;
@@ -153,7 +172,6 @@ public class WorkOrderController extends Extension {
             this.ticketId = ticketId;
             this.deliquencyReportId = deliquencyReportId;
         }
-        
 
         public String getAccountNumber() {
             return accountNumber;
@@ -178,9 +196,6 @@ public class WorkOrderController extends Extension {
         public void setDeliquencyReportId(Integer deliquencyReportId) {
             this.deliquencyReportId = deliquencyReportId;
         }
-        
-        
-        
 
     }
 
