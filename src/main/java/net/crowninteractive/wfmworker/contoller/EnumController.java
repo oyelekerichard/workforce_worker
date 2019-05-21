@@ -127,10 +127,11 @@ public class EnumController {
         return awe;
     }
 
+    
     @RequestMapping(method = RequestMethod.GET, value = "enumeration_requests")
     public Awesome getEnumerationRequests(
             @RequestParam(defaultValue = "1", value = "page") Integer page,
-            @RequestParam(value = "district", required = false) String district,
+            @RequestParam(defaultValue = "business_unit", value = "district", required = false) String district,
             @RequestParam(defaultValue = "create_time", value = "from", required = false) String from,
             @RequestParam(defaultValue = "create_time", value = "to", required = false) String to,
             @RequestParam(value = "queue", required = false) String queue,
@@ -154,7 +155,7 @@ public class EnumController {
     @RequestMapping(method = RequestMethod.GET, value = "enumeration_work_orders")
     public Awesome getEnumerationWorkOrders(
             @RequestParam(defaultValue = "1", value = "page") Integer page,
-            @RequestParam(value = "district", required = false) String district,
+            @RequestParam(defaultValue = "business_unit", value = "district", required = false) String district,
             @RequestParam(defaultValue = "create_time", value = "from", required = false) String from,
             @RequestParam(defaultValue = "create_time", value = "to", required = false) String to,
             @RequestParam(value = "queue", required = false) String queue,
