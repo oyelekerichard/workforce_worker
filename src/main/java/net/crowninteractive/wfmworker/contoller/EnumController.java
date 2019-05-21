@@ -5,6 +5,7 @@
  */
 package net.crowninteractive.wfmworker.contoller;
 
+import com.google.gson.Gson;
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
@@ -17,9 +18,11 @@ import java.util.logging.Logger;
 import javax.servlet.http.HttpServletRequest;
 import javax.ws.rs.core.Context;
 import net.crowninteractive.wfmworker.entity.Dashboard;
+import net.crowninteractive.wfmworker.entity.EnumReportObj;
 import net.crowninteractive.wfmworker.entity.Queue;
 import net.crowninteractive.wfmworker.entity.WorkOrder;
 import net.crowninteractive.wfmworker.misc.StandardResponse;
+import net.crowninteractive.wfmworker.misc.Utils;
 import net.crowninteractive.wfmworker.misc.WorkOrderEnumerationBody;
 import net.crowninteractive.wfmworker.misc.WorkOrderJson;
 import net.crowninteractive.wfmworker.service.Awesome;
@@ -313,6 +316,46 @@ public class EnumController {
             }
         } catch (Exception ex) {
             awe = StandardResponse.invalidUser();
+        }
+        return awe;
+    }
+    
+    @RequestMapping(method = RequestMethod.GET, value = "/download_enumeration_reports/{fileName:.+}")
+    public ResponseEntity downloadEnumerationReport(@PathVariable("fileName") String name) throws IOException {
+        System.out.println("---- -- " + name);
+        if (Utils.checkNullOrEmpty(name)) {
+            final File requestFile = new File("/var/wfm/downloads/" + name);
+            if (requestFile.isFile()) {
+                Path path = Paths.get(requestFile.getAbsolutePath());
+                byte[] data = Files.readAllBytes(path);
+                ByteArrayResource resource = new ByteArrayResource(data);
+                return ResponseEntity.ok()
+                    .header("Content-Disposition", "attachment; filename = "+name)
+                    .contentType(MediaType.APPLICATION_OCTET_STREAM)
+                    .body(resource);            
+            } else {
+                return ResponseEntity.ok()
+                    .contentType(MediaType.APPLICATION_JSON)
+                    .body(StandardResponse.validationErrors("no report found for " + name));
+            }
+        } else {
+            return ResponseEntity.ok()
+                    .contentType(MediaType.APPLICATION_JSON)
+                    .body(StandardResponse.validationErrors("File name should be passed as a parameter"));
+        }
+    }
+    
+    @RequestMapping(method = RequestMethod.POST, value = "create_enumeration_report")
+    public Awesome createEnumerationReport(@RequestBody String json) {
+        Awesome awe;
+        try {
+            EnumReportObj repObj = new Gson().fromJson(json, EnumReportObj.class);
+            L.info("Generating enumeration report with fileName: "+repObj.getFileName());
+            awe = enumService.createEnumerationReportFile(repObj);
+
+        } catch (Exception ex) {
+            ex.printStackTrace();
+            awe = StandardResponse.errorDuringProcessing();
         }
         return awe;
     }
