@@ -28,6 +28,7 @@ import net.crowninteractive.wfmworker.dao.QueueTypeData;
 import net.crowninteractive.wfmworker.dao.WorkOrderDao;
 import net.crowninteractive.wfmworker.dao.WorkOrderTempDao;
 import net.crowninteractive.wfmworker.entity.Dashboard;
+import net.crowninteractive.wfmworker.entity.EnumReportObj;
 import net.crowninteractive.wfmworker.entity.LowerWidget;
 import net.crowninteractive.wfmworker.entity.Queue;
 import net.crowninteractive.wfmworker.entity.RequestEnumerationBody;
@@ -273,13 +274,7 @@ public class EnumService {
         List<String> err = validateEnumWorkOrder(to, from);
 
         if (err.isEmpty()) {
-            String sql = "SELECT " + EnumerationWorkOrderDownloadModel.enumerationWorkOrderDataCols() + ",wt.ticket_id, "
-                + "(select name from queue where id=wt.queue_id) as queue_name,"
-                + "(select name from queue_type where id=wt.queue_type_id) as queue_type_name "
-                + " ,wt.current_status "
-                + "FROM `work_order` wt, enumeration_work_order e where wt.ticket_id = e.work_order_id and cast(create_time as date) >= cast({from} as date) and cast(create_time as date) <= cast({to} as date )";
-
-            final List<EnumerationWorkOrderDownloadModel> workOrders = wdao.getEnumerationDownloadList(sql, district, from, to, queue, queueType, priority,status, billingId, ticketId, reportedBy);
+              final List<EnumerationWorkOrderDownloadModel> workOrders = wdao.getEnumerationDownloadList(EnumerationWorkOrderDownloadModel.workOrderQuery(), district, from, to, queue, queueType, priority,status, billingId, ticketId, reportedBy);
             if (!workOrders.isEmpty()) {
                 sendWorkOrderEmailAttachment(emailAddress, workOrders,fileType.WORKORDER);
             } else {
@@ -430,20 +425,12 @@ public class EnumService {
 
     }
 
-    @Async
+     @Async
     public Awesome sendEnumerationRequestListFile(String emailAddress, String district, String from, String to, String queue, String queueType, String priority, String status, String billingId, String ticketId, String reportedBy) {
         List<String> err = validateEnumWorkOrder(to, from);
 
         if (err.isEmpty()) {
-            String sql = "SELECT " + EnumerationWorkOrderDownloadModel.enumerationWorkOrderDataCols() + ",wt.ticket_id, "
-                + "(select name from queue where id=wt.queue_id) as queue_name,"
-                + "(select name from queue_type where id=wt.queue_type_id) as queue_type_name "
-                + ", wt.current_status "
-                + "FROM `work_order_temp` wt, enumeration_work_order e where wt.token = e.work_order_temp_token "
-                + "and cast(wt.create_time as date) >= cast({from} as date) and cast(wt.create_time as date) <= cast({to} as date )";
-
-
-            final List<EnumerationWorkOrderDownloadModel> requests = wdao.getEnumerationDownloadList(sql, district, from, to, queue, queueType, priority,status, billingId, ticketId, reportedBy);
+            final List<EnumerationWorkOrderDownloadModel> requests = wdao.getEnumerationDownloadList(EnumerationWorkOrderDownloadModel.requestQuery(), district, from, to, queue, queueType, priority,status, billingId, ticketId, reportedBy);
             
             if (!requests.isEmpty()) {
                 sendWorkOrderEmailAttachment(emailAddress, requests,fileType.REQUEST);
@@ -566,6 +553,113 @@ public class EnumService {
             }
         } catch (Exception ex) {
             ex.printStackTrace();
+            return null;
+        }
+    }
+    
+    public Awesome createEnumerationReportFile(EnumReportObj obj) {
+        System.out.println(obj.getType());
+        if ("WORK_ORDERS_all".equals(obj.getType()) || "REQUESTS_all".equals(obj.getType())) {
+            if ("WORK_ORDERS_all".equals(obj.getType())) {
+                final List<EnumerationWorkOrderDownloadModel> workOrders = wdao.getEnumerationDownloadList(EnumerationWorkOrderDownloadModel.workOrderQuery(), "business_unit","create_time", "create_time", null, null, null,null, null, null, null);
+                if (workOrders.size() > 0) {
+                    File excelFileForWorkOrder = createReportExcel(EnumerationWorkOrderDownloadModel.class,workOrders, obj.getFileName());
+                    if (excelFileForWorkOrder.exists()) {
+                        return new Awesome(0, "Successful");
+                    } else {
+                        return new Awesome(400, "File generation failed");
+                    }
+                } else {
+                    return new Awesome(100, "No data retrieved for report");
+                }
+            } else {
+                final List<EnumerationWorkOrderDownloadModel> requests = wdao.getEnumerationDownloadList(EnumerationWorkOrderDownloadModel.requestQuery(), "business_unit", "create_time", "create_time", null, null, null,null, null, null, null);
+                if (requests.size() > 0) {
+                    File excelFileForWorkOrder = createReportExcel(EnumerationWorkOrderDownloadModel.class,requests, obj.getFileName());
+                    if (excelFileForWorkOrder.exists()) {
+                        return new Awesome(0, "Successful");
+                    } else {
+                        return new Awesome(400, "File generation failed");
+                    }
+                } else {
+                    return new Awesome(100, "No data retrieved for report");
+                }
+            }
+        } else if ("WORK_ORDERS_with_select_customers".equals(obj.getType()) || "REQUESTS_with_select_customers".equals(obj.getType())) {
+            if ("WORK_ORDERS_with_select_customers".equals(obj.getType())) {
+                final List<EnumerationWorkOrderDownloadModel> workOrders = wdao.getWorkOrderEnumerationByTokens(obj.getTokens());
+                if (workOrders.size() > 0) {
+                    File excelFileForWorkOrder = createReportExcel(EnumerationWorkOrderDownloadModel.class,workOrders, obj.getFileName());
+                    if (excelFileForWorkOrder.exists()) {
+                        return new Awesome(0, "Successful");
+                    } else {
+                        return new Awesome(400, "File generation failed");
+                    }
+                } else {
+                    return new Awesome(100, "No data retrieved for report");
+                }
+            } else {
+                final List<EnumerationWorkOrderDownloadModel> requests = wdao.getWorkOrderEnumerationTempByTokens(obj.getTokens());
+                if (requests.size() > 0) {
+                    File excelFileForWorkOrder = createReportExcel(EnumerationWorkOrderDownloadModel.class,requests, obj.getFileName());
+                    if (excelFileForWorkOrder.exists()) {
+                        return new Awesome(0, "Successful");
+                    } else {
+                        return new Awesome(400, "File generation failed");
+                    }
+                } else {
+                    return new Awesome(100, "No data retrieved for report");
+                }
+            }
+        } else {
+            return new Awesome(100, "Invalid Report Type");
+        }
+    }
+    
+     private <T> File createReportExcel(Class<T> clazz, List<T> data, String fileName) {
+        try {
+            L.info("Creating file with data rows -----------" + data.size());
+            
+            final String filePath;
+
+            filePath = "/var/wfm/downloads/" + fileName;
+
+            final FileOutputStream fileOutputStream = new FileOutputStream(filePath);
+            final Workbook workbook = new SXSSFWorkbook(data.size());
+            final Sheet sheet = workbook.createSheet();
+
+            final Field[] declaredFields = Arrays.stream(clazz.getDeclaredFields()).filter(field -> !field.isAnnotationPresent(ExcludeForExcel.class)).toArray(Field[]::new);
+
+            final Row headRow = sheet.createRow(0);
+
+            for (int j = 0; j < declaredFields.length; j++) {
+                final Cell cellInHeadRow = headRow.createCell(j);
+                cellInHeadRow.setCellValue(declaredFields[j].getName().toUpperCase());
+            }
+
+            int rowCount = 1;
+
+            for (T datum : data) {
+                final Row row = sheet.createRow(rowCount);
+                for (int k = 0; k < declaredFields.length; k++) {
+                    final Cell cell = row.createCell(k);
+                    final Field declaredField = declaredFields[k];
+                    declaredField.setAccessible(true);
+                    final Object value = declaredField.get(datum);
+                    cell.setCellValue(value != null ? value.toString() : " ");
+                }
+
+                rowCount++;
+            }
+            workbook.write(fileOutputStream);
+            fileOutputStream.close();
+            return new File(filePath);
+
+        } catch (Exception ex) {
+            ex.printStackTrace();
+            System.out.println("-------------------------__Eror occured -----------------");
+            ex.printStackTrace();
+            L.warning("An error occurred while trying to createWorkOrderFile" + ex);
             return null;
         }
     }

@@ -687,7 +687,7 @@ public class WorkOrderDao extends AbstractDao<Integer, WorkOrder> {
         return new WorkOrderEnumerationBody();
     }
 
-    public List<EnumerationWorkOrderDownloadModel> getEnumerationDownloadList(String sql, String district, String from, String to, String queue, String queueType, String priority, String status, String billingId, String ticketId, String reportedBy) {
+        public List<EnumerationWorkOrderDownloadModel> getEnumerationDownloadList(String sql, String district, String from, String to, String queue, String queueType, String priority, String status, String billingId, String ticketId, String reportedBy) {
 
         if (to.equals("create_time")) {
             sql = sql.replace("{to}", "create_time");
@@ -700,9 +700,12 @@ public class WorkOrderDao extends AbstractDao<Integer, WorkOrder> {
         }
         if (!from.equals("create_time")) {
             sql = sql.replace("{from}", String.format("'%s'", from));
-        }        
-        if (district != null) {
-            sql = sql.concat(String.format(" and business_unit = '%s'", district));
+        }
+        if (district.equals("business_unit")) {
+            sql = sql.replace("{unit}", district);
+        }
+        if (!district.equals("business_unit")) {
+            sql += " and business_unit like 'distr%'".replace("distr", district);
         }
         
         if (queue != null) {
@@ -712,6 +715,7 @@ public class WorkOrderDao extends AbstractDao<Integer, WorkOrder> {
         if (queueType != null) {
             sql += ("and queue_type_id=(select qt.id from queue_type qt, queue q where qt.name like 'queueName%' and q.name like 'enumeration' and qt.queue_id = q.id)")
                     .replace("queueName", queueType);
+
         }
         if (status != null) {
             sql += "and current_status like 'statuss%'".replace("statuss", status);
@@ -755,11 +759,12 @@ public class WorkOrderDao extends AbstractDao<Integer, WorkOrder> {
         if (!from.equals("create_time")) {
             sql = sql.replace("{from}", String.format("'%s'", from));
         }
-        
-        if (district != null) {
-            sql = sql.concat(String.format(" and business_unit = '%s'", district));
+        if (district.equals("business_unit")) {
+            sql = sql.replace("{unit}", district);
         }
-        
+        if (!district.equals("business_unit")) {
+            sql += " and business_unit like 'distr%'".replace("distr", district);
+        }
         if (queue != null) {
             sql += " and queue_id=(select id from queue where name like 'quet%')".replace("quet", queue);
 
@@ -776,15 +781,15 @@ public class WorkOrderDao extends AbstractDao<Integer, WorkOrder> {
             sql += " and priority like 'prioritys%'".replace("prioritys", priority);
         }
         if (billingId != null) {
-            sql += " and reference_type_data like 'billing%'".replace("billing", billingId);
+            sql += "and reference_type_data like 'billing%'".replace("billing", billingId);
         }
         if (ticketId != null) {
-            sql += String.format(" and ticket_id =%s", ticketId);
+            sql += String.format("and ticket_id =%s", ticketId);
         }
         if (reportedBy != null) {
-            sql += String.format(" and reported_by ='%s'", reportedBy);
+            sql += String.format("and reported_by ='%s'", reportedBy);
         }
-        
+
         final String sql2 = sql + " ORDER BY wt.create_time DESC limit 1000 offset " + page;
 
         logger.info("Compiled SQL " + sql2);
@@ -849,13 +854,10 @@ public class WorkOrderDao extends AbstractDao<Integer, WorkOrder> {
             Arrays.stream(tokens).forEach(s -> builder.append("'").append(s.trim()).append("'").append(","));
             final String builtParams = StringUtils.chop(builder.toString());
 
-            String sql = "SELECT " + EnumerationWorkOrderDownloadModel.enumerationWorkOrderDataCols() + ",wt.ticket_id, "
-                    + "(select name from queue where id=wt.queue_id) as queue_name,"
-                    + "(select name from queue_type where id=wt.queue_type_id) as queue_type_name "
-                    + " ,wt.current_status "
-                    + "FROM `work_order_temp` wt,enumeration_work_order e where wt.token = e.work_order_temp_token and wt.token in (" + builtParams + ")";
+            String sql = "SELECT " + EnumerationWorkOrderDownloadModel.enumerationWorkOrderDataCols() + " FROM `work_order_temp` wt,enumeration_work_order e "
+                        + "where wt.token = e.work_order_temp_token and wt.token in (" + builtParams + ")";
 
-            logger.info("Executing SQL {} with {}" + sql);
+            logger.info("Executing SQL {}" + sql);
 
             List<EnumerationWorkOrderDownloadModel> model = new ArrayList();
 
@@ -882,13 +884,10 @@ public class WorkOrderDao extends AbstractDao<Integer, WorkOrder> {
             Arrays.stream(tokens).forEach(s -> builder.append("'").append(s.trim()).append("'").append(","));
             final String builtParams = StringUtils.chop(builder.toString());
 
-            String sql = "SELECT " + EnumerationWorkOrderDownloadModel.enumerationWorkOrderDataCols() + ",wt.ticket_id, "
-                    + "(select name from queue where id=wt.queue_id) as queue_name,"
-                    + "(select name from queue_type where id=wt.queue_type_id) as queue_type_name "
-                    + " ,wt.current_status "
-                    + "FROM `work_order` wt, enumeration_work_order e where wt.ticket_id = e.work_order_id and wt.token in (" + builtParams + ")";
+            String sql = "SELECT " + EnumerationWorkOrderDownloadModel.enumerationWorkOrderDataCols()+ " FROM `work_order` wt, "
+                        + " enumeration_work_order e where wt.ticket_id = e.work_order_id and wt.token in (" + builtParams + ")";
 
-            logger.info("Executing SQL {} with {}" + sql);
+            logger.info("Executing SQL {} " + sql);
 
             List<EnumerationWorkOrderDownloadModel> model = new ArrayList();
 
