@@ -14,15 +14,13 @@ import net.crowninteractive.wfmworker.dao.WorkOrderRemarkDao;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
 /**
  *
  * @author johnson3yo
  */
-@RunWith(SpringJUnit4ClassRunner.class)
-@ContextConfiguration(locations = {"file:src/main/webapp/WEB-INF/spring-config-test.xml"})
+//@RunWith(SpringJUnit4ClassRunner.class)
+//@ContextConfiguration(locations = {"file:src/main/webapp/WEB-INF/spring-config-test.xml"})
 public class MORTest {
 
     private static String fileName = "/home/remark.csv";
@@ -31,7 +29,7 @@ public class MORTest {
     @Autowired
     private WorkOrderDao dao;
 
-    @Test
+    //@Test
     public void testAddRemark() {
 
         try (Stream<String> stream = Files.lines(Paths.get(fileName));) {

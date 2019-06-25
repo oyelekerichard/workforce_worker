@@ -9,30 +9,28 @@ import net.crowninteractive.wfmworker.dao.WorkOrderDao;
 import net.crowninteractive.wfmworker.entity.WorkOrderMessage;
 import net.crowninteractive.wfmworker.exception.WfmWorkerException;
 import net.crowninteractive.wfmworker.service.WorkOrderService;
-import org.junit.Test;
-import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
 /**
  *
  * @author johnson3yo
  */
-@RunWith(SpringJUnit4ClassRunner.class)
-@ContextConfiguration(locations = {"file:src/main/webapp/WEB-INF/spring-config-test.xml"})
+//@RunWith(SpringJUnit4ClassRunner.class)
+//@ContextConfiguration(locations = {"file:src/main/webapp/WEB-INF/spring-config-test.xml"})
 public class WorkOrderDaoTest {
-    
-    @Autowired WorkOrderDao wdao;
-    @Autowired WorkOrderService ws;
-    
+
+    @Autowired
+    WorkOrderDao wdao;
+    @Autowired
+    WorkOrderService ws;
+
     //@Test
-    public void testMigratedWorkOrders(){
-       wdao.findNonMigratedWorkOrders();
+    public void testMigratedWorkOrders() {
+        wdao.findNonMigratedWorkOrders();
     }
-    
-    @Test
-    public void testCreateWorkorder() throws WfmWorkerException{
+
+    //@Test
+    public void testCreateWorkorder() throws WfmWorkerException {
         WorkOrderMessage wm = new WorkOrderMessage();
         wm.setBusinessUnit("");
         wm.setAccountType("");
@@ -57,5 +55,5 @@ public class WorkOrderDaoTest {
         wm.setUpdatedBy(1);
         ws.createWorkOrder(wm);
     }
-    
+
 }

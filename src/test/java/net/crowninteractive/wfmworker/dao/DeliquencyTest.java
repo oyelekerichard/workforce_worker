@@ -5,28 +5,20 @@
  */
 package net.crowninteractive.wfmworker.dao;
 
-import java.util.Date;
-import net.crowninteractive.wfmworker.entity.Queue;
-import net.crowninteractive.wfmworker.entity.QueueType;
-import net.crowninteractive.wfmworker.entity.WorkOrder;
-import org.junit.Test;
-import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
 /**
  *
  * @author johnson3yo
  */
-@RunWith(SpringJUnit4ClassRunner.class)
-@ContextConfiguration(locations = {"file:src/main/webapp/WEB-INF/spring-config-test.xml"})
+//@RunWith(SpringJUnit4ClassRunner.class)
+//@ContextConfiguration(locations = {"file:src/main/webapp/WEB-INF/spring-config-test.xml"})
 public class DeliquencyTest {
 
     @Autowired
     private WorkOrderDao wdao;
 
-    @Test
+    //@Test
     public void testCreateWorkOrder() {
 //
 //        WorkOrder.WorkOrderBuilder builder = new WorkOrder.WorkOrderBuilder();

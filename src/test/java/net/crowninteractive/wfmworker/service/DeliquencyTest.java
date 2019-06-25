@@ -10,25 +10,21 @@ import net.crowninteractive.wfmworker.dao.WorkOrderDao;
 import net.crowninteractive.wfmworker.entity.Queue;
 import net.crowninteractive.wfmworker.entity.QueueType;
 import net.crowninteractive.wfmworker.entity.WorkOrder;
-import org.junit.Test;
-import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
 /**
  *
  * @author johnson3yo
  */
-@RunWith(SpringJUnit4ClassRunner.class)
-@ContextConfiguration(locations = {"file:src/main/webapp/WEB-INF/spring-config-test.xml"})
+//@RunWith(SpringJUnit4ClassRunner.class)
+//@ContextConfiguration(locations = {"file:src/main/webapp/WEB-INF/spring-config-test.xml"})
 public class DeliquencyTest {
 
-   @Autowired
-   private WorkOrderDao wdao;
+    @Autowired
+    private WorkOrderDao wdao;
 
-   @Test
-   public void testCreateWorkOrder() {
+    //@Test
+    public void testCreateWorkOrder() {
         WorkOrder.WorkOrderBuilder builder = new WorkOrder.WorkOrderBuilder();
         builder.setAddressLine1("Lekki Phase 1").setBusinessUnit("Lekki").setAmount(Double.valueOf("2000"))
                 .setCity("Lekki").setContactNumber("0123456789").setCurrentBill(Double.valueOf("2000"))
@@ -41,6 +37,6 @@ public class DeliquencyTest {
 
         WorkOrder build = builder.build();
         wdao.save(build);
-   }
-   
+    }
+
 }

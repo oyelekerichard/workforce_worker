@@ -29,18 +29,14 @@ import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.util.CellRangeAddress;
 import org.apache.poi.xssf.streaming.SXSSFSheet;
 import org.apache.poi.xssf.streaming.SXSSFWorkbook;
-import org.junit.Test;
-import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
 /**
  *
  * @author johnson3yo
  */
-@RunWith(SpringJUnit4ClassRunner.class)
-@ContextConfiguration(locations = {"file:src/main/webapp/WEB-INF/spring-config-test.xml"})
+//@RunWith(SpringJUnit4ClassRunner.class)
+//@ContextConfiguration(locations = {"file:src/main/webapp/WEB-INF/spring-config-test.xml"})
 public class MikaSpecialReport {
 
     @Autowired
@@ -49,13 +45,11 @@ public class MikaSpecialReport {
     @Autowired
     private UsersDao usersDao;
 
-  
-
     @Autowired
     private SendEmail emm;
 
-    @Test
-    public void testMika()  {
+    //@Test
+    public void testMika() {
         Runnable runnable = () -> {
             try {
                 processWriteV2("2016-01-01", "2018-10-31", "mika.alanko@crowninteractive.com");
@@ -66,7 +60,7 @@ public class MikaSpecialReport {
         runnable.run();
     }
 
-   public void processWriteV2(String from, String to, String email) throws FileNotFoundException, IOException, EmailException, WfmWorkerException {
+    public void processWriteV2(String from, String to, String email) throws FileNotFoundException, IOException, EmailException, WfmWorkerException {
         System.out.println("-------------------------About to process report ---------");
         System.out.println("userDao-----------" + this.usersDao);
         System.out.println("-Email-------------" + email);

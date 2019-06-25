@@ -10,18 +10,14 @@ import net.crowninteractive.wfmworker.dao.WorkOrderDao;
 import net.crowninteractive.wfmworker.dao.WorkOrderTempDao;
 import net.crowninteractive.wfmworker.entity.EnumerationWorkOrder;
 import net.crowninteractive.wfmworker.misc.WorkOrderJson;
-import org.junit.Test;
-import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
 /**
  *
  * @author uchep
  */
-@RunWith(SpringJUnit4ClassRunner.class)
-@ContextConfiguration(locations = {"file:src/main/webapp/WEB-INF/spring-config-test.xml"})
+//@RunWith(SpringJUnit4ClassRunner.class)
+//@ContextConfiguration(locations = {"file:src/main/webapp/WEB-INF/spring-config-test.xml"})
 public class EnumerationTest {
 
     @Autowired
@@ -114,16 +110,14 @@ public class EnumerationTest {
             + "  }\n"
             + "}";
 
-   
     public void testCreateWorkOrderTemp() {
         WorkOrderJson woj = new Gson().fromJson(sql, WorkOrderJson.class);
         temp.createEnumerationWorkOrder(woj);
     }
 
-    public void get(){
+    public void get() {
         EnumerationWorkOrder enumerationWorkOrder = wdao.getEnumerationWorkOrder("DP2Hn7775MoL1w6VxIZnD1e4GJWeHX");
         System.out.println(new Gson().toJson(enumerationWorkOrder));
     }
-    
-    
+
 }

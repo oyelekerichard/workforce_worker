@@ -13,27 +13,24 @@ import net.crowninteractive.wfmworker.entity.QueueType;
 import net.crowninteractive.wfmworker.entity.WorkOrder;
 import net.crowninteractive.wfmworker.entity.WorkOrderExtra;
 import org.apache.commons.lang3.RandomStringUtils;
-import org.junit.Test;
-import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
 /**
  *
  * @author johnson3yo
  */
-@RunWith(SpringJUnit4ClassRunner.class)
-@ContextConfiguration(locations = {"file:src/main/webapp/WEB-INF/spring-config-test.xml"})
+//@RunWith(SpringJUnit4ClassRunner.class)
+//@ContextConfiguration(locations = {"file:src/main/webapp/WEB-INF/spring-config-test.xml"})
 public class WorkOrderExtraTest {
-    
-    @Autowired WorkOrderDao dao;
-    @Autowired WorkOrderExtraDao dao2;
-    
-    
-    @Test
-    public void createWorkOrderExtra(){
-        
+
+    @Autowired
+    WorkOrderDao dao;
+    @Autowired
+    WorkOrderExtraDao dao2;
+
+    //@Test
+    public void createWorkOrderExtra() {
+
         WorkOrder wo = new WorkOrder();
         wo.setBusinessUnit("GBAGS");
         wo.setAddressLine1("");
@@ -62,11 +59,10 @@ public class WorkOrderExtraTest {
         WorkOrderExtra woe = new WorkOrderExtra();
         woe.setConnectionType("654");
         woe.setTransformer("4643");
-        WorkOrder w  = dao.save(wo);
+        WorkOrder w = dao.save(wo);
         woe.setId(w);
         dao2.save(woe);
-       
+
     }
-    
-    
+
 }

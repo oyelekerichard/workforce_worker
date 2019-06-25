@@ -8,7 +8,6 @@ package net.crowninteractive.wfmworker.test;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import net.crowninteractive.wfmworker.dao.RequestObj;
-import org.junit.Test;
 
 /**
  *
@@ -18,7 +17,7 @@ public class ParralelDeliquencyTest {
 
     private static Integer count = 10000;
 
-    @Test
+    //@Test
     public void test() {
         RequestObj[] list = populateRequestObject(count);
         ExecutorService executor = Executors.newFixedThreadPool(4);
@@ -50,8 +49,7 @@ public class ParralelDeliquencyTest {
         public void run() {
             for (int c = start; c < end; c++) {
                 RequestObj reqobj = obj[c];
-                
-                
+
             }
         }
 
